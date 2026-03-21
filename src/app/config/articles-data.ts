@@ -1,0 +1,520 @@
+/**
+ * 文章数据源 - 元思想
+ *
+ * 所有文章内容集中管理，按 card id 索引
+ * 承接首页「今日频率指南」和「明镜之声」卡片的点击跳转
+ *
+ * 数据规范：
+ *   - 标题不硬编码省略号，截断由 CSS line-clamp 处理
+ *   - 副标题分隔符用中圆点（·）
+ *   - 文章 800-1500 字，陪伴式提问调性
+ *   - 每篇文末附微练习
+ *   - content 段落支持多种类型，由阅读页模板渲染
+ *   - 中文引号统一用角引号「」，避免 ASCII 引号冲突
+ *
+ * 段落类型：
+ *   text     — 正文
+ *   heading  — 小标题（宋体）
+ *   quote    — 引述/金句（琥珀竖线）
+ *   question — 陪伴式提问（鼠尾草绿底）
+ *   divider  — 装饰分隔线
+ */
+
+// ─── 类型定义 ─────────────────────────────────────────
+
+export interface ArticleParagraph {
+  type: "text" | "heading" | "quote" | "question" | "divider";
+  content: string;
+}
+
+export interface MicroPractice {
+  /** 练习标题 */
+  title: string;
+  /** 练习步骤 */
+  steps: string[];
+  /** 预估时长 */
+  duration: string;
+}
+
+export interface Article {
+  /** 唯一标识，对应 home-data 中的 card id */
+  id: string;
+  /** 文章标题 */
+  title: string;
+  /** 副标题/来源 */
+  subtitle: string;
+  /** 所属栏目 */
+  category: string;
+  /** 栏目色调 amber | sage */
+  categoryColor: "amber" | "sage";
+  /** 封面图 */
+  coverImage: string;
+  /** 作者 */
+  author: {
+    name: string;
+  };
+  /** 阅读时长 */
+  readTime: string;
+  /** 可选音频路径 */
+  audioSrc?: string;
+  /** 正文段落 */
+  paragraphs: ArticleParagraph[];
+  /** 文末微练习 */
+  practice?: MicroPractice;
+}
+
+// ─── 文章数据 ─────────────────────────────────────────
+
+export const ARTICLES: Record<string, Article> = {
+  /* ═══════════════════════════════════════════════
+     今日之光 · 语录详情
+     ═══════════════════════════════════════════════ */
+  "wisdom-today": {
+    id: "wisdom-today",
+    title: "当你回到自己，世界便回到了它本来的样子",
+    subtitle: "今日之光 · 感知笔记",
+    category: "今日之光",
+    categoryColor: "amber",
+    coverImage:
+      "https://images.unsplash.com/photo-1765727739751-14e389d935e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb2xkZW4lMjBzdW5yaXNlJTIwcGVhY2VmdWwlMjBtb3VudGFpbiUyMGxhbmRzY2FwZSUyMHNlcmVuZXxlbnwxfHx8fDE3NzA3MjgyMDl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    author: { name: "元思想编辑部" },
+    readTime: "3 分钟",
+    paragraphs: [
+      {
+        type: "text",
+        content:
+          "这句话听起来简单，但真正理解它，可能需要很长的时间。我们花了大量的力气去改变世界、改变别人、改变环境——却很少停下来看看，是不是自己先走散了。",
+      },
+      {
+        type: "question",
+        content: "你有没有过这样的感觉：身边一切都在，却好像少了什么？",
+      },
+      {
+        type: "heading",
+        content: "世界是你内心的投影",
+      },
+      {
+        type: "text",
+        content:
+          "当你内心不安的时候，天气都显得灰暗。当你心生欢喜的时候，连路边的野花都格外鲜亮。世界没有变，变的是你看它的那双眼睛。",
+      },
+      {
+        type: "quote",
+        content: "你不是活在世界里，你活在你对世界的感知里。",
+      },
+      {
+        type: "text",
+        content:
+          "所以，当我们说「回到自己」，并不是逃避外在，而是重新校准内在的镜头。当镜头清晰了，世界自然呈现它本来的样子——不是完美的，但也不是糟糕的，只是如实的。",
+      },
+      { type: "divider", content: "" },
+      {
+        type: "heading",
+        content: "回到自己，从哪里开始",
+      },
+      {
+        type: "text",
+        content:
+          "回到自己不需要去远方，不需要辞职旅行，不需要任何仪式。只需要一个呼吸的间隙——在忙碌中停下三秒，在焦虑中注意到自己正在焦虑，在难过时允许自己难过。",
+      },
+      {
+        type: "question",
+        content: "此刻，你能不能用十秒钟，只是感受一下自己的呼吸？",
+      },
+      {
+        type: "text",
+        content:
+          "这十秒钟里，你哪儿也不需要去，什么也不需要做。你只是在这里，和自己在一起。这就是回到自己最简单的方式。",
+      },
+      {
+        type: "quote",
+        content: "回来吧，你一直在外面找的东西，其实从未离开。",
+      },
+    ],
+    practice: {
+      title: "十秒回归练习",
+      steps: [
+        "无论你在做什么，现在暂停一下",
+        "闭上眼睛，做一个深呼吸",
+        "呼气的时候，在心里对自己说：我回来了",
+        "感受这一刻的安静——哪怕只有十秒",
+      ],
+      duration: "1 分钟",
+    },
+  },
+
+  /* ═══════════════════════════════════════════════
+     今日频率指南 · 第一篇
+     ═══════════════════════════════════════════════ */
+  "dg-1": {
+    id: "dg-1",
+    title: "为什么我努力，反而越来越累",
+    subtitle: "今日频率指南 · 感知笔记",
+    category: "今日频率指南",
+    categoryColor: "amber",
+    coverImage:
+      "https://images.unsplash.com/photo-1681465637428-dc93e2d72f6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXJtJTIwbW9ybmluZyUyMHN1bmxpZ2h0JTIwdGhyb3VnaCUyMHdpbmRvdyUyMGNhbG18ZW58MXx8fHwxNzcwNzI3MDgxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    author: { name: "元思想编辑部" },
+    readTime: "4 分钟",
+    paragraphs: [
+      {
+        type: "text",
+        content:
+          "你有没有这样的体验——明明已经很拼了，生活却似乎并没有变得更好。日程排得越满，心里反而越空。完成了一件事，紧接着的不是满足，而是更大的焦虑。",
+      },
+      {
+        type: "question",
+        content: "此刻，你可以停下来感受一下：你的身体有哪些地方是紧绷的？",
+      },
+      {
+        type: "text",
+        content:
+          "我们从小被教育「努力就有回报」。这个信念像一根看不见的弦，把我们拉得越来越紧。但很少有人告诉我们，努力本身也可以成为一种逃避——逃避面对内心真正的需要。",
+      },
+      {
+        type: "heading",
+        content: "忙碌，是最隐蔽的麻木",
+      },
+      {
+        type: "text",
+        content:
+          "当我们不断往前冲的时候，往往并不是在回应真实的渴望，而是在回应一种恐惧：如果我停下来，会不会被抛下？如果我不够好，是不是就不值得被爱？",
+      },
+      {
+        type: "quote",
+        content: "真正的休息，不是停止做事，而是停止与自己对抗。",
+      },
+      {
+        type: "text",
+        content:
+          "你可能会说：「可是我不努力就会焦虑。」是的，这正是值得观察的地方。焦虑并不是因为你做得不够多，而是因为你对自己有一个无法满足的期待。这个期待也许来自父母的目光，也许来自社会的标准，也许来自你内心深处那个觉得自己「还不够好」的声音。",
+      },
+      { type: "divider", content: "" },
+      {
+        type: "heading",
+        content: "允许自己慢下来",
+      },
+      {
+        type: "text",
+        content:
+          "放松练习的核心，不是教你放弃努力，而是邀请你思考：此刻的努力，是出于热爱，还是出于恐惧？是在回应自己，还是在讨好别人？",
+      },
+      {
+        type: "question",
+        content:
+          "试着问自己一个问题：如果今天只做一件让我真正开心的事，那会是什么？",
+      },
+      {
+        type: "text",
+        content:
+          "答案不需要宏大。也许是安静地喝一杯茶，也许是在阳光下走十分钟路，也许只是关掉手机、闭上眼睛，什么都不做地待三分钟。",
+      },
+      {
+        type: "text",
+        content:
+          "你不需要成为一个永远精力充沛的人。真正有力量的状态，是你知道自己什么时候需要前进，什么时候需要停下——并且，两者都允许。",
+      },
+      {
+        type: "quote",
+        content: "向前走是能力，能停下来也是。",
+      },
+    ],
+    practice: {
+      title: "三分钟放松扫描",
+      steps: [
+        "找一个舒适的坐姿，轻轻闭上眼睛",
+        "从头顶开始，慢慢向下扫描身体，注意哪些地方有紧绷感",
+        "每发现一处紧绷，轻轻呼气，想象那里的紧绷随呼气慢慢融化",
+        "扫描到脚底时，做三个深呼吸，感受整个身体的轻松",
+      ],
+      duration: "3 分钟",
+    },
+  },
+
+  /* ═══════════════════════════════════════════════
+     今日频率指南 · 第二篇
+     ═══════════════════════════════════════════════ */
+  "dg-2": {
+    id: "dg-2",
+    title: "为什么你总感觉清楚却做不到",
+    subtitle: "今日频率指南 · 感知笔记",
+    category: "今日频率指南",
+    categoryColor: "amber",
+    coverImage:
+      "https://images.unsplash.com/photo-1763899910806-43a13994b44f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBzaXR0aW5nJTIwYWxvbmUlMjBwZWFjZWZ1bCUyMHJlZmxlY3Rpb24lMjBuYXR1cmV8ZW58MXx8fHwxNzcwNzI3MDgxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    author: { name: "元思想编辑部" },
+    readTime: "5 分钟",
+    paragraphs: [
+      {
+        type: "text",
+        content:
+          "道理都懂，就是做不到。你一定听过这句话，甚至自己也常常这样说。明明知道该早睡、该运动、该放下手机、该对自己好一点——可身体就是不听话。",
+      },
+      {
+        type: "text",
+        content:
+          "这种「知道却做不到」的撕裂感，也许是现代人最隐秘的痛苦之一。它让你对自己失望，觉得自己没有自律力、没有行动力、甚至「不够好」。",
+      },
+      {
+        type: "question",
+        content:
+          "想一想：最近有没有一件事，你很清楚应该怎么做，却一直没有开始？",
+      },
+      {
+        type: "heading",
+        content: "头脑清楚，不等于身心准备好了",
+      },
+      {
+        type: "text",
+        content:
+          "我们的头脑运转速度远快于身体和情感。头脑可以在一秒钟内分析出最佳方案，但身体需要安全感，情感需要被看见，它们的节奏完全不同。",
+      },
+      {
+        type: "quote",
+        content:
+          "改变不是靠「想通」就能发生的，它需要你的整个身心都到场。",
+      },
+      {
+        type: "text",
+        content:
+          "很多时候，「做不到」不是因为你懒，也不是意志力不足。而是你的身体还停留在旧的模式里——那个模式曾经保护过你。比如拖延可能是你面对压力时唯一学会的应对方式；回避可能是童年时期你保护自己的策略。",
+      },
+      { type: "divider", content: "" },
+      {
+        type: "heading",
+        content: "从「要求自己」到「陪伴自己」",
+      },
+      {
+        type: "text",
+        content:
+          "下次当你发现自己又「做不到」的时候，试着不要马上批判自己。停下来，像对待一个朋友那样问自己：",
+      },
+      {
+        type: "question",
+        content:
+          "你现在需要什么？是休息，是陪伴，是一个更小的第一步，还是只是被允许暂时做不到？",
+      },
+      {
+        type: "text",
+        content:
+          "放松练习中有一个核心理念：改变的前提不是自律，而是自我接纳。当你不再把能量浪费在自我批评上，反而会发现，行动变得自然了。",
+      },
+      {
+        type: "text",
+        content:
+          "就像水不需要努力就能流动。它只是需要一个通道——而接纳自己，就是为行动打开通道。",
+      },
+      {
+        type: "quote",
+        content:
+          "不是先改变才能接纳自己，而是先接纳自己才有空间改变。",
+      },
+    ],
+    practice: {
+      title: "最小一步练习",
+      steps: [
+        "选一件你一直想做却没开始的事",
+        "把它拆解到最小——小到「不可能失败」的程度",
+        "比如：不是「开始运动」，而是「穿上运动鞋站起来」",
+        "完成这个最小步骤后，允许自己选择继续或停下",
+        "无论哪个选择，都对自己说一声「做到了」",
+      ],
+      duration: "2 分钟",
+    },
+  },
+
+  /* ═══════════════════════════════════════════════
+     明镜之声 · 第一篇
+     ═══════════════════════════════════════════════ */
+  "mr-1": {
+    id: "mr-1",
+    title: "每个人都面临的日常困境",
+    subtitle: "明镜之声 · 自我观察",
+    category: "明镜之声",
+    categoryColor: "sage",
+    coverImage:
+      "https://images.unsplash.com/photo-1758135986660-4922b5c59396?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYWxtJTIwZm9yZXN0JTIwcGF0aCUyMHNvZnQlMjBsaWdodCUyMHplbnxlbnwxfHx8fDE3NzA3MjcwODJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    author: { name: "元思想编辑部" },
+    readTime: "4 分钟",
+    paragraphs: [
+      {
+        type: "text",
+        content:
+          "每天早上来，你做的第一件事是什么？大多数人的答案是：拿起手机。然后，一天就这样开始了——被消息推着走，被待办事项推着走，被别人的期望推着走。",
+      },
+      {
+        type: "text",
+        content:
+          "我们以为这就是生活的常态。但偶尔，在某个安静的傍晚、某个无聊的等待中、某个突然放空的瞬间，会冒出一个微弱的声音：这真的是我想要的生活吗？",
+      },
+      {
+        type: "question",
+        content:
+          "你上一次什么都不做地、安静地待着，是什么时候？",
+      },
+      {
+        type: "heading",
+        content: "被「应该」填满的日子",
+      },
+      {
+        type: "text",
+        content:
+          "困境往往不在于事情太多，而在于我们失去了选择的感觉。什么时候起，「我想」变成了「我应该」？什么时候起，休息开始需要理由，发呆变成了一种浪费？",
+      },
+      {
+        type: "quote",
+        content:
+          "当一个人连发呆都觉得有罪恶感的时候，他大概已经很久没有回到自己了。",
+      },
+      {
+        type: "text",
+        content:
+          "这不是你一个人的问题。整个时代都在加速，「效率」成了最高信仰，「有用」成了衡量一切的标准。在这样的环境里，我们慢慢学会了向外看、向外跑，却忘了内心也需要被照料。",
+      },
+      { type: "divider", content: "" },
+      {
+        type: "heading",
+        content: "困境之中，有一个出口",
+      },
+      {
+        type: "text",
+        content:
+          "这个出口并不在远方，也不需要任何特殊条件。它就在你的每一个「当下」里——每当你意识到自己正在被裹挟，你就已经迈出了回到自己的第一步。",
+      },
+      {
+        type: "text",
+        content:
+          "放松练习不会教你逃离日常，而是帮你在日常之中找到那些可以呼吸的缝隙。哪怕只有三分钟——三分钟的安静，就够了。",
+      },
+      {
+        type: "question",
+        content:
+          "今天，你愿意给自己三分钟什么都不做的时间吗？就只是坐着、呼吸、感受。",
+      },
+      {
+        type: "quote",
+        content:
+          "你不需要等到一切都好了才开始照顾自己。照顾自己，本身就是变好的开始。",
+      },
+    ],
+    practice: {
+      title: "三分钟正念呼吸",
+      steps: [
+        "放下手机，找一个不被打扰的角落",
+        "坐下来，双手自然放在膝盖上",
+        "闭上眼睛，注意力放在呼吸上——不用改变它，只是观察",
+        "如果走神了，温柔地把注意力带回呼吸，不做任何评判",
+        "三分钟后，睁开眼睛，感受一下此刻和三分钟前的不同",
+      ],
+      duration: "3 分钟",
+    },
+  },
+
+  /* ═══════════════════════════════════════════════
+     明镜之声 · 第二篇
+     ═══════════════════════════════════════════════ */
+  "mr-2": {
+    id: "mr-2",
+    title: "越了解内心的问题",
+    subtitle: "明镜之声 · 自我观察",
+    category: "明镜之声",
+    categoryColor: "sage",
+    coverImage:
+      "https://images.unsplash.com/photo-1678008313898-6eaaf9c77d87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0ZWElMjBjdXAlMjB3YXJtJTIwc29mdCUyMGxpZ2h0JTIwbWluZGZ1bG5lc3N8ZW58MXx8fHwxNzcwNzI3MDgyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    author: { name: "元思想编辑部" },
+    readTime: "5 分钟",
+    paragraphs: [
+      {
+        type: "text",
+        content:
+          "有些人在开始自我成长之后，会经历一个意想不到的阶段：越了解自己，反而越痛苦了。那些以前可以忽略的情绪、可以假装不存在的伤口，突然间都变得清晰可见。",
+      },
+      {
+        type: "text",
+        content:
+          "于是你会怀疑：我是不是走错了路？以前不知道的时候，至少还能假装没事。现在知道了，反而更难受了。",
+      },
+      {
+        type: "question",
+        content:
+          "你有没有这样的时刻——觉得「不知道」反而更轻松？",
+      },
+      {
+        type: "heading",
+        content: "看见，本身就是疗愈的开始",
+      },
+      {
+        type: "text",
+        content:
+          "这个阶段虽然不舒服，但恰恰说明你在进步。就像打扫房间——刚开始翻出来的时候，房间看起来比之前更乱了。但这不是房间变脏了，而是你终于看见了那些一直堆在角落里的东西。",
+      },
+      {
+        type: "quote",
+        content:
+          "自我认知不会制造痛苦。它只是照亮了那些一直在暗处的东西。",
+      },
+      {
+        type: "text",
+        content:
+          "以前的「没事」，并不是真的没事，而是你的心理防御机制在帮你屏蔽。就像止痛药——吃的时候不疼，不代表伤口不在。而当你有勇气停下药，真实地面对，疗愈才真正开始。",
+      },
+      { type: "divider", content: "" },
+      {
+        type: "heading",
+        content: "与不舒服共处",
+      },
+      {
+        type: "text",
+        content:
+          "成长的秘密不在于消除不舒服，而在于学会与不舒服共处。不急着修复、不急着解决、不急着让自己「变好」。只是看见，只是允许，只是在那里。",
+      },
+      {
+        type: "question",
+        content:
+          "如果你不需要「解决」眼前的情绪，只是让它在那里待一会儿，你会有什么感觉？",
+      },
+      {
+        type: "text",
+        content:
+          "很多时候我们急于摆脱不舒服的感觉，是因为我们从小学到的模式就是「有问题就要解决」。但情绪不是问题，它是信使。它来，是为了告诉你一些重要的事。你要做的，不是赶走信使，而是听一听它带来了什么消息。",
+      },
+      {
+        type: "text",
+        content:
+          "所以，如果你正处在「越了解越难受」的阶段，请对自己温柔一点。这条路确实不容易走，但你正在走的，是回家的路。",
+      },
+      {
+        type: "quote",
+        content:
+          "成长不是从不完美到完美，而是从不接受自己的不完美，到慢慢地与它和解。",
+      },
+    ],
+    practice: {
+      title: "情绪命名练习",
+      steps: [
+        "找一个安静的时刻，闭上眼睛",
+        "扫描一下你此刻的内在状态——有什么情绪在那里？",
+        "试着给它一个名字：焦虑、委屈、疲惫、不安、期待……",
+        "命名之后，对自己说：「我看见你了。你可以在这里。」",
+        "不做任何事，只是和它待一会儿，然后慢慢睁开眼睛",
+      ],
+      duration: "3 分钟",
+    },
+  },
+};
+
+/**
+ * 根据 card id 获取文章
+ * 如果没有对应文章，返回 undefined（前端可做降级处理）
+ */
+export function getArticleById(cardId: string): Article | undefined {
+  return ARTICLES[cardId];
+}
+
+/**
+ * 判断某个 card id 是否有对应文章
+ * 用于首页决定点击后跳转到文章页还是其他页面
+ */
+export function hasArticle(cardId: string): boolean {
+  return cardId in ARTICLES;
+}

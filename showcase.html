@@ -1,0 +1,3654 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>元思想 - 身心成长平台</title>
+    <meta
+      name="description"
+      content="在快节奏的世界中，我们需要一个回到自己的入口。元思想以东方智慧为底色，用温暖的方式陪伴你慢下来、停下来、静下来。"
+    />
+
+    <!-- Google Fonts: Noto Serif SC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+          "Hiragino Sans GB", sans-serif;
+        color: #3a3028;
+        overflow-x: hidden;
+        background:
+          radial-gradient(
+            980px 560px at 22% 10%,
+            rgba(122, 77, 179, 0.14) 0%,
+            rgba(122, 77, 179, 0) 62%
+          ),
+          radial-gradient(
+            980px 560px at 84% 14%,
+            rgba(139, 170, 125, 0.16) 0%,
+            rgba(139, 170, 125, 0) 62%
+          ),
+          radial-gradient(
+            1100px 620px at 52% 18%,
+            rgba(242, 210, 122, 0.16) 0%,
+            rgba(242, 210, 122, 0) 60%
+          ),
+          radial-gradient(
+            900px 520px at 70% 78%,
+            rgba(196, 154, 108, 0.12) 0%,
+            rgba(196, 154, 108, 0) 60%
+          ),
+          linear-gradient(180deg, #faf7f2 0%, #f0e4ce 40%, #faf7f2 100%);
+      }
+
+      body > section {
+        background: transparent !important;
+      }
+      img {
+        display: block;
+      }
+      p {
+        margin: 0;
+      }
+      a {
+        transition: color 0.3s ease;
+      }
+
+      .bgm-btn {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        z-index: 9999;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255, 252, 245, 0.92);
+        box-shadow:
+          0 4px 16px rgba(58, 48, 40, 0.12),
+          0 2px 6px rgba(0, 0, 0, 0.06),
+          inset 0 0 0 1px rgba(196, 154, 108, 0.2);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .bgm-btn:hover {
+        transform: scale(1.05);
+        box-shadow:
+          0 6px 20px rgba(58, 48, 40, 0.15),
+          0 2px 8px rgba(0, 0, 0, 0.08),
+          inset 0 0 0 1px rgba(196, 154, 108, 0.3);
+      }
+      .bgm-btn:active {
+        transform: scale(0.95);
+      }
+      .bgm-btn:focus-visible {
+        outline: 2px solid rgba(196, 154, 108, 0.5);
+        outline-offset: 2px;
+      }
+      .bgm-btn svg {
+        width: 18px;
+        height: 18px;
+        color: rgba(58, 48, 40, 0.8);
+      }
+
+      .back-to-top {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 9999;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255, 252, 245, 0.92);
+        box-shadow:
+          0 4px 16px rgba(58, 48, 40, 0.12),
+          0 2px 6px rgba(0, 0, 0, 0.06),
+          inset 0 0 0 1px rgba(196, 154, 108, 0.2);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease,
+          opacity 0.3s ease;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .back-to-top.visible {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .back-to-top:hover {
+        transform: scale(1.05);
+        box-shadow:
+          0 6px 20px rgba(58, 48, 40, 0.15),
+          0 2px 8px rgba(0, 0, 0, 0.08),
+          inset 0 0 0 1px rgba(196, 154, 108, 0.3);
+      }
+      .back-to-top:active {
+        transform: scale(0.95);
+      }
+      .back-to-top svg {
+        width: 18px;
+        height: 18px;
+        color: rgba(58, 48, 40, 0.8);
+      }
+
+      #features #features-cards {
+        display: flex !important;
+        align-items: stretch;
+        justify-content: center;
+        gap: 14px !important;
+        perspective: 1200px;
+        padding: 0;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+      }
+
+      #features #features-cards > .hover-lift-sm {
+        flex: 1 1 240px;
+        max-width: 300px;
+        min-height: 180px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 22px !important;
+        padding: 36px 28px !important;
+        background: rgba(255, 252, 245, 0.52) !important;
+        border: 1px solid rgba(58, 48, 40, 0.08) !important;
+        box-shadow:
+          0 22px 60px rgba(58, 48, 40, 0.09),
+          0 2px 14px rgba(0, 0, 0, 0.03),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.55) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transform-style: preserve-3d;
+        transform: rotateY(var(--panel-rotate, 0deg));
+      }
+
+      #features #features-cards > .hover-lift-sm:hover {
+        transform: translateY(-2px) rotateY(0deg);
+      }
+
+      #features #features-cards > .hover-lift-sm::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background:
+          radial-gradient(
+            760px 260px at 14% 12%,
+            rgba(255, 255, 255, 0.7) 0%,
+            rgba(255, 255, 255, 0) 62%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.28) 0%,
+            rgba(255, 255, 255, 0) 48%,
+            rgba(255, 255, 255, 0.08) 100%
+          );
+        opacity: 0.65;
+        pointer-events: none;
+      }
+
+      #features #features-cards > .hover-lift-sm::after {
+        display: none;
+      }
+
+      #features #features-cards > .hover-lift-sm > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      #features #features-cards > .hover-lift-sm:nth-child(1) {
+        --panel-rotate: -14deg;
+        transform-origin: 100% 50%;
+        border-color: rgba(196, 154, 108, 0.18) !important;
+      }
+      #features #features-cards > .hover-lift-sm:nth-child(2) {
+        --panel-rotate: -6deg;
+        transform-origin: 100% 50%;
+        border-color: rgba(139, 170, 125, 0.18) !important;
+      }
+      #features #features-cards > .hover-lift-sm:nth-child(3) {
+        --panel-rotate: 6deg;
+        transform-origin: 0% 50%;
+        border-color: rgba(122, 77, 179, 0.16) !important;
+      }
+      #features #features-cards > .hover-lift-sm:nth-child(4) {
+        --panel-rotate: 14deg;
+        transform-origin: 0% 50%;
+        border-color: rgba(242, 210, 122, 0.18) !important;
+      }
+
+      #design-language .hover-lift-sm {
+        position: relative;
+        border-radius: 22px !important;
+        border: 1px solid rgba(122, 77, 179, 0.18) !important;
+        box-shadow:
+          0 2px 16px rgba(0, 0, 0, 0.04),
+          0 18px 46px rgba(122, 77, 179, 0.05) !important;
+      }
+
+      #design-language .hover-lift-sm::before {
+        content: none;
+      }
+
+      #design-language #design-cards {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(240px, 1fr)) !important;
+        gap: 24px !important;
+        margin-bottom: 60px !important;
+      }
+
+      #design-language #design-cards > .hover-lift-sm:nth-child(1) {
+        grid-column: 1 / -1;
+        padding: 42px 34px !important;
+        border-radius: 26px !important;
+      }
+
+      #design-language #design-cards > .hover-lift-sm:nth-child(n + 2) {
+        padding: 30px 26px !important;
+        border-radius: 20px !important;
+      }
+
+      #core-philosophy .philosophy-card {
+        position: relative !important;
+        overflow: hidden !important;
+        background: rgba(255, 252, 245, 0.38) !important;
+        border: 1px solid rgba(255, 255, 255, 0.55) !important;
+        box-shadow:
+          0 22px 60px rgba(58, 48, 40, 0.1),
+          0 2px 14px rgba(0, 0, 0, 0.04) !important;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+
+      #core-philosophy .philosophy-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          720px 260px at 18% 12%,
+          rgba(255, 255, 255, 0.72) 0%,
+          rgba(255, 255, 255, 0) 62%
+        );
+        opacity: 0.55;
+        pointer-events: none;
+      }
+
+      #core-philosophy .philosophy-card > * {
+        position: relative;
+        z-index: 1;
+      }
+
+      #core-philosophy .philosophy-card:nth-child(1) {
+        background: linear-gradient(
+          135deg,
+          rgba(196, 154, 108, 0.22) 0%,
+          rgba(255, 252, 245, 0.38) 55%,
+          rgba(255, 252, 245, 0.28) 100%
+        ) !important;
+      }
+      #core-philosophy .philosophy-card:nth-child(2) {
+        background: linear-gradient(
+          135deg,
+          rgba(139, 170, 125, 0.22) 0%,
+          rgba(255, 252, 245, 0.38) 55%,
+          rgba(255, 252, 245, 0.28) 100%
+        ) !important;
+      }
+      #core-philosophy .philosophy-card:nth-child(3) {
+        background: linear-gradient(
+          135deg,
+          rgba(122, 77, 179, 0.18) 0%,
+          rgba(255, 252, 245, 0.38) 55%,
+          rgba(255, 252, 245, 0.28) 100%
+        ) !important;
+      }
+
+      #practice-spaces #spaces-cross {
+        position: relative;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(260px, 1fr)) !important;
+        gap: 36px 52px !important;
+        align-items: stretch;
+      }
+
+      #practice-spaces #spaces-cross::before {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 8px;
+        bottom: 8px;
+        width: 2px;
+        transform: translateX(-50%);
+        background: linear-gradient(
+          180deg,
+          rgba(122, 77, 179, 0.28) 0%,
+          rgba(242, 210, 122, 0.26) 52%,
+          rgba(139, 170, 125, 0.22) 100%
+        );
+        border-radius: 2px;
+        opacity: 0.45;
+        pointer-events: none;
+      }
+
+      #practice-spaces #spaces-cross::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 8px;
+        right: 8px;
+        height: 2px;
+        transform: translateY(-50%);
+        background: linear-gradient(
+          90deg,
+          rgba(122, 77, 179, 0.26) 0%,
+          rgba(242, 210, 122, 0.26) 55%,
+          rgba(139, 170, 125, 0.2) 100%
+        );
+        border-radius: 2px;
+        opacity: 0.45;
+        pointer-events: none;
+      }
+
+      #practice-spaces #spaces-cross > .hover-lift {
+        position: relative;
+        z-index: 1;
+      }
+
+      @media (max-width: 900px) {
+        #practice-spaces #spaces-cross {
+          grid-template-columns: 1fr !important;
+          gap: 24px !important;
+        }
+        #practice-spaces #spaces-cross::before,
+        #practice-spaces #spaces-cross::after {
+          content: none;
+        }
+      }
+
+      @media (max-width: 900px) {
+        #features #features-cards {
+          display: grid !important;
+          grid-template-columns: 1fr !important;
+          justify-items: center !important;
+          padding: 0 !important;
+          border: none !important;
+          background: transparent !important;
+          box-shadow: none !important;
+        }
+        #features #features-cards > .hover-lift-sm {
+          transform: none !important;
+          width: 100% !important;
+          max-width: 340px !important;
+        }
+        #features #features-cards > .hover-lift-sm:hover {
+          transform: translateY(-2px) !important;
+        }
+
+        #design-language #design-cards {
+          grid-template-columns: 1fr !important;
+        }
+        #design-language #design-cards > .hover-lift-sm:nth-child(1) {
+          grid-column: auto;
+        }
+      }
+      .serif {
+        font-family: "Noto Serif SC", "Songti SC", STSong, SimSun, serif;
+      }
+
+      /* ═══ Reusable Utility Classes ═══ */
+
+      /* Section wrapper */
+      .section-wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 80px 40px;
+      }
+
+      /* Section header block */
+      .section-header {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+      .section-header .section-title {
+        font-size: 36px;
+        font-weight: 400;
+        color: #3a3028;
+        letter-spacing: 4px;
+        margin: 0;
+        line-height: 1.4;
+      }
+      .section-header .section-subtitle {
+        font-size: 16px;
+        font-weight: 300;
+        color: rgba(58, 48, 40, 0.5);
+        margin-top: 12px;
+        letter-spacing: 1px;
+        line-height: 1.6;
+      }
+      .section-header .section-divider {
+        width: 40px;
+        height: 2px;
+        background: #c49a6c;
+        margin: 24px auto 0;
+        border-radius: 1px;
+      }
+
+      /* Space card (四大修行空间) */
+      .space-card {
+        padding: 40px 28px;
+        border-radius: 24px;
+        background: rgba(255, 252, 245, 0.7);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        text-align: center;
+      }
+      .space-card .space-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+      }
+      .space-card .space-label {
+        font-size: 13px;
+        font-weight: 300;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+      }
+      .space-card .space-title {
+        font-size: 18px;
+        font-weight: 400;
+        color: #3a3028;
+        margin-bottom: 14px;
+        letter-spacing: 1px;
+      }
+      .space-card .space-desc {
+        font-size: 13px;
+        font-weight: 300;
+        color: rgba(58, 48, 40, 0.55);
+        line-height: 1.75;
+        letter-spacing: 0.3px;
+      }
+
+      /* Vertical text (mockup内竖排文字) */
+      .text-vertical {
+        writing-mode: vertical-rl;
+      }
+      .text-shadow-dark {
+        text-shadow:
+          0 1px 4px rgba(0, 0, 0, 0.6),
+          0 2px 12px rgba(0, 0, 0, 0.35),
+          0 0 24px rgba(0, 0, 0, 0.15);
+      }
+
+      /* Utility classes */
+      .flex-center {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .flex-col-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .phone-header {
+        position: absolute;
+        top: 36px;
+        left: 20px;
+        right: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .phone-content-wrap {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .phone-bg-img {
+        width: 100%;
+        height: 105%;
+        object-fit: cover;
+        object-position: center 40%;
+      }
+      .mockup-container {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .section-subtitle {
+        font-size: 16px;
+        font-weight: 300;
+        color: rgba(58, 48, 40, 0.5);
+        margin-top: 12px;
+        letter-spacing: 1px;
+        line-height: 1.6;
+      }
+      .section-divider {
+        width: 40px;
+        height: 2px;
+        background: #c49a6c;
+        margin: 24px auto 0;
+        border-radius: 1px;
+      }
+      .philosophy-card {
+        flex: 1 1 280px;
+        max-width: 340px;
+        padding: 48px 32px;
+        border-radius: 24px;
+        background: rgba(255, 252, 245, 0.7);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        text-align: center;
+      }
+      .philosophy-char {
+        font-size: 56px;
+        font-weight: 300;
+        line-height: 1;
+        margin-bottom: 20px;
+      }
+      .philosophy-title {
+        font-size: 20px;
+        font-weight: 400;
+        color: #3a3028;
+        margin-bottom: 16px;
+        letter-spacing: 2px;
+      }
+      .philosophy-desc {
+        font-size: 14px;
+        font-weight: 300;
+        color: rgba(58, 48, 40, 0.55);
+        line-height: 1.7;
+        letter-spacing: 0.5px;
+      }
+      .philosophy-dots {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin-top: 28px;
+      }
+      .philosophy-dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: rgba(58, 48, 40, 0.12);
+      }
+      .philosophy-dot.active {
+        background: currentColor;
+      }
+
+      /* Phone mockup frame */
+      .phone-frame {
+        position: relative;
+        width: 320px;
+        height: 650px;
+        flex-shrink: 0;
+      }
+      .phone-shell {
+        position: absolute;
+        inset: 0;
+        border-radius: 44px;
+        background: #1a1a1a;
+        box-shadow:
+          0 0 0 2px #333,
+          0 8px 24px rgba(58, 48, 40, 0.1),
+          0 0 40px rgba(196, 154, 108, 0.03);
+      }
+      .phone-notch {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 28px;
+        background: #1a1a1a;
+        border-radius: 0 0 18px 18px;
+        z-index: 10;
+      }
+      .phone-notch::after {
+        content: "";
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 5px;
+        background: #333;
+        border-radius: 3px;
+      }
+      .phone-screen {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        right: 4px;
+        bottom: 4px;
+        border-radius: 40px;
+        overflow: hidden;
+        background: #f0e4ce;
+      }
+
+      /* Theme colors for space cards */
+      .theme-amber {
+        color: #c49a6c;
+      }
+      .theme-sage {
+        color: #8baa7d;
+      }
+      .theme-lavender {
+        color: #b4a0c8;
+      }
+      .bg-amber {
+        background: linear-gradient(
+          135deg,
+          rgba(196, 154, 108, 0.08),
+          rgba(196, 154, 108, 0.03)
+        );
+      }
+      .bg-sage {
+        background: linear-gradient(
+          135deg,
+          rgba(139, 170, 125, 0.08),
+          rgba(139, 170, 125, 0.03)
+        );
+      }
+      .bg-lavender {
+        background: linear-gradient(
+          135deg,
+          rgba(180, 160, 200, 0.08),
+          rgba(180, 160, 200, 0.03)
+        );
+      }
+
+      /* Phone mockup internal components */
+      .phone-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(30, 20, 10, 0.32) 0%,
+          rgba(30, 20, 10, 0.15) 10%,
+          rgba(30, 20, 10, 0.04) 25%,
+          transparent 40%,
+          transparent 75%,
+          rgba(30, 20, 10, 0.06) 90%,
+          rgba(30, 20, 10, 0.15) 100%
+        );
+      }
+      .phone-avatar {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.35);
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+      .phone-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .phone-tab-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(50, 43, 32, 0.55);
+        padding: 8px 24px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-radius: 0 0 40px 40px;
+      }
+      .phone-tab-bar svg {
+        filter: drop-shadow(0 0 0.3px currentColor);
+      }
+      .glass-card {
+        border-radius: 12px;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow:
+          0 4px 24px rgba(0, 0, 0, 0.1),
+          inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      }
+      .glass-card-amber {
+        background: linear-gradient(
+          135deg,
+          rgba(196, 154, 108, 0.25),
+          rgba(212, 176, 138, 0.1)
+        );
+      }
+      .glass-card-sage {
+        background: linear-gradient(
+          135deg,
+          rgba(139, 170, 125, 0.28),
+          rgba(168, 192, 157, 0.12)
+        );
+      }
+      .glass-card-lavender {
+        background: linear-gradient(
+          135deg,
+          rgba(180, 160, 200, 0.22),
+          rgba(200, 185, 215, 0.1)
+        );
+      }
+      .breath-circle-outer {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(196, 154, 108, 0.18) 0%,
+          rgba(196, 154, 108, 0.06) 50%,
+          transparent 70%
+        );
+        animation: mockBreathOuter 8s ease-in-out infinite;
+        will-change: transform, opacity;
+      }
+      .breath-circle-mid {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle,
+          rgba(255, 252, 245, 0.28) 0%,
+          rgba(255, 252, 245, 0.1) 60%,
+          transparent 100%
+        );
+        animation: mockBreathMid 8s ease-in-out infinite 0.5s;
+        will-change: transform, opacity;
+      }
+      .breath-circle-inner {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: rgba(255, 248, 235, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: mockBreathInner 8s ease-in-out infinite;
+        will-change: transform, opacity;
+      }
+
+      .fade-section {
+        opacity: 0;
+        transform: translateY(40px);
+        transition:
+          opacity 0.8s ease,
+          transform 0.8s ease;
+      }
+      .fade-section.visible {
+        opacity: 1;
+        transform: none;
+      }
+      .hover-lift {
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        cursor: default;
+      }
+      .hover-lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      }
+      .hover-lift-sm {
+        transition: transform 0.3s ease;
+        cursor: default;
+      }
+      .hover-lift-sm:hover {
+        transform: translateY(-2px);
+      }
+
+      @keyframes mockBreathOuter {
+        0%,
+        100% {
+          transform: scale(0.92);
+          opacity: 0.45;
+        }
+        50% {
+          transform: scale(1.08);
+          opacity: 1;
+        }
+      }
+      @keyframes mockBreathMid {
+        0%,
+        100% {
+          transform: scale(0.95);
+          opacity: 0.55;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 1;
+        }
+      }
+      @keyframes mockBreathInner {
+        0%,
+        100% {
+          transform: scale(0.97);
+          opacity: 0.8;
+        }
+        50% {
+          transform: scale(1.03);
+          opacity: 1;
+        }
+      }
+      @keyframes mockTextCompensate {
+        0%,
+        100% {
+          transform: scale(1.0309);
+        }
+        50% {
+          transform: scale(0.9709);
+        }
+      }
+      @keyframes mockHighlightIn {
+        0%,
+        100% {
+          color: rgba(255, 255, 255, 0.3);
+        }
+        45%,
+        55% {
+          color: rgba(255, 255, 255, 1);
+        }
+      }
+      @keyframes mockHighlightOut {
+        0%,
+        100% {
+          color: rgba(255, 255, 255, 1);
+        }
+        45%,
+        55% {
+          color: rgba(255, 255, 255, 0.3);
+        }
+      }
+      @keyframes mockGuideBreath {
+        0%,
+        100% {
+          opacity: 0.55;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+      @keyframes mockScrollHint {
+        0%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.5;
+        }
+        50% {
+          transform: translateY(3px);
+          opacity: 1;
+        }
+      }
+
+      @keyframes gentleFloat {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+
+      .floaty {
+        animation: gentleFloat var(--float-duration, 5.6s) ease-in-out infinite;
+        animation-delay: var(--float-delay, 0s);
+        will-change: transform;
+      }
+
+      @media (max-width: 768px) {
+        .hero-inner {
+          flex-direction: column !important;
+          gap: 40px !important;
+          padding: 100px 24px 40px !important;
+        }
+        .hero-brand {
+          max-width: 100% !important;
+          text-align: center;
+        }
+        .hero-brand h1 {
+          font-size: 48px !important;
+        }
+        .hero-brand .subtitle {
+          font-size: 18px !important;
+        }
+        .hero-brand .desc {
+          max-width: 100% !important;
+        }
+        .section-wrap {
+          padding: 60px 20px !important;
+        }
+        .section-title {
+          font-size: 28px !important;
+        }
+        .section-header .section-title {
+          font-size: 26px !important;
+          letter-spacing: 2px !important;
+        }
+        .section-header .section-subtitle {
+          font-size: 14px !important;
+        }
+        .philosophy-cards {
+          flex-direction: column !important;
+          align-items: center !important;
+        }
+        .philosophy-card {
+          max-width: 100% !important;
+        }
+        .dual-phone {
+          flex-direction: column !important;
+          gap: 32px !important;
+          align-items: center !important;
+        }
+        .icon-row {
+          gap: 20px !important;
+        }
+        .quote-text {
+          font-size: 22px !important;
+        }
+        /* Space cards mobile */
+        .space-card {
+          padding: 32px 24px !important;
+        }
+        .space-card .space-title {
+          font-size: 16px !important;
+        }
+        .space-card .space-desc {
+          font-size: 12px !important;
+        }
+        /* Phone frame mobile */
+        .phone-frame {
+          width: 280px !important;
+          height: 570px !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ═══ SVG Symbol Definitions (reusable icons) ═══ -->
+    <svg style="display: none">
+      <defs>
+        <!-- 湖心亭 icon -->
+        <symbol
+          id="icon-pavilion"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M9 5.5 Q12 2 15 5.5" />
+          <path d="M4 11 Q8 7 12 6.5 Q16 7 20 11" />
+          <line x1="6" y1="11" x2="18" y2="11" />
+          <line x1="8.5" y1="11" x2="8.5" y2="17" />
+          <line x1="15.5" y1="11" x2="15.5" y2="17" />
+          <line x1="6.5" y1="17" x2="17.5" y2="17" />
+          <path
+            d="M3 19.5 Q6 18.5 9 19.5 Q12 20.5 15 19.5 Q18 18.5 21 19.5"
+            stroke-width="1.1"
+            opacity="0.5"
+          />
+          <path
+            d="M2 21.5 Q5.5 20.5 9 21.5 Q12 22.5 15 21.5 Q18.5 20.5 22 21.5"
+            stroke-width="0.85"
+            opacity="0.3"
+          />
+        </symbol>
+        <!-- 古卷轴 icon -->
+        <symbol
+          id="icon-scroll"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="4" y1="3" x2="20" y2="3" stroke-width="1.82" />
+          <line x1="4" y1="21" x2="20" y2="21" stroke-width="1.82" />
+          <line
+            x1="6.5"
+            y1="4.5"
+            x2="6.5"
+            y2="19.5"
+            stroke-linecap="butt"
+            stroke-width="0.91"
+          />
+          <line
+            x1="17.5"
+            y1="4.5"
+            x2="17.5"
+            y2="19.5"
+            stroke-linecap="butt"
+            stroke-width="0.91"
+          />
+          <g
+            opacity="0.7"
+            stroke-width="1.1"
+            stroke-linecap="round"
+            fill="none"
+          >
+            <line x1="9" y1="7.5" x2="15" y2="7.5" />
+            <circle cx="12" cy="9.8" r="1.4" />
+            <path d="M12 11.2 L9.2 15.5 M12 11.2 L14.8 15.5" />
+          </g>
+        </symbol>
+        <!-- 八卦 icon -->
+        <symbol
+          id="icon-bagua"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="0.9"
+          stroke-linecap="butt"
+        >
+          <g transform="rotate(0,12,12)">
+            <line x1="10.2" y1="6.5" x2="13.8" y2="6.5" />
+            <line x1="10.2" y1="4.8" x2="13.8" y2="4.8" />
+            <line x1="10.2" y1="3" x2="13.8" y2="3" />
+          </g>
+          <g transform="rotate(45,12,12)">
+            <line x1="10.2" y1="6.5" x2="11.4" y2="6.5" />
+            <line x1="12.6" y1="6.5" x2="13.8" y2="6.5" />
+            <line x1="10.2" y1="4.8" x2="13.8" y2="4.8" />
+            <line x1="10.2" y1="3" x2="13.8" y2="3" />
+          </g>
+          <g transform="rotate(90,12,12)">
+            <line x1="10.2" y1="6.5" x2="11.4" y2="6.5" />
+            <line x1="12.6" y1="6.5" x2="13.8" y2="6.5" />
+            <line x1="10.2" y1="4.8" x2="13.8" y2="4.8" />
+            <line x1="10.2" y1="3" x2="11.4" y2="3" />
+            <line x1="12.6" y1="3" x2="13.8" y2="3" />
+          </g>
+          <g transform="rotate(135,12,12)">
+            <line x1="10.2" y1="6.5" x2="11.4" y2="6.5" />
+            <line x1="12.6" y1="6.5" x2="13.8" y2="6.5" />
+            <line x1="10.2" y1="4.8" x2="11.4" y2="4.8" />
+            <line x1="12.6" y1="4.8" x2="13.8" y2="4.8" />
+            <line x1="10.2" y1="3" x2="13.8" y2="3" />
+          </g>
+          <g transform="rotate(180,12,12)">
+            <line x1="10.2" y1="6.5" x2="11.4" y2="6.5" />
+            <line x1="12.6" y1="6.5" x2="13.8" y2="6.5" />
+            <line x1="10.2" y1="4.8" x2="11.4" y2="4.8" />
+            <line x1="12.6" y1="4.8" x2="13.8" y2="4.8" />
+            <line x1="10.2" y1="3" x2="11.4" y2="3" />
+            <line x1="12.6" y1="3" x2="13.8" y2="3" />
+          </g>
+          <g transform="rotate(225,12,12)">
+            <line x1="10.2" y1="6.5" x2="13.8" y2="6.5" />
+            <line x1="10.2" y1="4.8" x2="11.4" y2="4.8" />
+            <line x1="12.6" y1="4.8" x2="13.8" y2="4.8" />
+            <line x1="10.2" y1="3" x2="11.4" y2="3" />
+            <line x1="12.6" y1="3" x2="13.8" y2="3" />
+          </g>
+          <g transform="rotate(270,12,12)">
+            <line x1="10.2" y1="6.5" x2="13.8" y2="6.5" />
+            <line x1="10.2" y1="4.8" x2="11.4" y2="4.8" />
+            <line x1="12.6" y1="4.8" x2="13.8" y2="4.8" />
+            <line x1="10.2" y1="3" x2="13.8" y2="3" />
+          </g>
+          <g transform="rotate(315,12,12)">
+            <line x1="10.2" y1="6.5" x2="13.8" y2="6.5" />
+            <line x1="10.2" y1="4.8" x2="13.8" y2="4.8" />
+            <line x1="10.2" y1="3" x2="11.4" y2="3" />
+            <line x1="12.6" y1="3" x2="13.8" y2="3" />
+          </g>
+        </symbol>
+        <!-- 太极 icon -->
+        <symbol
+          id="icon-taiji"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <defs>
+            <clipPath id="taiji-clip">
+              <circle cx="12" cy="12" r="9.2" />
+            </clipPath>
+          </defs>
+          <circle cx="12" cy="12" r="10" />
+          <g clip-path="url(#taiji-clip)">
+            <path
+              d="M12 2 A5 5 0 0 1 12 12 A5 5 0 0 0 12 22"
+              fill="none"
+              stroke-linecap="butt"
+            />
+          </g>
+          <circle cx="12" cy="7" r="1.5" fill="currentColor" stroke="none" />
+          <circle cx="12" cy="17" r="1.5" fill="none" />
+        </symbol>
+        <!-- 云 cloud icon -->
+        <symbol
+          id="icon-cloud"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M4 16.5 Q4 13 7.5 12.5 Q8 9 12 8.5 Q16 9 16.5 12.5 Q20 13 20 16.5 Q20 18 18 18.5 L6 18.5 Q4 18 4 16.5 Z"
+          />
+        </symbol>
+        <!-- 叶 leaf icon -->
+        <symbol
+          id="icon-leaf"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.78 10-10 10Z"
+          />
+          <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+        </symbol>
+        <!-- 月 moon icon -->
+        <symbol
+          id="icon-moon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" />
+        </symbol>
+        <!-- 箭头下 chevron-down -->
+        <symbol
+          id="icon-chevron-down"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </symbol>
+      </defs>
+    </svg>
+
+    <!-- ═══ 1. HERO ═══ -->
+    <section
+      style="
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(
+          180deg,
+          rgba(139, 170, 125, 0.32) 0%,
+          rgba(139, 170, 125, 0.22) 35%,
+          rgba(196, 154, 108, 0.12) 70%,
+          #f0e4ce 100%
+        );
+        overflow: hidden;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          top: -20%;
+          right: -10%;
+          width: 600px;
+          height: 600px;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(196, 154, 108, 0.08) 0%,
+            transparent 70%
+          );
+          pointer-events: none;
+        "
+      ></div>
+      <div
+        style="
+          position: absolute;
+          bottom: -15%;
+          left: -5%;
+          width: 500px;
+          height: 500px;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(139, 170, 125, 0.06) 0%,
+            transparent 70%
+          );
+          pointer-events: none;
+        "
+      ></div>
+      <div
+        class="hero-inner fade-section"
+        style="
+          max-width: 1200px;
+          width: 100%;
+          padding: 60px 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 80px;
+          flex-wrap: wrap;
+        "
+      >
+        <div class="hero-brand" style="flex: 1 1 400px; max-width: 560px">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 16px;
+              margin-bottom: 40px;
+            "
+          >
+            <div
+              style="
+                width: 3px;
+                height: 48px;
+                background: linear-gradient(to bottom, #c49a6c, #8baa7d);
+                border-radius: 2px;
+              "
+            ></div>
+            <span
+              class="serif"
+              style="
+                font-size: 14px;
+                font-weight: 300;
+                color: rgba(58, 48, 40, 0.45);
+                letter-spacing: 6px;
+              "
+              >META MIND</span
+            >
+          </div>
+          <h1
+            class="serif"
+            style="
+              font-size: 64px;
+              font-weight: 400;
+              color: #3a3028;
+              letter-spacing: 8px;
+              line-height: 1.3;
+              margin: 0;
+            "
+          >
+            元思想
+          </h1>
+          <p
+            class="serif subtitle"
+            style="
+              font-size: 22px;
+              font-weight: 300;
+              color: rgba(58, 48, 40, 0.7);
+              letter-spacing: 3px;
+              margin-top: 16px;
+              line-height: 1.6;
+            "
+          >
+            身心成长平台
+          </p>
+          <p
+            class="desc"
+            style="
+              font-size: 15px;
+              font-weight: 300;
+              color: rgba(58, 48, 40, 0.55);
+              margin-top: 32px;
+              line-height: 1.8;
+              max-width: 420px;
+              letter-spacing: 0.5px;
+            "
+          >
+            在快节奏的世界中，我们需要一个回到自己的入口。元思想以东方智慧为底色，用温暖的方式陪伴你慢下来、停下来、静下来。
+          </p>
+          <div
+            style="
+              margin-top: 48px;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+            "
+          >
+            <div
+              style="
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #c49a6c;
+                box-shadow: 0 0 12px #c49a6c;
+              "
+            ></div>
+            <span
+              style="
+                font-size: 13px;
+                font-weight: 300;
+                color: rgba(58, 48, 40, 0.5);
+                letter-spacing: 1px;
+              "
+              >产品内测中</span
+            >
+          </div>
+          <!-- 立即体验按钮 -->
+          <a
+            href="app/index.html"
+            style="
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+              margin-top: 32px;
+              padding: 14px 36px;
+              background: linear-gradient(135deg, #c49a6c 0%, #a8845c 100%);
+              color: white;
+              font-size: 15px;
+              font-weight: 400;
+              letter-spacing: 2px;
+              text-decoration: none;
+              border-radius: 28px;
+              box-shadow:
+                0 4px 20px rgba(196, 154, 108, 0.35),
+                0 2px 8px rgba(0, 0, 0, 0.1);
+              transition: all 0.3s ease;
+            "
+            onmouseover="
+              this.style.transform = 'translateY(-2px)';
+              this.style.boxShadow =
+                '0 6px 28px rgba(196, 154, 108, 0.45), 0 4px 12px rgba(0,0,0,0.12)';
+            "
+            onmouseout="
+              this.style.transform = 'none';
+              this.style.boxShadow =
+                '0 4px 20px rgba(196, 154, 108, 0.35), 0 2px 8px rgba(0,0,0,0.1)';
+            "
+          >
+            <span>立即体验</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+        <!-- Hero手机mockup -->
+        <div style="flex: 0 0 auto">
+          <div class="phone-frame">
+            <div class="phone-shell">
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <div class="phone-content-wrap">
+                  <img
+                    src="https://images.unsplash.com/photo-1765200135122-6e0e9e14da76?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZXJpYWwlMjB2aWV3JTIwZ3JlZW4lMjByaXZlciUyMHZhbGxleSUyMHZhc3QlMjB0ZXJyYWluJTIwYnJpZ2h0JTIwd2FybSUyMGxhbmRzY2FwZXxlbnwxfHx8fDE3NzA1MzExNDR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                    alt="Background"
+                    class="phone-bg-img"
+                  />
+                  <div class="phone-overlay"></div>
+                  <div class="phone-header">
+                    <div class="phone-avatar">
+                      <img
+                        src="https://images.unsplash.com/photo-1587362869854-3898f1e5c2ac?w=100&h=100&fit=crop"
+                        alt="Avatar"
+                      />
+                    </div>
+                    <div
+                      style="
+                        display: flex;
+                        flex-direction: row-reverse;
+                        gap: 4px;
+                        align-items: flex-start;
+                      "
+                    >
+                      <span
+                        class="serif text-vertical text-shadow-dark"
+                        style="
+                          font-size: 16px;
+                          font-weight: 400;
+                          color: white;
+                          letter-spacing: 3px;
+                        "
+                        >立春</span
+                      >
+                      <div
+                        style="
+                          display: flex;
+                          flex-direction: column;
+                          align-items: center;
+                          gap: 3px;
+                        "
+                      >
+                        <span
+                          class="serif text-vertical text-shadow-dark"
+                          style="
+                            font-size: 8px;
+                            font-weight: 300;
+                            color: rgba(255, 255, 255, 0.5);
+                            letter-spacing: 1.5px;
+                          "
+                          >辰时</span
+                        >
+                        <span
+                          style="
+                            width: 1.5px;
+                            height: 1.5px;
+                            border-radius: 50%;
+                            background: rgba(255, 255, 255, 0.2);
+                          "
+                        ></span>
+                        <span
+                          class="serif text-vertical text-shadow-dark"
+                          style="
+                            font-size: 8px;
+                            font-weight: 300;
+                            color: rgba(255, 255, 255, 0.5);
+                            letter-spacing: 1.5px;
+                            opacity: 0.8;
+                          "
+                          >食时</span
+                        >
+                      </div>
+                      <span
+                        class="serif text-vertical text-shadow-dark"
+                        style="
+                          font-size: 7px;
+                          font-weight: 300;
+                          color: rgba(255, 255, 255, 0.65);
+                          letter-spacing: 1.5px;
+                        "
+                        >春到人间草木知</span
+                      >
+                    </div>
+                  </div>
+                  <div
+                    style="
+                      position: absolute;
+                      top: 0;
+                      left: 0;
+                      right: 0;
+                      bottom: 12%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      pointer-events: none;
+                    "
+                  >
+                    <div
+                      style="position: relative; width: 140px; height: 140px"
+                    >
+                      <div class="breath-circle-outer"></div>
+                      <div class="breath-circle-mid"></div>
+                      <div class="breath-circle-inner">
+                        <div
+                          style="
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+                            animation: mockTextCompensate 8s ease-in-out
+                              infinite;
+                            will-change: transform;
+                          "
+                        >
+                          <span
+                            class="serif"
+                            style="
+                              font-size: 14px;
+                              font-weight: 400;
+                              text-shadow:
+                                0 1px 10px rgba(0, 0, 0, 0.5),
+                                0 0 30px rgba(0, 0, 0, 0.2);
+                              animation: mockHighlightIn 8s ease-in-out infinite;
+                              line-height: 1;
+                            "
+                            >收</span
+                          >
+                          <span
+                            style="
+                              width: 1px;
+                              height: 9px;
+                              background: rgba(255, 255, 255, 0.3);
+                              flex-shrink: 0;
+                            "
+                          ></span>
+                          <span
+                            class="serif"
+                            style="
+                              font-size: 14px;
+                              font-weight: 400;
+                              text-shadow:
+                                0 1px 10px rgba(0, 0, 0, 0.5),
+                                0 0 30px rgba(0, 0, 0, 0.2);
+                              animation: mockHighlightOut 8s ease-in-out
+                                infinite;
+                              line-height: 1;
+                            "
+                            >清</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    style="
+                      position: absolute;
+                      bottom: 50px;
+                      left: 20px;
+                      right: 20px;
+                    "
+                  >
+                    <div
+                      style="
+                        display: flex;
+                        justify-content: center;
+                        margin-bottom: 10px;
+                      "
+                    >
+                      <div
+                        style="
+                          position: relative;
+                          animation: mockGuideBreath 3.5s ease-in-out infinite;
+                        "
+                      >
+                        <span
+                          style="
+                            position: absolute;
+                            top: -3px;
+                            right: -6px;
+                            width: 8px;
+                            height: 8px;
+                            border-top: 1px solid rgba(255, 255, 255, 0.55);
+                            border-right: 1px solid rgba(255, 255, 255, 0.55);
+                            border-top-right-radius: 4px;
+                            pointer-events: none;
+                          "
+                        ></span>
+                        <span
+                          style="
+                            position: absolute;
+                            bottom: -3px;
+                            left: -6px;
+                            width: 8px;
+                            height: 8px;
+                            border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+                            border-left: 1px solid rgba(255, 255, 255, 0.55);
+                            border-bottom-left-radius: 4px;
+                            pointer-events: none;
+                          "
+                        ></span>
+                        <span
+                          class="serif"
+                          style="
+                            writing-mode: vertical-rl;
+                            display: block;
+                            font-size: 10px;
+                            font-weight: 400;
+                            color: rgba(255, 255, 255, 0.88);
+                            letter-spacing: 3px;
+                            text-shadow:
+                              0 1px 4px rgba(0, 0, 0, 0.5),
+                              0 2px 10px rgba(0, 0, 0, 0.3),
+                              0 0 20px rgba(0, 0, 0, 0.15);
+                          "
+                          >问道</span
+                        >
+                      </div>
+                    </div>
+                    <div style="display: flex; gap: 6px">
+                      <div
+                        class="glass-card glass-card-amber"
+                        style="flex: 1; height: 64px; gap: 3px"
+                      >
+                        <span
+                          class="serif text-vertical"
+                          style="
+                            font-size: 9px;
+                            font-weight: 300;
+                            color: rgba(255, 255, 255, 0.85);
+                            letter-spacing: 1.5px;
+                            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+                          "
+                          >徐</span
+                        >
+                        <svg
+                          width="13"
+                          height="13"
+                          viewBox="0 0 24 24"
+                          style="color: white"
+                        >
+                          <use href="#icon-cloud" />
+                        </svg>
+                      </div>
+                      <div
+                        class="glass-card glass-card-sage"
+                        style="flex: 1; height: 64px; gap: 3px"
+                      >
+                        <span
+                          class="serif text-vertical"
+                          style="
+                            font-size: 9px;
+                            font-weight: 300;
+                            color: rgba(255, 255, 255, 0.85);
+                            letter-spacing: 1.5px;
+                            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+                          "
+                          >止</span
+                        >
+                        <svg
+                          width="13"
+                          height="13"
+                          viewBox="0 0 24 24"
+                          style="color: white"
+                        >
+                          <use href="#icon-leaf" />
+                        </svg>
+                      </div>
+                      <div
+                        class="glass-card glass-card-lavender"
+                        style="flex: 1; height: 64px; gap: 3px"
+                      >
+                        <span
+                          class="serif text-vertical"
+                          style="
+                            font-size: 9px;
+                            font-weight: 300;
+                            color: rgba(255, 255, 255, 0.85);
+                            letter-spacing: 1.5px;
+                            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+                          "
+                          >定</span
+                        >
+                        <svg
+                          width="13"
+                          height="13"
+                          viewBox="0 0 24 24"
+                          style="color: white"
+                        >
+                          <use href="#icon-moon" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div
+                      style="
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        margin-top: 6px;
+                      "
+                    >
+                      <span
+                        class="serif"
+                        style="
+                          writing-mode: vertical-rl;
+                          font-size: 10px;
+                          font-weight: 300;
+                          color: rgba(255, 255, 255, 0.7);
+                          letter-spacing: 3px;
+                          text-shadow:
+                            0 1px 4px rgba(0, 0, 0, 0.6),
+                            0 2px 12px rgba(0, 0, 0, 0.35),
+                            0 0 24px rgba(0, 0, 0, 0.15);
+                          margin-bottom: 3px;
+                          line-height: 1;
+                        "
+                        >觉知</span
+                      >
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="rgba(255,255,255,0.65)"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        style="
+                          animation: mockScrollHint 2s ease-in-out infinite;
+                          filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.6));
+                        "
+                      >
+                        <path d="m6 9 6 6 6-6" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div class="phone-tab-bar">
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      style="color: white"
+                    >
+                      <use href="#icon-pavilion" />
+                    </svg>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      style="color: rgba(255, 255, 255, 0.6)"
+                    >
+                      <use href="#icon-scroll" />
+                    </svg>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      style="color: rgba(255, 255, 255, 0.6)"
+                    >
+                      <use href="#icon-bagua" />
+                    </svg>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      style="color: rgba(255, 255, 255, 0.6)"
+                    >
+                      <use href="#icon-taiji" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        style="
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          height: 160px;
+          display: none;
+          pointer-events: none;
+        "
+      ></div>
+    </section>
+
+    <!-- ═══ 2. 双屏展示 ═══ -->
+    <section
+      style="
+        background: linear-gradient(
+          180deg,
+          #f0e4ce 0%,
+          rgba(139, 170, 125, 0.12) 35%,
+          #faf7f2 55%,
+          #f0e4ce 100%
+        );
+      "
+    >
+      <div
+        class="fade-section section-wrap"
+        style="max-width: 1200px; margin: 0 auto; padding: 80px 40px"
+      >
+        <div style="text-align: center; margin-bottom: 60px">
+          <h2
+            class="serif section-title"
+            style="
+              font-size: 36px;
+              font-weight: 400;
+              color: #3a3028;
+              letter-spacing: 4px;
+              margin: 0;
+              line-height: 1.4;
+            "
+          >
+            沉浸式交互体验
+          </h2>
+          <p
+            style="
+              font-size: 16px;
+              font-weight: 300;
+              color: rgba(58, 48, 40, 0.5);
+              margin-top: 12px;
+              letter-spacing: 1px;
+              line-height: 1.6;
+            "
+          >
+            远山呼吸 · 古卷展开 · 两种阅读模式无缝切换
+          </p>
+          <div
+            style="
+              width: 40px;
+              height: 2px;
+              background: #c49a6c;
+              margin: 24px auto 0;
+              border-radius: 1px;
+            "
+          ></div>
+        </div>
+        <div
+          class="dual-phone"
+          style="
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+          "
+        >
+          <!-- 左: Hero mockup -->
+          <div class="mockup-container">
+            <div class="phone-frame">
+              <div class="phone-shell">
+                <div class="phone-notch"></div>
+                <div class="phone-screen">
+                  <div class="phone-content-wrap">
+                    <img
+                      src="https://images.unsplash.com/photo-1765200135122-6e0e9e14da76?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZXJpYWwlMjB2aWV3JTIwZ3JlZW4lMjByaXZlciUyMHZhbGxleSUyMHZhc3QlMjB0ZXJyYWluJTIwYnJpZ2h0JTIwd2FybSUyMGxhbmRzY2FwZXxlbnwxfHx8fDE3NzA1MzExNDR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                      alt="Background"
+                      class="phone-bg-img"
+                    />
+                    <div class="phone-overlay"></div>
+                    <div class="phone-header">
+                      <div class="phone-avatar">
+                        <img
+                          src="https://images.unsplash.com/photo-1587362869854-3898f1e5c2ac?w=100&h=100&fit=crop"
+                          alt="Avatar"
+                        />
+                      </div>
+                      <div
+                        style="
+                          display: flex;
+                          flex-direction: row-reverse;
+                          gap: 4px;
+                          align-items: flex-start;
+                        "
+                      >
+                        <span
+                          class="serif text-vertical text-shadow-dark"
+                          style="
+                            font-size: 16px;
+                            font-weight: 400;
+                            color: white;
+                            letter-spacing: 3px;
+                            text-shadow:
+                              0 1px 4px rgba(0, 0, 0, 0.6),
+                              0 2px 12px rgba(0, 0, 0, 0.35),
+                              0 0 24px rgba(0, 0, 0, 0.15);
+                          "
+                          >立春</span
+                        >
+                        <div
+                          style="
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 3px;
+                          "
+                        >
+                          <span
+                            class="serif"
+                            style="
+                              writing-mode: vertical-rl;
+                              font-size: 8px;
+                              font-weight: 300;
+                              color: rgba(255, 255, 255, 0.5);
+                              text-shadow:
+                                0 1px 4px rgba(0, 0, 0, 0.6),
+                                0 2px 12px rgba(0, 0, 0, 0.35),
+                                0 0 24px rgba(0, 0, 0, 0.15);
+                              letter-spacing: 1.5px;
+                            "
+                            >辰时</span
+                          >
+                          <span
+                            style="
+                              width: 1.5px;
+                              height: 1.5px;
+                              border-radius: 50%;
+                              background: rgba(255, 255, 255, 0.2);
+                              flex-shrink: 0;
+                            "
+                          ></span>
+                          <span
+                            class="serif"
+                            style="
+                              writing-mode: vertical-rl;
+                              font-size: 8px;
+                              font-weight: 300;
+                              color: rgba(255, 255, 255, 0.5);
+                              text-shadow:
+                                0 1px 4px rgba(0, 0, 0, 0.6),
+                                0 2px 12px rgba(0, 0, 0, 0.35),
+                                0 0 24px rgba(0, 0, 0, 0.15);
+                              letter-spacing: 1.5px;
+                              opacity: 0.8;
+                            "
+                            >食时</span
+                          >
+                        </div>
+                        <span
+                          class="serif"
+                          style="
+                            writing-mode: vertical-rl;
+                            font-size: 7px;
+                            font-weight: 300;
+                            color: rgba(255, 255, 255, 0.65);
+                            text-shadow:
+                              0 1px 4px rgba(0, 0, 0, 0.6),
+                              0 2px 12px rgba(0, 0, 0, 0.35),
+                              0 0 24px rgba(0, 0, 0, 0.15);
+                            letter-spacing: 1.5px;
+                          "
+                          >春到人间草木知</span
+                        >
+                      </div>
+                    </div>
+
+                    <div
+                      style="
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 12%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        pointer-events: none;
+                      "
+                    >
+                      <div
+                        style="position: relative; width: 140px; height: 140px"
+                      >
+                        <div class="breath-circle-outer"></div>
+                        <div class="breath-circle-mid"></div>
+                        <div class="breath-circle-inner">
+                          <div
+                            style="
+                              display: flex;
+                              align-items: center;
+                              gap: 5px;
+                              animation: mockTextCompensate 8s ease-in-out
+                                infinite;
+                              will-change: transform;
+                            "
+                          >
+                            <span
+                              class="serif"
+                              style="
+                                font-size: 14px;
+                                font-weight: 400;
+                                text-shadow:
+                                  0 1px 10px rgba(0, 0, 0, 0.5),
+                                  0 0 30px rgba(0, 0, 0, 0.2);
+                                animation: mockHighlightIn 8s ease-in-out
+                                  infinite;
+                                line-height: 1;
+                              "
+                              >收</span
+                            >
+                            <span
+                              style="
+                                width: 1px;
+                                height: 9px;
+                                background: rgba(255, 255, 255, 0.3);
+                                flex-shrink: 0;
+                              "
+                            ></span>
+                            <span
+                              class="serif"
+                              style="
+                                font-size: 14px;
+                                font-weight: 400;
+                                text-shadow:
+                                  0 1px 10px rgba(0, 0, 0, 0.5),
+                                  0 0 30px rgba(0, 0, 0, 0.2);
+                                animation: mockHighlightOut 8s ease-in-out
+                                  infinite;
+                                line-height: 1;
+                              "
+                              >清</span
+                            >
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div
+                      style="
+                        position: absolute;
+                        bottom: 50px;
+                        left: 20px;
+                        right: 20px;
+                      "
+                    >
+                      <div
+                        style="
+                          display: flex;
+                          justify-content: center;
+                          margin-bottom: 10px;
+                        "
+                      >
+                        <div
+                          style="
+                            position: relative;
+                            animation: mockGuideBreath 3.5s ease-in-out infinite;
+                          "
+                        >
+                          <span
+                            style="
+                              position: absolute;
+                              top: -3px;
+                              right: -6px;
+                              width: 8px;
+                              height: 8px;
+                              border-top: 1px solid rgba(255, 255, 255, 0.55);
+                              border-right: 1px solid rgba(255, 255, 255, 0.55);
+                              border-top-right-radius: 4px;
+                              pointer-events: none;
+                            "
+                          ></span>
+                          <span
+                            style="
+                              position: absolute;
+                              bottom: -3px;
+                              left: -6px;
+                              width: 8px;
+                              height: 8px;
+                              border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+                              border-left: 1px solid rgba(255, 255, 255, 0.55);
+                              border-bottom-left-radius: 4px;
+                              pointer-events: none;
+                            "
+                          ></span>
+                          <span
+                            class="serif"
+                            style="
+                              writing-mode: vertical-rl;
+                              display: block;
+                              font-size: 10px;
+                              font-weight: 400;
+                              color: rgba(255, 255, 255, 0.88);
+                              letter-spacing: 3px;
+                              text-shadow:
+                                0 1px 4px rgba(0, 0, 0, 0.5),
+                                0 2px 10px rgba(0, 0, 0, 0.3),
+                                0 0 20px rgba(0, 0, 0, 0.15);
+                            "
+                            >问道</span
+                          >
+                        </div>
+                      </div>
+                      <div style="display: flex; gap: 6px">
+                        <div
+                          class="glass-card glass-card-amber"
+                          style="flex: 1; height: 64px; gap: 3px"
+                        >
+                          <span
+                            class="serif text-vertical"
+                            style="
+                              font-size: 9px;
+                              font-weight: 300;
+                              color: rgba(255, 255, 255, 0.85);
+                              letter-spacing: 1.5px;
+                              text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+                            "
+                            >徐</span
+                          >
+                          <svg
+                            width="13"
+                            height="13"
+                            viewBox="0 0 24 24"
+                            style="color: white"
+                          >
+                            <use href="#icon-cloud" />
+                          </svg>
+                        </div>
+                        <div
+                          class="glass-card glass-card-sage"
+                          style="flex: 1; height: 64px; gap: 3px"
+                        >
+                          <span
+                            class="serif text-vertical"
+                            style="
+                              font-size: 9px;
+                              font-weight: 300;
+                              color: rgba(255, 255, 255, 0.85);
+                              letter-spacing: 1.5px;
+                              text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+                            "
+                            >止</span
+                          >
+                          <svg
+                            width="13"
+                            height="13"
+                            viewBox="0 0 24 24"
+                            style="color: white"
+                          >
+                            <use href="#icon-leaf" />
+                          </svg>
+                        </div>
+                        <div
+                          class="glass-card glass-card-lavender"
+                          style="flex: 1; height: 64px; gap: 3px"
+                        >
+                          <span
+                            class="serif text-vertical"
+                            style="
+                              font-size: 9px;
+                              font-weight: 300;
+                              color: rgba(255, 255, 255, 0.85);
+                              letter-spacing: 1.5px;
+                              text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+                            "
+                            >定</span
+                          >
+                          <svg
+                            width="13"
+                            height="13"
+                            viewBox="0 0 24 24"
+                            style="color: white"
+                          >
+                            <use href="#icon-moon" />
+                          </svg>
+                        </div>
+                      </div>
+                      <div
+                        style="
+                          display: flex;
+                          flex-direction: column;
+                          align-items: center;
+                          margin-top: 6px;
+                        "
+                      >
+                        <span
+                          class="serif"
+                          style="
+                            writing-mode: vertical-rl;
+                            font-size: 10px;
+                            font-weight: 300;
+                            color: rgba(255, 255, 255, 0.7);
+                            letter-spacing: 3px;
+                            text-shadow:
+                              0 1px 4px rgba(0, 0, 0, 0.6),
+                              0 2px 12px rgba(0, 0, 0, 0.35),
+                              0 0 24px rgba(0, 0, 0, 0.15);
+                            margin-bottom: 3px;
+                            line-height: 1;
+                          "
+                          >觉知</span
+                        >
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="rgba(255,255,255,0.65)"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          style="
+                            animation: mockScrollHint 2s ease-in-out infinite;
+                            filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.6));
+                          "
+                        >
+                          <path d="m6 9 6 6 6-6" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div class="phone-tab-bar">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        style="color: white"
+                      >
+                        <use href="#icon-pavilion" />
+                      </svg>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        style="color: rgba(255, 255, 255, 0.6)"
+                      >
+                        <use href="#icon-scroll" />
+                      </svg>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        style="color: rgba(255, 255, 255, 0.6)"
+                      >
+                        <use href="#icon-bagua" />
+                      </svg>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        style="color: rgba(255, 255, 255, 0.6)"
+                      >
+                        <use href="#icon-taiji" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p
+              class="serif"
+              style="
+                margin-top: 24px;
+                font-size: 15px;
+                font-weight: 400;
+                color: #3a3028;
+                letter-spacing: 2px;
+              "
+            >
+              呼吸引导
+            </p>
+            <p
+              style="
+                font-size: 12px;
+                font-weight: 300;
+                color: rgba(58, 48, 40, 0.4);
+                margin-top: 6px;
+              "
+            >
+              竖排节气 · 三层呼吸圆环 · 感知入口
+            </p>
+          </div>
+          <!-- 右: 内容页 mockup -->
+          <div class="mockup-container">
+            <div class="phone-frame">
+              <div class="phone-shell">
+                <div class="phone-notch"></div>
+                <div
+                  class="phone-screen"
+                  style="
+                    background: linear-gradient(to bottom, #f0e4ce, #f5e8d2);
+                    text-align: left;
+                  "
+                >
+                  <div
+                    style="
+                      padding: 32px 20px 10px;
+                      background: #f0e4ce;
+                      text-align: left;
+                    "
+                  >
+                    <div
+                      style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                      "
+                    >
+                      <div style="text-align: left">
+                        <div
+                          style="display: flex; align-items: center; gap: 5px"
+                        >
+                          <span
+                            class="serif"
+                            style="
+                              font-size: 16px;
+                              font-weight: 400;
+                              color: #3d3428;
+                              letter-spacing: 2px;
+                            "
+                            >立春</span
+                          >
+                          <span
+                            style="
+                              width: 1px;
+                              height: 8px;
+                              background: rgba(61, 52, 40, 0.15);
+                              flex-shrink: 0;
+                            "
+                          ></span>
+                          <span
+                            class="serif"
+                            style="
+                              font-size: 8px;
+                              font-weight: 300;
+                              color: rgba(61, 52, 40, 0.4);
+                              letter-spacing: 1px;
+                            "
+                            >辰时<span style="margin: 0 3px; opacity: 0.5"
+                              >·</span
+                            >食时</span
+                          >
+                        </div>
+                        <p
+                          class="serif"
+                          style="
+                            font-size: 7px;
+                            font-weight: 300;
+                            color: rgba(61, 52, 40, 0.7);
+                            margin-top: 4px;
+                            letter-spacing: 1px;
+                            text-align: left;
+                          "
+                        >
+                          春到人间草木知
+                        </p>
+                      </div>
+                      <div
+                        style="
+                          width: 24px;
+                          height: 24px;
+                          border-radius: 50%;
+                          background: rgba(61, 52, 40, 0.08);
+                          overflow: hidden;
+                          flex-shrink: 0;
+                        "
+                      >
+                        <img
+                          src="https://images.unsplash.com/photo-1587362869854-3898f1e5c2ac?w=100&h=100&fit=crop"
+                          alt="Avatar"
+                          style="width: 100%; height: 100%; object-fit: cover"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div style="padding: 10px 16px; text-align: left">
+                    <div
+                      style="
+                        position: relative;
+                        border-radius: 14px;
+                        padding: 14px 12px;
+                        background: linear-gradient(
+                          135deg,
+                          rgba(196, 154, 108, 0.25) 0%,
+                          rgba(139, 170, 125, 0.12) 50%,
+                          rgba(212, 176, 138, 0.1) 100%
+                        );
+                        margin-bottom: 12px;
+                        overflow: hidden;
+                        box-shadow: 0 2px 16px rgba(196, 154, 108, 0.08);
+                      "
+                    >
+                      <div
+                        style="
+                          position: absolute;
+                          top: -16px;
+                          right: -16px;
+                          width: 60px;
+                          height: 60px;
+                          border-radius: 50%;
+                          background: radial-gradient(
+                            circle,
+                            rgba(196, 154, 108, 0.15) 0%,
+                            transparent 70%
+                          );
+                        "
+                      ></div>
+                      <div
+                        class="serif"
+                        style="
+                          font-size: 7px;
+                          font-weight: 400;
+                          color: #c49a6c;
+                          letter-spacing: 2px;
+                          margin-bottom: 5px;
+                        "
+                      >
+                        今日之光
+                      </div>
+                      <p
+                        class="serif"
+                        style="
+                          font-size: 11px;
+                          font-weight: 400;
+                          color: #3a3028;
+                          line-height: 1.8;
+                          margin-bottom: 5px;
+                        "
+                      >
+                        当你回到自己，世界便回到了它本来的样子
+                      </p>
+                      <p
+                        class="serif"
+                        style="
+                          font-size: 7px;
+                          font-weight: 300;
+                          color: rgba(58, 48, 40, 0.45);
+                        "
+                      >
+                        —— 元思想 · 感知笔记
+                      </p>
+                    </div>
+                    <div
+                      style="
+                        border-radius: 14px;
+                        height: 95px;
+                        overflow: hidden;
+                        position: relative;
+                        margin-bottom: 14px;
+                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+                      "
+                    >
+                      <img
+                        src="https://images.unsplash.com/photo-1713120153988-63ebab7e1d86?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzbW9vdGglMjBncmVlbiUyMGxhd24lMjBtb3JuaW5nJTIwbGlnaHQlMjBlbXB0eSUyMGNsZWFuJTIwcGVhY2VmdWx8ZW58MXx8fHwxNzcwNTM1MjU1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                        alt="Featured"
+                        style="width: 100%; height: 100%; object-fit: cover"
+                      />
+                      <div
+                        style="
+                          position: absolute;
+                          inset: 0;
+                          background: linear-gradient(
+                            to top,
+                            rgba(30, 25, 18, 0.5) 0%,
+                            rgba(30, 25, 18, 0.1) 40%,
+                            transparent 65%
+                          );
+                          display: flex;
+                          flex-direction: column;
+                          justify-content: flex-end;
+                          padding: 0 12px 10px;
+                        "
+                      >
+                        <span
+                          class="serif"
+                          style="
+                            font-size: 12px;
+                            font-weight: 400;
+                            color: rgba(255, 255, 255, 0.92);
+                            letter-spacing: 1px;
+                            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+                          "
+                          >回到此刻，感知呼吸</span
+                        >
+                        <span
+                          style="
+                            font-size: 8px;
+                            font-weight: 300;
+                            color: rgba(255, 255, 255, 0.65);
+                            margin-top: 3px;
+                          "
+                          >5分钟 · 感知引导</span
+                        >
+                      </div>
+                    </div>
+                    <div style="margin-bottom: 14px">
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          justify-content: space-between;
+                          margin-bottom: 1px;
+                        "
+                      >
+                        <div
+                          style="display: flex; align-items: center; gap: 4px"
+                        >
+                          <span
+                            style="
+                              width: 2px;
+                              height: 11px;
+                              border-radius: 1px;
+                              background: #c49a6c;
+                              flex-shrink: 0;
+                            "
+                          ></span>
+                          <span
+                            class="serif"
+                            style="
+                              font-size: 12px;
+                              font-weight: 400;
+                              color: #3a3028;
+                            "
+                            >今日频率指南</span
+                          >
+                        </div>
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#C49A6C"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="m9 18 6-6-6-6" />
+                        </svg>
+                      </div>
+                      <p
+                        style="
+                          font-size: 7px;
+                          font-weight: 300;
+                          color: rgba(58, 48, 40, 0.45);
+                          margin-bottom: 6px;
+                        "
+                      >
+                        给自己一段安静的时间
+                      </p>
+                      <div style="display: flex; gap: 6px">
+                        <div style="flex: 1">
+                          <div
+                            style="
+                              aspect-ratio: 16/9;
+                              border-radius: 10px;
+                              overflow: hidden;
+                              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                              margin-bottom: 4px;
+                            "
+                          >
+                            <img
+                              src="https://images.unsplash.com/photo-1581845912101-b79003f1b71e?w=400"
+                              alt="为什么越努力反而越焦虑"
+                              style="
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                              "
+                            />
+                          </div>
+                          <div
+                            style="
+                              font-size: 8px;
+                              font-weight: 400;
+                              color: #3a3028;
+                              margin-bottom: 1px;
+                              text-align: left;
+                              line-height: 1.4;
+                            "
+                          >
+                            为什么越努力反而越焦虑
+                          </div>
+                          <div
+                            style="
+                              font-size: 6px;
+                              color: rgba(58, 48, 40, 0.45);
+                              text-align: left;
+                              line-height: 1.3;
+                            "
+                          >
+                            【人生十字】周末生活的情感觉察
+                          </div>
+                        </div>
+                        <div style="flex: 1">
+                          <div
+                            style="
+                              aspect-ratio: 16/9;
+                              border-radius: 10px;
+                              overflow: hidden;
+                              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                              margin-bottom: 4px;
+                            "
+                          >
+                            <img
+                              src="https://images.unsplash.com/photo-1587362869854-3898f1e5c2ac?w=400"
+                              alt="为什么你总感觉不够好"
+                              style="
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                              "
+                            />
+                          </div>
+                          <div
+                            style="
+                              font-size: 8px;
+                              font-weight: 400;
+                              color: #3a3028;
+                              margin-bottom: 1px;
+                              text-align: left;
+                              line-height: 1.4;
+                            "
+                          >
+                            为什么你总感觉不够好
+                          </div>
+                          <div
+                            style="
+                              font-size: 6px;
+                              color: rgba(58, 48, 40, 0.45);
+                              text-align: left;
+                              line-height: 1.3;
+                            "
+                          >
+                            【暇思空间】把理想追求当作锚点
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          justify-content: space-between;
+                          margin-bottom: 1px;
+                        "
+                      >
+                        <div
+                          style="display: flex; align-items: center; gap: 4px"
+                        >
+                          <span
+                            style="
+                              width: 2px;
+                              height: 11px;
+                              border-radius: 1px;
+                              background: #c49a6c;
+                              flex-shrink: 0;
+                            "
+                          ></span>
+                          <span
+                            class="serif"
+                            style="
+                              font-size: 12px;
+                              font-weight: 400;
+                              color: #3a3028;
+                            "
+                            >感知入门</span
+                          >
+                        </div>
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="#C49A6C"
+                          stroke-width="1.5"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                        >
+                          <path d="m9 18 6-6-6-6" />
+                        </svg>
+                      </div>
+                      <p
+                        style="
+                          font-size: 7px;
+                          font-weight: 300;
+                          color: rgba(58, 48, 40, 0.45);
+                          margin-bottom: 6px;
+                        "
+                      >
+                        从当下这一刻开始练习
+                      </p>
+                      <div style="display: flex; gap: 5px">
+                        <div style="flex: 1">
+                          <div
+                            style="
+                              aspect-ratio: 1/1;
+                              border-radius: 10px;
+                              overflow: hidden;
+                              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                              margin-bottom: 4px;
+                            "
+                          >
+                            <img
+                              src="https://images.unsplash.com/photo-1767844075709-457613db5747?w=400"
+                              alt="感知此刻"
+                              style="
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                              "
+                            />
+                          </div>
+                          <div
+                            style="
+                              font-size: 7px;
+                              font-weight: 400;
+                              color: #3a3028;
+                              margin-bottom: 1px;
+                              text-align: left;
+                            "
+                          >
+                            感知此刻
+                          </div>
+                          <div
+                            style="
+                              font-size: 5px;
+                              color: rgba(58, 48, 40, 0.45);
+                              text-align: left;
+                            "
+                          >
+                            5分钟·呼吸引导
+                          </div>
+                        </div>
+                        <div style="flex: 1">
+                          <div
+                            style="
+                              aspect-ratio: 1/1;
+                              border-radius: 10px;
+                              overflow: hidden;
+                              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                              margin-bottom: 4px;
+                            "
+                          >
+                            <img
+                              src="https://images.unsplash.com/photo-1755375640763-7095bc784ec6?w=400"
+                              alt="感知此刻"
+                              style="
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                              "
+                            />
+                          </div>
+                          <div
+                            style="
+                              font-size: 7px;
+                              font-weight: 400;
+                              color: #3a3028;
+                              margin-bottom: 1px;
+                              text-align: left;
+                            "
+                          >
+                            感知此刻
+                          </div>
+                          <div
+                            style="
+                              font-size: 5px;
+                              color: rgba(58, 48, 40, 0.45);
+                              text-align: left;
+                            "
+                          >
+                            5-10分钟·聚焦感
+                          </div>
+                        </div>
+                        <div style="flex: 1">
+                          <div
+                            style="
+                              aspect-ratio: 1/1;
+                              border-radius: 10px;
+                              overflow: hidden;
+                              box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                              margin-bottom: 4px;
+                            "
+                          >
+                            <img
+                              src="https://images.unsplash.com/photo-1581845912101-b79003f1b71e?w=400"
+                              alt="感知此刻"
+                              style="
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                              "
+                            />
+                          </div>
+                          <div
+                            style="
+                              font-size: 7px;
+                              font-weight: 400;
+                              color: #3a3028;
+                              margin-bottom: 1px;
+                              text-align: left;
+                            "
+                          >
+                            感知此刻
+                          </div>
+                          <div
+                            style="
+                              font-size: 5px;
+                              color: rgba(58, 48, 40, 0.45);
+                              text-align: left;
+                            "
+                          >
+                            5分钟
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="phone-tab-bar">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    style="color: white"
+                  >
+                    <use href="#icon-pavilion" />
+                  </svg>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    style="color: rgba(255, 255, 255, 0.6)"
+                  >
+                    <use href="#icon-scroll" />
+                  </svg>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    style="color: rgba(255, 255, 255, 0.6)"
+                  >
+                    <use href="#icon-bagua" />
+                  </svg>
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    style="color: rgba(255, 255, 255, 0.6)"
+                  >
+                    <use href="#icon-taiji" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+            <p
+              class="serif"
+              style="
+                margin-top: 24px;
+                font-size: 15px;
+                font-weight: 400;
+                color: #3a3028;
+                letter-spacing: 2px;
+              "
+            >
+              内容浏览
+            </p>
+            <p
+              style="
+                font-size: 12px;
+                font-weight: 300;
+                color: rgba(58, 48, 40, 0.4);
+                margin-top: 6px;
+              "
+            >
+              语录卡片 · 精选推荐 · 内容导航
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 3. 核心理念 ═══ -->
+    <section
+      id="core-philosophy"
+      style="
+        background: linear-gradient(
+          180deg,
+          #f0e4ce 0%,
+          rgba(196, 154, 108, 0.12) 32%,
+          #faf7f2 55%,
+          #f0e4ce 100%
+        );
+      "
+    >
+      <div
+        class="fade-section section-wrap"
+        style="max-width: 1200px; margin: 0 auto; padding: 80px 40px"
+      >
+        <div style="text-align: center; margin-bottom: 60px">
+          <h2
+            class="serif section-title"
+            style="
+              font-size: 36px;
+              font-weight: 400;
+              color: #3a3028;
+              letter-spacing: 4px;
+              margin: 0;
+              line-height: 1.4;
+            "
+          >
+            由动入静的渐修之路
+          </h2>
+          <p class="section-subtitle">知止而后有定，定而后能静</p>
+          <div class="section-divider"></div>
+        </div>
+        <div
+          class="philosophy-cards"
+          style="
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            flex-wrap: wrap;
+          "
+        >
+          <div class="philosophy-card hover-lift">
+            <div class="serif philosophy-char theme-amber">徐</div>
+            <div class="serif philosophy-title">慢下来</div>
+            <p class="philosophy-desc">
+              清风徐来，在快节奏的世界中找到自己的节奏
+            </p>
+            <div class="philosophy-dots">
+              <div class="philosophy-dot active theme-amber"></div>
+              <div class="philosophy-dot"></div>
+              <div class="philosophy-dot"></div>
+            </div>
+          </div>
+          <div class="philosophy-card hover-lift">
+            <div class="serif philosophy-char theme-sage">止</div>
+            <div class="serif philosophy-title">停下来</div>
+            <p class="philosophy-desc">知止而后有定，停下脚步才能看见内心</p>
+            <div class="philosophy-dots">
+              <div class="philosophy-dot"></div>
+              <div class="philosophy-dot active theme-sage"></div>
+              <div class="philosophy-dot"></div>
+            </div>
+          </div>
+          <div class="philosophy-card hover-lift">
+            <div class="serif philosophy-char theme-lavender">定</div>
+            <div class="serif philosophy-title">静下来</div>
+            <p class="philosophy-desc">定而后能静，在安定中回归真我</p>
+            <div class="philosophy-dots">
+              <div class="philosophy-dot"></div>
+              <div class="philosophy-dot"></div>
+              <div class="philosophy-dot active theme-lavender"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 4. 四大修行空间 ═══ -->
+    <section
+      id="practice-spaces"
+      style="
+        background:
+          radial-gradient(
+            900px 520px at 28% 18%,
+            rgba(180, 160, 200, 0.12) 0%,
+            rgba(180, 160, 200, 0) 62%
+          ),
+          radial-gradient(
+            760px 420px at 72% 62%,
+            rgba(196, 154, 108, 0.12) 0%,
+            rgba(196, 154, 108, 0) 66%
+          ),
+          linear-gradient(180deg, #f0e4ce 0%, #faf7f2 100%);
+      "
+    >
+      <div
+        class="fade-section section-wrap"
+        style="max-width: 1200px; margin: 0 auto; padding: 80px 40px"
+      >
+        <div style="text-align: center; margin-bottom: 60px">
+          <h2
+            class="serif section-title"
+            style="
+              font-size: 36px;
+              font-weight: 400;
+              color: #3a3028;
+              letter-spacing: 4px;
+              margin: 0;
+              line-height: 1.4;
+            "
+          >
+            四大修行空间
+          </h2>
+          <p class="section-subtitle">每一个入口，都是一段向内探索的旅程</p>
+          <div class="section-divider"></div>
+        </div>
+        <div
+          id="spaces-cross"
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+          "
+        >
+          <!-- 湖心亭 -->
+          <div class="space-card hover-lift">
+            <div class="space-icon bg-amber theme-amber">
+              <svg width="32" height="32"><use href="#icon-pavilion" /></svg>
+            </div>
+            <div class="serif space-label theme-amber">湖心亭</div>
+            <div class="serif space-title">首页 · 回到此刻</div>
+            <p class="space-desc">
+              以呼吸引导为核心，三层圆环以不同节奏脉动。配合24节气与十二时辰，让每次打开都是一次回到当下的邀请
+            </p>
+          </div>
+          <!-- 古卷轴 -->
+          <div class="space-card hover-lift">
+            <div class="space-icon bg-sage theme-sage">
+              <svg width="32" height="32"><use href="#icon-scroll" /></svg>
+            </div>
+            <div class="serif space-label theme-sage">古卷轴</div>
+            <div class="serif space-title">人类手册 · 认识自己</div>
+            <p class="space-desc">
+              身心成长的知识宝库，汇集古今中外关于自我认知、情绪管理、心灵成长的精华内容
+            </p>
+          </div>
+          <!-- 先天八卦 -->
+          <div class="space-card hover-lift">
+            <div class="space-icon bg-lavender theme-lavender">
+              <svg width="32" height="32"><use href="#icon-bagua" /></svg>
+            </div>
+            <div class="serif space-label theme-lavender">先天八卦</div>
+            <div class="serif space-title">新人生之路 · 探索可能</div>
+            <p class="space-desc">
+              基于东方智慧的自我探索工具，帮助你理解自身模式，发现新的人生方向与可能性
+            </p>
+          </div>
+          <!-- 太极 -->
+          <div class="space-card hover-lift">
+            <div class="space-icon bg-amber theme-amber">
+              <svg width="32" height="32"><use href="#icon-taiji" /></svg>
+            </div>
+            <div class="serif space-label theme-amber">太极</div>
+            <div class="serif space-title">明镜 · 向内观照</div>
+            <p class="space-desc">
+              如同一面清澈的镜子，映照内心。通过感知练习与自我对话，培养觉察力与内在平静
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 5. 金句横幅 ═══ -->
+    <section
+      style="
+        position: relative;
+        padding: 100px 40px;
+        background:
+          radial-gradient(
+            800px 420px at 25% 30%,
+            rgba(139, 170, 125, 0.14) 0%,
+            rgba(139, 170, 125, 0) 60%
+          ),
+          radial-gradient(
+            700px 380px at 70% 55%,
+            rgba(196, 154, 108, 0.16) 0%,
+            rgba(196, 154, 108, 0) 62%
+          ),
+          linear-gradient(180deg, #faf7f2 0%, #f0e4ce 100%);
+        overflow: hidden;
+        text-align: center;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          top: -30%;
+          left: 20%;
+          width: 400px;
+          height: 400px;
+          display: none;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(196, 154, 108, 0.14) 0%,
+            transparent 70%
+          );
+          pointer-events: none;
+        "
+      ></div>
+      <div style="position: relative; max-width: 700px; margin: 0 auto">
+        <div
+          style="
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(to right, #c49a6c, #8baa7d);
+            margin: 0 auto 40px;
+            border-radius: 1px;
+          "
+        ></div>
+        <p
+          class="serif quote-text"
+          style="
+            font-size: 28px;
+            font-weight: 300;
+            color: rgba(58, 48, 40, 0.78);
+            line-height: 1.8;
+            letter-spacing: 3px;
+          "
+        >
+          当你回到自己，<br />世界便回到了它本来的样子
+        </p>
+        <p
+          class="serif"
+          style="
+            font-size: 13px;
+            font-weight: 300;
+            color: rgba(58, 48, 40, 0.38);
+            margin-top: 32px;
+            letter-spacing: 2px;
+          "
+        >
+          —— 元思想 · 感知笔记
+        </p>
+        <div
+          style="
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(to right, #8baa7d, #c49a6c);
+            margin: 40px auto 0;
+            border-radius: 1px;
+          "
+        ></div>
+      </div>
+    </section>
+
+    <!-- ═══ 6. 产品特色 ═══ -->
+    <section
+      id="features"
+      style="
+        background:
+          radial-gradient(
+            900px 480px at 22% 22%,
+            rgba(196, 154, 108, 0.16) 0%,
+            rgba(196, 154, 108, 0) 64%
+          ),
+          radial-gradient(
+            760px 420px at 75% 60%,
+            rgba(139, 170, 125, 0.12) 0%,
+            rgba(139, 170, 125, 0) 66%
+          ),
+          linear-gradient(180deg, #f0e4ce 0%, #faf7f2 100%);
+      "
+    >
+      <div
+        class="fade-section section-wrap"
+        style="max-width: 1200px; margin: 0 auto; padding: 80px 40px"
+      >
+        <div style="text-align: center; margin-bottom: 60px">
+          <h2
+            class="serif section-title"
+            style="
+              font-size: 36px;
+              font-weight: 400;
+              color: #3a3028;
+              letter-spacing: 4px;
+              margin: 0;
+              line-height: 1.4;
+            "
+          >
+            你将获得
+          </h2>
+          <p class="section-subtitle">从呼吸开始，找到回到自己的路</p>
+          <div class="section-divider"></div>
+        </div>
+        <div
+          id="features-cards"
+          style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 24px;
+          "
+        >
+          <div
+            class="hover-lift-sm"
+            style="
+              padding: 36px 28px;
+              border-radius: 20px;
+              background: linear-gradient(
+                135deg,
+                rgba(196, 154, 108, 0.14) 0%,
+                rgba(255, 252, 245, 0.72) 55%,
+                rgba(255, 252, 245, 0.6) 100%
+              );
+              box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+            "
+          >
+            <h3
+              class="serif"
+              style="
+                font-size: 18px;
+                font-weight: 400;
+                color: #3a3028;
+                margin-bottom: 12px;
+                letter-spacing: 1px;
+              "
+            >
+              感知练习
+            </h3>
+            <p
+              style="
+                font-size: 13px;
+                font-weight: 300;
+                color: rgba(58, 48, 40, 0.55);
+                line-height: 1.75;
+                letter-spacing: 0.3px;
+              "
+            >
+              从5分钟呼吸引导开始，循序渐进地培养对当下的觉察力。不需要经验，不需要技巧——只需要回到此刻
+            </p>
+          </div>
+          <div
+            class="hover-lift-sm"
+            style="
+              padding: 36px 28px;
+              border-radius: 20px;
+              background: linear-gradient(
+                135deg,
+                rgba(139, 170, 125, 0.14) 0%,
+                rgba(255, 252, 245, 0.72) 55%,
+                rgba(255, 252, 245, 0.6) 100%
+              );
+              box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+            "
+          >
+            <h3
+              class="serif"
+              style="
+                font-size: 18px;
+                font-weight: 400;
+                color: #3a3028;
+                margin-bottom: 12px;
+                letter-spacing: 1px;
+              "
+            >
+              节气时辰
+            </h3>
+            <p
+              style="
+                font-size: 13px;
+                font-weight: 300;
+                color: rgba(58, 48, 40, 0.55);
+                line-height: 1.75;
+                letter-spacing: 0.3px;
+              "
+            >
+              融合24节气与十二时辰的中国传统时间智慧，让你在每个时刻都能感受到天地自然的节律
+            </p>
+          </div>
+          <div
+            class="hover-lift-sm"
+            style="
+              padding: 36px 28px;
+              border-radius: 20px;
+              background: linear-gradient(
+                135deg,
+                rgba(180, 160, 200, 0.14) 0%,
+                rgba(255, 252, 245, 0.72) 55%,
+                rgba(255, 252, 245, 0.6) 100%
+              );
+              box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+            "
+          >
+            <h3
+              class="serif"
+              style="
+                font-size: 18px;
+                font-weight: 400;
+                color: #3a3028;
+                margin-bottom: 12px;
+                letter-spacing: 1px;
+              "
+            >
+              内容引导
+            </h3>
+            <p
+              style="
+                font-size: 13px;
+                font-weight: 300;
+                color: rgba(58, 48, 40, 0.55);
+                line-height: 1.75;
+                letter-spacing: 0.3px;
+              "
+            >
+              精心策划的文章、音频与练习指南，从"为什么焦虑"到"如何安住当下"，陪伴你走过每一步
+            </p>
+          </div>
+          <div
+            class="hover-lift-sm"
+            style="
+              padding: 36px 28px;
+              border-radius: 20px;
+              background: linear-gradient(
+                135deg,
+                rgba(196, 154, 108, 0.12) 0%,
+                rgba(255, 252, 245, 0.72) 55%,
+                rgba(255, 252, 245, 0.6) 100%
+              );
+              box-shadow: 0 2px 16px rgba(0, 0, 0, 0.04);
+            "
+          >
+            <h3
+              class="serif"
+              style="
+                font-size: 18px;
+                font-weight: 400;
+                color: #3a3028;
+                margin-bottom: 12px;
+                letter-spacing: 1px;
+              "
+            >
+              温暖社区
+            </h3>
+            <p
+              style="
+                font-size: 13px;
+                font-weight: 300;
+                color: rgba(58, 48, 40, 0.55);
+                line-height: 1.75;
+                letter-spacing: 0.3px;
+              "
+            >
+              感知者的声音汇聚于此。分享你的练习体验，听见他人的共鸣，在成长的路上你并不孤单
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ 8. CTA 内测邀请 ═══ -->
+    <section
+      style="
+        position: relative;
+        padding: 80px 40px;
+        background:
+          radial-gradient(
+            900px 480px at 20% 25%,
+            rgba(139, 170, 125, 0.14) 0%,
+            rgba(139, 170, 125, 0) 62%
+          ),
+          radial-gradient(
+            760px 420px at 72% 42%,
+            rgba(196, 154, 108, 0.16) 0%,
+            rgba(196, 154, 108, 0) 65%
+          ),
+          linear-gradient(180deg, #f0e4ce 0%, #faf7f2 100%);
+        text-align: center;
+        overflow: hidden;
+      "
+    >
+      <div
+        style="
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 500px;
+          height: 500px;
+          display: none;
+          border-radius: 50%;
+          background: radial-gradient(
+            circle,
+            rgba(196, 154, 108, 0.16) 0%,
+            transparent 60%
+          );
+          pointer-events: none;
+        "
+      ></div>
+      <div style="position: relative; max-width: 600px; margin: 0 auto">
+        <div
+          class="serif"
+          style="
+            font-size: 36px;
+            font-weight: 300;
+            color: rgba(58, 48, 40, 0.86);
+            letter-spacing: 4px;
+            line-height: 1.4;
+            margin-bottom: 10px;
+          "
+        >
+          元思想
+        </div>
+
+        <div
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 28px;
+          "
+        >
+          <span
+            class="serif"
+            style="
+              font-size: 12px;
+              font-weight: 300;
+              color: rgba(58, 48, 40, 0.55);
+              letter-spacing: 1px;
+            "
+            >内测进行中</span
+          >
+          <div
+            style="
+              width: 7px;
+              height: 7px;
+              border-radius: 50%;
+              background: #8baa7d;
+              box-shadow: 0 0 10px #8baa7d;
+            "
+          ></div>
+          <span
+            class="serif"
+            style="
+              font-size: 12px;
+              font-weight: 300;
+              color: rgba(58, 48, 40, 0.6);
+              letter-spacing: 1.5px;
+            "
+            >即将上线 敬请期待</span
+          >
+        </div>
+        <p
+          style="
+            font-size: 15px;
+            font-weight: 300;
+            color: rgba(58, 48, 40, 0.55);
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            margin-bottom: 36px;
+          "
+        >
+          我们正在用心打磨每一个细节。<br />如果你也相信「慢下来才能看见自己」，期待与你在元思想相遇。
+        </p>
+      </div>
+      <!-- ═══ 9. 页脚 ═══ -->
+      <footer
+        style="
+          background: transparent;
+          padding: 0 40px 32px;
+          text-align: center;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+            font-size: 11px;
+            font-weight: 300;
+            color: rgba(58, 48, 40, 0.38);
+            letter-spacing: 0.3px;
+          "
+        >
+          <span>&copy; 2025 元思想（北京）文化传播有限公司</span>
+          <span style="opacity: 0.4">·</span>
+          <span
+            style="
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              white-space: nowrap;
+            "
+          >
+            <img
+              src="https://beian.mps.gov.cn/img/head-logo2.4d29d9b1.png"
+              width="14"
+              height="14"
+              alt="公安备案"
+              style="opacity: 0.35; vertical-align: middle"
+            />
+            <a
+              href="https://beian.mps.gov.cn/#/query/webSearch?code=51015602001384"
+              target="_blank"
+              rel="noopener noreferrer"
+              style="
+                color: rgba(58, 48, 40, 0.55);
+                text-decoration: none;
+                border-bottom: none;
+              "
+              >川公网安备51015602001384号</a
+            >
+          </span>
+          <span style="opacity: 0.4">·</span>
+          <a
+            href="https://beian.miit.gov.cn"
+            target="_blank"
+            rel="noopener noreferrer"
+            style="
+              color: rgba(58, 48, 40, 0.55);
+              text-decoration: none;
+              border-bottom: none;
+            "
+            >京ICP备2025142983号-1</a
+          >
+        </div>
+      </footer>
+    </section>
+
+    <button class="bgm-btn" id="bgm-btn" type="button" aria-label="背景音乐">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path id="bgm-icon-path" d="M8 5v14l11-7-11-7Z" fill="currentColor" />
+      </svg>
+    </button>
+    <audio
+      id="bgm-audio"
+      src="assets/audios/guzheng-soundtrack-guzheng-and-japanese-bamboo-flute-8-471680.mp3"
+      preload="auto"
+      loop
+      playsinline
+    ></audio>
+
+    <button
+      class="back-to-top"
+      id="back-to-top"
+      type="button"
+      aria-label="回到顶部"
+    >
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 4l-8 8h5v8h6v-8h5l-8-8z" fill="currentColor" />
+      </svg>
+    </button>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var sections = document.querySelectorAll(".fade-section");
+        var observer = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          { threshold: 0.1 },
+        );
+        sections.forEach(function (s) {
+          observer.observe(s);
+        });
+
+        var audio = document.getElementById("bgm-audio");
+        var btn = document.getElementById("bgm-btn");
+        var iconPath = document.getElementById("bgm-icon-path");
+        if (!audio || !btn || !iconPath) return;
+
+        audio.volume = 0.5;
+        var hasInteracted = false;
+        var playIcon = "M8 5v14l11-7-11-7Z";
+        var pauseIcon = "M6 4h4v16H6V4Zm8 0h4v16h-4V4Z";
+
+        function updateIcon() {
+          iconPath.setAttribute("d", audio.paused ? playIcon : pauseIcon);
+        }
+
+        function tryPlay() {
+          if (hasInteracted || !audio.paused) return;
+          audio
+            .play()
+            .then(function () {
+              hasInteracted = true;
+              updateIcon();
+              removeListeners();
+            })
+            .catch(function () {});
+        }
+
+        function removeListeners() {
+          document.removeEventListener("click", tryPlay, true);
+          document.removeEventListener("touchend", tryPlay, true);
+          document.removeEventListener("keydown", tryPlay, true);
+        }
+        document.addEventListener("click", tryPlay, true);
+        document.addEventListener("touchend", tryPlay, true);
+        document.addEventListener("keydown", tryPlay, true);
+
+        btn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          if (audio.paused) {
+            audio.play().catch(function () {});
+          } else {
+            audio.pause();
+          }
+        });
+
+        audio.addEventListener("play", updateIcon);
+        audio.addEventListener("pause", updateIcon);
+        updateIcon();
+
+        // Back to top button
+        var backToTop = document.getElementById("back-to-top");
+        if (backToTop) {
+          window.addEventListener(
+            "scroll",
+            function () {
+              if (window.scrollY > 400) {
+                backToTop.classList.add("visible");
+              } else {
+                backToTop.classList.remove("visible");
+              }
+            },
+            { passive: true },
+          );
+
+          backToTop.addEventListener("click", function () {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
