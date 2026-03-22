@@ -117,7 +117,7 @@ export const COURSES: Course[] = [
     title: "新宇宙观",
     author: "元思想",
     cover:
-      "https://images.unsplash.com/photo-1709408635158-8d735f0395c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYWxheHklMjB1bml2ZXJzZSUyMG5lYnVsYSUyMGRlZXAlMjBzcGFjZXxlbnwxfHx8fDE3NzEwNTYyOTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-170940863515.jpg",
     description:
       "从全新的视角理解宇宙、生命与意识的关系，建立属于新时代的宇宙观和世界观。",
     type: "video",
@@ -132,7 +132,7 @@ export const COURSES: Course[] = [
     title: "感知生活",
     author: "元思想",
     cover:
-      "https://images.unsplash.com/photo-1569882971763-38336bb04c05?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhdXR1bW4lMjBnb2xkZW4lMjB0cmVlcyUyMHN1bmxpZ2h0JTIwd2FybXxlbnwxfHx8fDE3NzEwNTk3NTV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-156988297176.jpg",
     description:
       "在日常生活中培养感知力，让每一天都成为成长的契机。包含实用的感知练习和生活化的观察方法。",
     type: "audio",
@@ -146,7 +146,7 @@ export const COURSES: Course[] = [
     title: "1天日常感知",
     author: "元思想",
     cover:
-      "https://images.unsplash.com/photo-1566928033753-01ae400b9b0e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3JuaW5nJTIwbGFrZSUyMG1pc3QlMjBzZXJlbmUlMjBsYW5kc2NhcGV8ZW58MXx8fHwxNzcxMDU5NzU1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-156692803375.jpg",
     description: "用一天的时间，体验完整的日常感知练习流程。从晨起到入睡，全天候的感知引导。",
     type: "practice",
     taskCount: 10,
@@ -159,7 +159,7 @@ export const COURSES: Course[] = [
     title: "7天日常感知",
     author: "元思想",
     cover:
-      "https://images.unsplash.com/photo-1622394147443-46af451abd28?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBzaWxob3VldHRlJTIwbW91bnRhaW4lMjBzdW5yaXNlJTIwaGlraW5nfGVufDF8fHx8MTc3MTA1OTc1OXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-162239414744.jpg",
     description:
       "七天系统化的感知训练计划。循序渐进地建立你的感知习惯，从入门到日常化。",
     type: "practice",
@@ -173,7 +173,7 @@ export const COURSES: Course[] = [
     title: "宁静时光",
     author: "元思想",
     cover:
-      "https://images.unsplash.com/photo-1763767455832-db3097070257?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxncmVlbiUyMGJhbWJvbyUyMGZvcmVzdCUyMHplbiUyMG5hdHVyZXxlbnwxfHx8fDE3NzEwNTk3NTV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-176376745583.jpg",
     description:
       "一系列帮助你找回内心宁静的引导练习。适合在忙碌的一天中随时使用。",
     type: "audio",
@@ -187,7 +187,7 @@ export const COURSES: Course[] = [
     title: "关系中的感知力：在人际互动中回归真实",
     author: "元思想",
     cover:
-      "https://images.unsplash.com/photo-1761925952963-a3547560d0ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyaXZlciUyMHZhbGxleSUyMGdvbGRlbiUyMGhvdXIlMjBsYW5kc2NhcGUlMjBhZXJpYWx8ZW58MXx8fHwxNzcxMDU5NzU5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-176192595296.jpg",
     description: "探索亲密关系、家庭关系和社交中的感知模式，学会不迎合、不退缩，在关系中保持清醒与真实。",
     type: "audio",
     taskCount: 24,
@@ -213,7 +213,7 @@ export const CIRCLE_INFO: CircleInfo = {
   name: "新人生之路圈子",
   description: "新人类的汇聚地，践行全新的宇宙观、世界观和人生观",
   cover:
-    "https://images.unsplash.com/photo-1622393346904-7c75877bc914?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdW5zZXQlMjBvY2VhbiUyMHdhdmVzJTIwcGVhY2VmdWwlMjBjYWxtfGVufDF8fHx8MTc3MTA1OTc1NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+    "/images/img-162239334690.jpg",
   postCount: 8458,
   memberCount: 2141,
   announcement:

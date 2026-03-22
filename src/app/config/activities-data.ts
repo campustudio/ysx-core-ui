@@ -67,7 +67,7 @@ export const ACTIVITIES: Record<string, Activity> = {
     price: "免费（内测期）",
     participants: "已报名 42 人",
     coverImage:
-      "https://images.unsplash.com/photo-1570799650082-f3eb7207f588?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpdGF0aW9uJTIwcmV0cmVhdCUyMGdyb3VwJTIwcGVhY2VmdWwlMjBuYXR1cmV8ZW58MXx8fHwxNzcwNzI4MTg2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-157079965008.jpg",
     description:
       "21天的陪伴式放松练习，每天一个小练习，每周一次直播引导。不需要基础，不需要准备，只需要你愿意花每天5分钟，回到自己。",
     highlights: [
@@ -96,7 +96,7 @@ export const ACTIVITIES: Record<string, Activity> = {
     price: "体验课 ¥0 · 会员制",
     participants: "本周可预约",
     coverImage:
-      "https://images.unsplash.com/photo-1763890965393-1cea435581ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaW5kZnVsbmVzcyUyMHdvcmtzaG9wJTIwaW5kb29yJTIwd2FybSUyMHNwYWNlfGVufDF8fHx8MTc3MDcyODE4N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-176389096539.jpg",
     description:
       "元境中心是元思想的线下体验空间，坐落在西溪湿地旁的安静角落。这里没有课表的压力，没有社交的焦虑，只有一个可以安静待着的地方。你可以来这里做一次呼吸引导，也可以只是坐着发呆。",
     highlights: [
@@ -125,7 +125,7 @@ export const ACTIVITIES: Record<string, Activity> = {
     price: "¥99（早鸟价 ¥69）",
     participants: "限30人",
     coverImage:
-      "https://images.unsplash.com/photo-1758555225908-9930716a8e19?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx6ZW4lMjBnYXJkZW4lMjBwZWFjZWZ1bCUyMGV2ZW50JTIwb3V0ZG9vcnxlbnwxfHx8fDE3NzA3MjgxODh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-175855522590.jpg",
     description:
       "成长工作坊是元思想的主题工作坊系列。本期主题：「身体的记忆」——探索情绪如何存储在身体中，以及如何通过身体练习来释放积压的情绪。适合对自我成长感兴趣的朋友。",
     highlights: [

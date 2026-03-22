@@ -123,11 +123,11 @@
  */
 export const AMBIENT_SCENE_IMAGES = {
   /** 细雨 — 雨滴窗前，宁静惬意 */
-  rain: "https://images.unsplash.com/photo-1714972593463-3beecd6f7c1c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyYWluJTIwZHJvcHMlMjB3aW5kb3clMjBwZWFjZWZ1bCUyMG1vb2R5fGVufDF8fHx8MTc3MDczMTg5Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  rain: "/images/img-171497259346.jpg",
   /** 海浪 — 金色日落海面，波光粼粼 */
-  ocean: "https://images.unsplash.com/photo-1622393346904-7c75877bc914?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvY2VhbiUyMHdhdmVzJTIwcGVhY2VmdWwlMjBzdW5zZXQlMjBjYWxtfGVufDF8fHx8MTc3MDczMTg5N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  ocean: "/images/img-162239334690.jpg",
   /** 山林 — 晨光穿林，薄雾弥漫 */
-  forest: "https://images.unsplash.com/photo-1558641445-766a7c7036d3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb3Jlc3QlMjBzdW5saWdodCUyMG1vcm5pbmclMjBtaXN0eSUyMHBlYWNlZnVsfGVufDF8fHx8MTc3MDczMTg5N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  forest: "/images/img-1558641445-7.jpg",
   /** 清风 — 金色草地微风拂过 */
-  wind: "https://images.unsplash.com/photo-1767007566907-1b1443a4e3f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3aW5kJTIwZ3Jhc3MlMjBmaWVsZCUyMGdvbGRlbiUyMGdlbnRsZSUyMGJyZWV6ZXxlbnwxfHx8fDE3NzA3MzE4OTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  wind: "/images/img-176700756690.jpg",
 } as const;

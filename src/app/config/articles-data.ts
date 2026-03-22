@@ -76,7 +76,7 @@ export const ARTICLES: Record<string, Article> = {
     category: "今日之光",
     categoryColor: "amber",
     coverImage:
-      "https://images.unsplash.com/photo-1765727739751-14e389d935e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb2xkZW4lMjBzdW5yaXNlJTIwcGVhY2VmdWwlMjBtb3VudGFpbiUyMGxhbmRzY2FwZSUyMHNlcmVuZXxlbnwxfHx8fDE3NzA3MjgyMDl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-176572773975.jpg",
     author: { name: "元思想编辑部" },
     readTime: "3 分钟",
     paragraphs: [
@@ -153,7 +153,7 @@ export const ARTICLES: Record<string, Article> = {
     category: "今日频率指南",
     categoryColor: "amber",
     coverImage:
-      "https://images.unsplash.com/photo-1681465637428-dc93e2d72f6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXJtJTIwbW9ybmluZyUyMHN1bmxpZ2h0JTIwdGhyb3VnaCUyMHdpbmRvdyUyMGNhbG18ZW58MXx8fHwxNzcwNzI3MDgxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-168146563742.jpg",
     author: { name: "元思想编辑部" },
     readTime: "4 分钟",
     paragraphs: [
@@ -241,7 +241,7 @@ export const ARTICLES: Record<string, Article> = {
     category: "今日频率指南",
     categoryColor: "amber",
     coverImage:
-      "https://images.unsplash.com/photo-1763899910806-43a13994b44f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBzaXR0aW5nJTIwYWxvbmUlMjBwZWFjZWZ1bCUyMHJlZmxlY3Rpb24lMjBuYXR1cmV8ZW58MXx8fHwxNzcwNzI3MDgxfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-176389991080.jpg",
     author: { name: "元思想编辑部" },
     readTime: "5 分钟",
     paragraphs: [
@@ -333,7 +333,7 @@ export const ARTICLES: Record<string, Article> = {
     category: "明镜之声",
     categoryColor: "sage",
     coverImage:
-      "https://images.unsplash.com/photo-1758135986660-4922b5c59396?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYWxtJTIwZm9yZXN0JTIwcGF0aCUyMHNvZnQlMjBsaWdodCUyMHplbnxlbnwxfHx8fDE3NzA3MjcwODJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-175813598666.jpg",
     author: { name: "元思想编辑部" },
     readTime: "4 分钟",
     paragraphs: [
@@ -420,7 +420,7 @@ export const ARTICLES: Record<string, Article> = {
     category: "明镜之声",
     categoryColor: "sage",
     coverImage:
-      "https://images.unsplash.com/photo-1678008313898-6eaaf9c77d87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0ZWElMjBjdXAlMjB3YXJtJTIwc29mdCUyMGxpZ2h0JTIwbWluZGZ1bG5lc3N8ZW58MXx8fHwxNzcwNzI3MDgyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-167800831389.jpg",
     author: { name: "元思想编辑部" },
     readTime: "5 分钟",
     paragraphs: [

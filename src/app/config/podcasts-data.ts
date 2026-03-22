@@ -66,7 +66,7 @@ export const PODCASTS: Record<string, Podcast> = {
     subtitle: "感知者的声音 · 播客",
     category: "感知者的声音",
     coverImage:
-      "https://images.unsplash.com/photo-1698884292186-b1a40f72a1b7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwb2RjYXN0JTIwbWljcm9waG9uZSUyMHdhcm0lMjBzdHVkaW8lMjByZWNvcmRpbmd8ZW58MXx8fHwxNzcwNzI4MTg2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-169888429218.jpg",
     author: { name: "小林", role: "练习者 · 3个月" },
     duration: "12 分钟",
     description:
@@ -91,7 +91,7 @@ export const PODCASTS: Record<string, Podcast> = {
     subtitle: "感知者的声音 · 故事",
     category: "感知者的声音",
     coverImage:
-      "https://images.unsplash.com/photo-1765371514331-9d4e3228eed9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3p5JTIwc3R1ZGlvJTIwaGVhZHBob25lcyUyMHdhcm0lMjBsaWdodCUyMGludGVyaW9yfGVufDF8fHx8MTc3MDcyODE4OHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-176537151433.jpg",
     author: { name: "让舒", role: "引导师 · 2年" },
     duration: "18 分钟",
     description:
@@ -116,7 +116,7 @@ export const PODCASTS: Record<string, Podcast> = {
     subtitle: "感知者的声音 · 故事",
     category: "感知者的声音",
     coverImage:
-      "https://images.unsplash.com/photo-1555069855-e580a9adbf43?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwZXJzb24lMjBzaGFyaW5nJTIwc3RvcnklMjB3YXJtJTIwZ2F0aGVyaW5nJTIwY2lyY2xlfGVufDF8fHx8MTc3MDcyODE4N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-1555069855-e.jpg",
     author: { name: "老张", role: "企业管理者 · 1年" },
     duration: "15 分钟",
     description:

@@ -58,11 +58,11 @@ export interface TrackData {
 
 const COVER_IMAGES = {
   /** 徐 — 金色暮云，柔和天空 */
-  xu: "https://images.unsplash.com/photo-1770163821401-f34a06836e26?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb2xkZW4lMjBzdW5zZXQlMjBjbG91ZHMlMjBtZWRpdGF0aW9uJTIwd2FybSUyMHNreXxlbnwxfHx8fDE3NzA3MzE4OTl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  xu: "/images/img-177016382140.jpg",
   /** 止 — 晨光草地，温柔绿意 */
-  zhi: "https://images.unsplash.com/photo-1718523202382-0132eb7f0a16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3JuaW5nJTIwbWVhZG93JTIwc3VubGlnaHQlMjBzZXJlbmUlMjBkZXdkcm9wcyUyMGdyYXNzfGVufDF8fHx8MTc3MDczMTkwMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  zhi: "/images/img-171852320238.jpg",
   /** 定 — 柔光花田，梦幻浅色调 */
-  ding: "https://images.unsplash.com/photo-1751576530735-5847ff061320?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsYXZlbmRlciUyMGZpZWxkJTIwZHJlYW15JTIwcHVycGxlJTIwY2FsbSUyMHR3aWxpZ2h0fGVufDF8fHx8MTc3MDczMTkwMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  ding: "/images/img-175157653073.jpg",
 } as const;
 
 /**
@@ -71,11 +71,11 @@ const COVER_IMAGES = {
  */
 const BG_IMAGES = {
   /** 徐 — 金色暮光天空，温暖包裹 */
-  xu: "https://images.unsplash.com/photo-1770163821401-f34a06836e26?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnb2xkZW4lMjBzdW5zZXQlMjBjbG91ZHMlMjBtZWRpdGF0aW9uJTIwd2FybSUyMHNreXxlbnwxfHx8fDE3NzA3MzE4OTl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  xu: "/images/img-177016382140.jpg",
   /** 止 — 晨光草地，温柔绿意 */
-  zhi: "https://images.unsplash.com/photo-1718523202382-0132eb7f0a16?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3JuaW5nJTIwbWVhZG93JTIwc3VubGlnaHQlMjBzZXJlbmUlMjBkZXdkcm9wcyUyMGdyYXNzfGVufDF8fHx8MTc3MDczMTkwMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  zhi: "/images/img-171852320238.jpg",
   /** 定 — 梦幻花田暮色 */
-  ding: "https://images.unsplash.com/photo-1751576530735-5847ff061320?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsYXZlbmRlciUyMGZpZWxkJTIwZHJlYW15JTIwcHVycGxlJTIwY2FsbSUyMHR3aWxpZ2h0fGVufDF8fHx8MTc3MDczMTkwMHww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+  ding: "/images/img-175157653073.jpg",
 } as const;
 
 // ─── 曲目数据 ────────────────────────────────────────

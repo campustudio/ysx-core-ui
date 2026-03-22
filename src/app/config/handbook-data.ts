@@ -78,7 +78,7 @@ export const BOOKS: Book[] = [
     title: "人类手册",
     author: "元思想",
     cover:
-      "https://images.unsplash.com/photo-1636914315650-8cf8105faf9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxvcGVuJTIwYm9vayUyMGNvc21pYyUyMHN0YXJzJTIwa25vd2xlZGdlfGVufDF8fHx8MTc3MTA1NjI4NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-163691431565.jpg",
     description:
       "探索人类存在的本质，从身体、情绪、思维到意识，系统性地认识自己。每一章都是一把钥匙，帮助你打开自我认知的大门。",
     category: "audio",
@@ -206,7 +206,7 @@ export const BOOKS: Book[] = [
     title: "当下的力量",
     author: "元思想",
     cover:
-      "https://images.unsplash.com/photo-1759349375435-a620cbf10afd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdW5yaXNlJTIwbW91bnRhaW4lMjBtZWRpdGF0aW9uJTIwcGVhY2VmdWx8ZW58MXx8fHwxNzcxMDU2Mjk1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-175934937543.jpg",
     description:
       "学会在忙碌的生活中找到内心的宁静。这不是逃避现实，而是一种更深层次的面对生活的方式。",
     category: "audio",
@@ -303,7 +303,7 @@ export const BOOKS: Book[] = [
     title: "生命的探索",
     author: "元思想",
     cover:
-      "https://images.unsplash.com/photo-1709408635158-8d735f0395c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnYWxheHklMjB1bml2ZXJzZSUyMG5lYnVsYSUyMGRlZXAlMjBzcGFjZXxlbnwxfHx8fDE3NzEwNTYyOTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
+      "/images/img-170940863515.jpg",
     description:
       "从宇宙的视角重新审视人类的生命历程。每一个生命都是独一无二的旅程，这本书帮你找到属于自己的方向。",
     category: "audio",
