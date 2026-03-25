@@ -1,355 +1,414 @@
 /**
- * 首页 - 元思想
+ * 首页 v5.0 - 元思想
  *
- * 「固定首屏 + 内容上滑覆盖」架构：
- *   Hero 区 position:fixed 固定不动
- *   内容页从底部自然上滑覆盖 Hero
- *   Header 在内容页接近顶部时过渡为吸顶样式
+ * 「首页像镜」— 文明入口，纯净穿透
  *
- * 滚动行为（用户手指向上滑动）：
- *   1. Hero 不动，内容页从屏幕底部上滑
- *   2. 内容页圆角透出 Hero 背景图，呈现「卡片浮在风景上」
- *   3. 内容页顶部接近 Header 区域时，Header 过渡为绢轴色吸顶
- *   4. 继续滑动浏览内容
- *   5. 向下滑动回退时，内容页下移，Header 恢复透明 Hero 样式
+ * 动画逻辑（全部仅用透明度，无位移）：
+ *   1. 品牌阶段：标题 + 横线 + 副标题 + 过渡暗示同时柔和淡入
+ *   2. 3s后无缝交叉淡变到主轴阶段
+ *   3. 五大主轴一屏呈现，十字布局（2-1-2），不需滚动
  *
- * 页面仅负责组装组件 + 管理滚动状态
- * 所有数据来自 config 层，所有 UI 来自组件层
- *
- * 导航映射：
- *   今日之光语录        → 文章阅读页（wisdom-today）
- *   精选推荐卡片        → 沉浸呼吸页
- *   今日频率指南/明镜之声 → 文章阅读页
- *   放松入门            → 音频播放页
- *   同行者的声音        → 播客详情页
- *   正在发生的光点      → 活动详情页
- *
- * 未实现入口 Toast 提示（统一温柔语气）：
- *   头像              → 「登录」功能正在用心打磨中
- *   区块标题箭头(>)    → 「{区块名}」的更多内容正在用心打磨中
- *   公告卡片           → 公告详情页正在用心打磨中
- *   底部导航(非首页)   → 「{页面名}」正在用心打磨中
+ * 品牌区与主轴区用绝对定位堆叠，实现无缝交叉淡变。
  */
 
-import { useState, useEffect, useCallback } from "react";
-import { getSolarTerm, getShichen } from "../config/calendar";
-import { HERO_BG } from "../config/images";
-import {
-  FEATURED,
-  HOME_SECTIONS,
-  ANNOUNCEMENT,
-} from "../config/home-data";
-import { hasArticle } from "../config/articles-data";
-import { hasPodcast } from "../config/podcasts-data";
-import { hasActivity } from "../config/activities-data";
-import { BG_PARCHMENT, BG_CONTENT_GRADIENT } from "../config/styles";
-
-// ─── Hero 组件 ───────────────────────────────────────
-import { HeroBackground } from "../components/hero/HeroBackground";
-import { HeroHeader } from "../components/hero/HeroHeader";
-import { BreathingCircle } from "../components/hero/BreathingCircle";
-import { JourneyCards } from "../components/hero/JourneyCards";
-import { ScrollHint } from "../components/shared/ScrollHint";
-
-// ─── 内容区组件 ──────────────────────────────────────
-import { DailyQuoteCalendar } from "../components/content/DailyQuoteCalendar";
-import { FeaturedCard } from "../components/content/FeaturedCard";
-import { SectionBlock } from "../components/content/SectionBlock";
-import { AnnouncementCard } from "../components/content/AnnouncementCard";
-
-// ─── 导航组件 ────────────────────────────────────────
-import { BottomNavigation } from "../components/navigation/BottomNavigation";
+import { useState, useCallback, useEffect } from "react";
+import { rpx, FONT_SERIF } from "../config/styles";
 import { Toast } from "../components/shared/Toast";
 import { useToast } from "../hooks/useToast";
-import { UserDrawer } from "../components/auth/UserDrawer";
 
-/** 底部导航项标签（与 BottomNavigation 内部顺序一致） */
-const NAV_LABELS = ["首页", "人类手册", "新人生之路", "明镜"];
+/* ═══ 五大主轴数据 ═══ */
+const MAIN_AXES = [
+  { id: "handbook", title: "人类手册", subtitle: "重新认识生命的底层逻辑", navIndex: 1 },
+  { id: "newlife", title: "新人生之路", subtitle: "从现状出发，一步步走向真实", navIndex: 2 },
+  { id: "voices", title: "感知者的声音", subtitle: "聆听真实的生命频率", navIndex: -1 },
+  { id: "circle", title: "元思想圈子", subtitle: "共鸣与同频的汇聚地", navIndex: -1 },
+  { id: "profile", title: "个人空间", subtitle: "记录你的归位旅程", navIndex: -1 },
+];
+
+/**
+ * 【归位之镜】设计规范：极简、透明、镜面风格，竖向立轴式排列。
+ * 禁止使用任何普通卡片风、宫格风。
+ */
+
+/* ═══ 组件 ═══ */
 
 interface HomeProps {
-  /** 导航到音频播放页（传入曲目标签：徐/止/定） */
   onNavigateToPlayer?: (trackLabel: string) => void;
-  /** 导航到文章阅读页（传入文章 ID） */
   onNavigateToArticle?: (articleId: string) => void;
-  /** 导航到播客详情页 */
   onNavigateToPodcast?: (podcastId: string) => void;
-  /** 导航到活动详情页 */
   onNavigateToActivity?: (activityId: string) => void;
-  /** 导航到新人引导页 */
   onNavigateToGuide?: () => void;
-  /** 导航到沉浸呼吸页 */
   onNavigateToBreathing?: () => void;
-  /** 导航到登录页 */
   onNavigateToLogin?: () => void;
-  /** 底部导航切换（委托给 App.tsx 统一处理） */
   onNavChange?: (index: number) => void;
-  /**
-   * 返回首页时需要恢复的滚动位置
-   * 由 App.tsx 在离开首页前保存，返回时传入
-   * 用 ref 而非 state，避免触发不必要的重渲染
-   */
   restoreScrollY?: number;
-  /** 是否已登录 */
   isLoggedIn?: boolean;
-  /** 用户信息 */
   userInfo?: { name: string; avatar: string; days: number };
-  /** 退出登录 */
   onLogout?: () => void;
 }
 
-export function Home({
-  onNavigateToPlayer,
-  onNavigateToArticle,
-  onNavigateToPodcast,
-  onNavigateToActivity,
-  onNavigateToGuide,
-  onNavigateToBreathing,
-  onNavigateToLogin,
-  onNavChange,
-  restoreScrollY,
-  isLoggedIn = false,
-  userInfo,
-  onLogout,
-}: HomeProps) {
-  const [activeNav, setActiveNav] = useState(0);
-  const [isHeaderSticky, setIsHeaderSticky] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+export function Home({ onNavChange }: HomeProps) {
   const toast = useToast();
-  const solarTerm = getSolarTerm();
-  const shichen = getShichen();
+  const [phase, setPhase] = useState<"brand" | "axes">("brand");
+  const [mounted, setMounted] = useState(false);
+  const [axesRevealed, setAxesRevealed] = useState(false);
 
-  /**
-   * 恢复滚动位置
-   * 从详情页返回时，还原离开前的 scrollY
-   * 使用双重 rAF 确保 DOM 完全渲染后再滚动
-   */
+  /* 品牌阶段初始化 */
   useEffect(() => {
-    if (restoreScrollY != null && restoreScrollY > 0) {
-      // 第一帧：React 完成 DOM 提交
-      // 第二帧：浏览器完成布局与绘制
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          window.scrollTo(0, restoreScrollY);
-        });
-      });
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
     }
-  }, []); // 仅挂载时执行一次
-
-  /**
-   * 监听滚动，切换 Header 吸顶状态
-   * 阈值 ≈ 90vh 滚动量（内容页顶部在 10vh 处）
-   */
-  useEffect(() => {
-    const handleScroll = () => {
-      const threshold = window.innerHeight * 0.9;
-      setIsHeaderSticky(window.scrollY > threshold);
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.scrollTo(0, 0);
+    const t1 = setTimeout(() => setMounted(true), 50);
+    return () => { clearTimeout(t1); };
   }, []);
 
-  // ─── 交互入口回调 ────────────────────────────────────
-
-  /** 点击头像 → 打开用户面板 */
-  const handleAvatarClick = useCallback(() => {
-    setDrawerOpen(true);
+  /* 3s后切换到主轴阶段 */
+  useEffect(() => {
+    const t1 = setTimeout(() => setPhase("axes"), 3000);
+    const t2 = setTimeout(() => setAxesRevealed(true), 3600);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, []);
 
-  /** 点击呼吸圆环（收/清）→ 沉浸呼吸页 */
-  const handleBreathingClick = useCallback(() => {
-    onNavigateToBreathing?.();
-  }, [onNavigateToBreathing]);
+  const handleClick = useCallback(
+    (axis: (typeof MAIN_AXES)[number]) => {
+      if (axis.navIndex >= 0) onNavChange?.(axis.navIndex);
+      else toast.show(`「${axis.title}」正在精心筹备中，敬请期待`);
+    },
+    [onNavChange, toast]
+  );
 
-  /** 点击「探索」→ 新人指引页面 */
-  const handleGuideClick = useCallback(() => {
-    onNavigateToGuide?.();
-  }, [onNavigateToGuide]);
-
-  /** 点击徐/止/定卡片 → 对应练习 */
-  const handleJourneyCardClick = useCallback((label: string) => {
-    onNavigateToPlayer?.(label);
-  }, [onNavigateToPlayer]);
-
-  /** 点击今日智慧语录 → 文章阅读页 */
-  const handleWisdomClick = useCallback(() => {
-    onNavigateToArticle?.("wisdom-today");
-  }, [onNavigateToArticle]);
-
-  /** 点击精选推荐卡片 → 沉浸呼吸页 */
-  const handleFeaturedClick = useCallback(() => {
-    onNavigateToBreathing?.();
-  }, [onNavigateToBreathing]);
-
-  /**
-   * 点击内容区卡片 → 根据 cardId 分发到不同页面
-   * 优先级：文章 > 播客 > 活动 > 播放器（兜底）
-   */
-  const handleContentCardClick = useCallback((cardId: string) => {
-    if (hasArticle(cardId)) {
-      onNavigateToArticle?.(cardId);
-    } else if (hasPodcast(cardId)) {
-      onNavigateToPodcast?.(cardId);
-    } else if (hasActivity(cardId)) {
-      onNavigateToActivity?.(cardId);
-    } else {
-      onNavigateToPlayer?.(cardId);
-    }
-  }, [onNavigateToArticle, onNavigateToPodcast, onNavigateToActivity, onNavigateToPlayer]);
-
-  /** 点击区块标题"更多"箭头 */
-  const handleSectionMore = useCallback((sectionId: string, sectionTitle?: string) => {
-    const label = sectionTitle || sectionId;
-    toast.show(`「${label}」的更多内容正在用心打磨中，敬请期待`);
-  }, [toast]);
-
-  /** 点击公告卡片 */
-  const handleAnnouncementClick = useCallback(() => {
-    toast.show("公告详情页正在用心打磨中，敬请期待");
-  }, [toast]);
-
-  /** 底部导航切换 */
-  const handleNavChange = useCallback((index: number) => {
-    if (index === 0) {
-      // 已在首页，滚动回顶部
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
-    }
-    if (index === 1 || index === 2) {
-      // 人类手册 / 新人生之路 → 委托给 App.tsx
-      onNavChange?.(index);
-      return;
-    }
-    // 其余页面正在开发中，展示温柔提示
-    toast.show(`「${NAV_LABELS[index]}」正在用心打磨中，敬请期待`);
-  }, [toast, onNavChange]);
+  const isAxes = phase === "axes";
 
   return (
-    <div className="relative w-full" style={{ background: BG_PARCHMENT }}>
+    <div
+      style={{
+        height: "100vh",
+        background: "radial-gradient(circle at 50% 30%, #FFFFFF 0%, #F5F5F7 50%, #EAEBEF 100%)",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <style>{`
+        @keyframes hint-breathe {
+          0%, 100% { opacity: 0.2; }
+          50%      { opacity: 0.7; }
+        }
+        .axis-slab {
+          cursor: pointer;
+          position: relative;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          background: transparent;
+          transition: background 0.5s ease;
+        }
+        .axis-slab:active {
+          background: rgba(255,255,255,0.5) !important;
+        }
+        .axis-slab::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
+          opacity: 0;
+          transition: opacity 0.6s ease;
+          pointer-events: none;
+        }
+        .axis-slab:hover::after {
+          opacity: 1;
+        }
+      `}</style>
 
-      {/* ═══ Hero 定层：不随滚动移动 ═══ */}
+      {/* 中轴光线 - 恢复最早期极细的 1px 状态，取消多余光晕 */}
       <div
         style={{
           position: "fixed",
           top: 0,
-          left: 0,
-          right: 0,
-          bottom: "calc(var(--nav-height) + env(safe-area-inset-bottom, 0px))",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "1px",
+          height: "100vh",
+          background: "linear-gradient(180deg, transparent 5%, rgba(196,178,148,0.06) 30%, rgba(196,178,148,0.12) 50%, rgba(196,178,148,0.06) 70%, transparent 95%)",
+          pointerEvents: "none",
           zIndex: 0,
-          overflow: "visible",
+        }}
+      />
+
+      {/* ═══ 品牌区域（绝对定位，覆盖全屏） ═══ */}
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: isAxes ? 0 : 2,
+          opacity: isAxes ? 0 : 1,
+          transition: "opacity 1.2s ease",
+          pointerEvents: isAxes ? "none" : "auto",
         }}
       >
-        <HeroBackground src={HERO_BG} />
+        {/* 标题 */}
+        <h1
+          style={{
+            fontFamily: FONT_SERIF,
+            fontSize: rpx(88),
+            fontWeight: 300,
+            color: "#1A1918",
+            margin: 0,
+            lineHeight: 1,
+            letterSpacing: rpx(14),
+            textShadow: "0 1px 0 rgba(255,255,255,0.7), 0 -0.5px 0 rgba(0,0,0,0.04)",
+            opacity: mounted ? 1 : 0,
+            transition: "opacity 2s ease",
+          }}
+        >
+          元思想
+        </h1>
 
-        <div className="relative flex flex-col h-full app-container">
+        {/* 横线 */}
+        <div
+          style={{
+            width: rpx(70),
+            height: "1px",
+            margin: `${rpx(28)} 0`,
+            background: "linear-gradient(90deg, transparent, rgba(186,170,140,0.3), transparent)",
+            opacity: mounted ? 1 : 0,
+            transition: "opacity 2s ease",
+          }}
+        />
+
+        {/* 副标题 */}
+        <p
+          style={{
+            fontFamily: FONT_SERIF,
+            fontSize: rpx(26),
+            fontWeight: 300,
+            letterSpacing: rpx(5),
+            color: "rgba(26,25,24,0.3)",
+            margin: 0,
+            textAlign: "center",
+            lineHeight: 1.8,
+            textShadow: "0 1px 0 rgba(255,255,255,0.5)",
+            opacity: mounted ? 1 : 0,
+            transition: "opacity 2s ease",
+          }}
+        >
+          思想回到生命，生命回到感知
+        </p>
+
+        {/* 过渡暗示 */}
+        <div
+          style={{
+            marginTop: rpx(60),
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: rpx(20),
+            pointerEvents: "none",
+            opacity: mounted ? 1 : 0,
+            transition: "opacity 2s ease",
+          }}
+        >
           <div
             style={{
-              paddingTop:
-                "max(calc(var(--rpx) * 24), env(safe-area-inset-top))",
-              height: `calc(max(calc(var(--rpx) * 24), env(safe-area-inset-top)) + ${72 * (100 / 750)}vw)`,
+              width: rpx(200),
+              height: "1px",
+              background: "linear-gradient(90deg, transparent, rgba(180,160,130,0.35), transparent)",
+              animation: mounted ? "hint-breathe 2.8s ease-in-out infinite" : "none",
             }}
           />
-
-          <div className="flex-1 flex items-center justify-center">
-            <BreathingCircle onClick={handleBreathingClick} />
-          </div>
-
-          <div
-            style={{
-              paddingBottom: "var(--spacing-sm)",
-              zIndex: "var(--z-base)",
-            }}
-          >
-            <JourneyCards
-              onGuideClick={handleGuideClick}
-              onCardClick={handleJourneyCardClick}
-            />
-            <ScrollHint />
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: rpx(16) }}>
+            {[0, 0.5, 1.0].map((delay, idx) => (
+              <div
+                key={idx}
+                style={{
+                  width: rpx(8 - idx * 1.5),
+                  height: rpx(8 - idx * 1.5),
+                  borderRadius: "50%",
+                  background: `rgba(180,160,130,${0.5 - idx * 0.12})`,
+                  animation: mounted
+                    ? `hint-breathe 2.8s ${delay}s ease-in-out infinite`
+                    : "none",
+                }}
+              />
+            ))}
           </div>
         </div>
       </div>
 
-      {/* ═══ Hero 占位符 ═══ */}
-      <div style={{ height: "100vh" }} aria-hidden="true" />
-
-      {/* ═══ 吸顶 Header ═══ */}
-      <HeroHeader
-        solarTerm={solarTerm}
-        shichen={shichen}
-        isSticky={isHeaderSticky}
-        avatarUrl={isLoggedIn && userInfo ? userInfo.avatar : undefined}
-        onAvatarClick={handleAvatarClick}
-      />
-
-      {/* ═══ 内容页：上滑覆盖 Hero ═══ */}
-      <section
-        className="relative"
+      {/* ═══ 五大主轴区域 — 竖向立轴碑面，一屏呈现 ═══ */}
+      <div
         style={{
-          background: BG_CONTENT_GRADIENT,
-          paddingBottom: "calc(var(--nav-height) + var(--spacing-xl))",
-          borderRadius: "calc(var(--rpx) * 28) calc(var(--rpx) * 28) 0 0",
+          position: "fixed",
+          inset: 0,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          opacity: isAxes ? 1 : 0,
+          transition: "opacity 1.2s ease",
+          pointerEvents: isAxes ? "auto" : "none",
           zIndex: 1,
         }}
       >
+        {/* 透明碑面容器 - 强化“厚玻璃/水晶”的立体感 */}
         <div
-          className="app-container"
-          style={{ padding: "var(--spacing-xl) var(--spacing-lg)" }}
+          style={{
+            position: "relative",
+            width: rpx(640), // 稍微加宽容纳内部阴影
+            background: "linear-gradient(150deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.15) 100%)",
+            borderTop: "1.5px solid rgba(255,255,255,0.9)", // 顶部迎光面极亮边缘
+            borderLeft: "1.5px solid rgba(255,255,255,0.7)", // 左侧迎光边缘
+            borderRight: "1px solid rgba(255,255,255,0.1)", // 右侧背光
+            borderBottom: "1px solid rgba(255,255,255,0.05)", // 底部背光
+            borderRadius: rpx(16), // 微圆角带来高级抛光感
+            // 核心：多层阴影堆叠形成立体“厚度”
+            // 1,2 层：悬浮感与环境光投影
+            // 3,4 层：玻璃内部的折射高光与暗角，形成物理厚度感
+            // 5 层：整体内部的磨砂微光
+            boxShadow: `
+              16px 32px 64px -10px rgba(0,0,0,0.08),
+              0 12px 32px rgba(196,178,148,0.08),
+              inset 3px 3px 6px rgba(255,255,255,0.8),
+              inset -3px -3px 8px rgba(0,0,0,0.04),
+              inset 0 0 30px rgba(255,255,255,0.4)
+            `,
+            backdropFilter: "blur(28px)",
+            WebkitBackdropFilter: "blur(28px)",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden", // 边缘裁剪，保持完美圆角
+          }}
         >
-          <DailyQuoteCalendar
-            onClick={handleWisdomClick}
-          />
-
-          <FeaturedCard
-            image={FEATURED.image}
-            title={FEATURED.title}
-            subtitle={FEATURED.subtitle}
-            onClick={handleFeaturedClick}
-          />
-
-          {HOME_SECTIONS.map((section) => (
-            <SectionBlock
-              key={section.id}
-              title={section.title}
-              subtitle={section.subtitle}
-              columns={section.columns}
-              aspectRatio={section.aspectRatio}
-              cards={section.cards}
-              onMore={() => handleSectionMore(section.id, section.title)}
-              onCardClick={handleContentCardClick}
+          {MAIN_AXES.map((axis, i) => (
+            <AxisSlab
+              key={axis.id}
+              axis={axis}
+              revealed={axesRevealed}
+              delay={i * 0.12}
+              isLast={i === MAIN_AXES.length - 1}
+              onClick={() => handleClick(axis)}
             />
           ))}
-
-          <AnnouncementCard
-            sectionTitle={ANNOUNCEMENT.sectionTitle}
-            title={ANNOUNCEMENT.title}
-            description={ANNOUNCEMENT.description}
-            onClick={handleAnnouncementClick}
-          />
         </div>
-      </section>
 
-      {/* 底部导航栏 */}
-      <BottomNavigation active={activeNav} onChange={handleNavChange} />
+        {/* 底部引导语 */}
+        <p
+          style={{
+            marginTop: rpx(48),
+            fontFamily: FONT_SERIF,
+            fontSize: rpx(20),
+            fontWeight: 300,
+            letterSpacing: rpx(4),
+            color: "rgba(26,25,24,0.12)",
+            textAlign: "center",
+            opacity: axesRevealed ? 1 : 0,
+            transition: "opacity 1.2s 0.8s ease",
+          }}
+        >
+          让思想归位，让生命在场
+        </p>
+      </div>
 
-      {/* 用户面板抽屉 */}
-      <UserDrawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        onLoginClick={() => {
-          setDrawerOpen(false);
-          onNavigateToLogin?.();
-        }}
-        isLoggedIn={isLoggedIn}
-        userInfo={userInfo}
-        onLogout={onLogout}
-      />
-
-      {/* 「开发中」温柔提示 */}
       <Toast
         message={toast.message}
         visible={toast.visible}
         duration={2200}
         onDismiss={toast.dismiss}
       />
+    </div>
+  );
+}
+
+/* ═══ 主轴横向刻石（Slab）组件 ═══ */
+function AxisSlab({
+  axis,
+  revealed,
+  delay,
+  isLast,
+  onClick,
+}: {
+  axis: (typeof MAIN_AXES)[number];
+  revealed: boolean;
+  delay: number;
+  isLast: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <div
+      className="axis-slab"
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      style={{
+        height: rpx(160),
+        position: "relative",
+        opacity: revealed ? 1 : 0,
+        transition: `opacity 0.8s ${delay}s ease, background 0.4s ease`,
+      }}
+      onPointerEnter={(e) => {
+        const el = e.currentTarget;
+        el.style.background = "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%)";
+      }}
+      onPointerLeave={(e) => {
+        const el = e.currentTarget;
+        el.style.background = "transparent";
+      }}
+    >
+      {/* 标题 - 强化冷峻的阴刻字感 */}
+      <span
+        style={{
+          display: "block",
+          fontFamily: FONT_SERIF,
+          fontSize: rpx(34),
+          fontWeight: 400,
+          color: "#1A1512", // 加深刻字对比度，体现冷峻
+          letterSpacing: rpx(10), // 更具碑文排布感
+          textAlign: "center",
+          textShadow: "0 1px 0 rgba(255,255,255,0.8), 0 0 1px rgba(0,0,0,0.1)", // 上方���暗，下方高亮，形成雕刻凹陷
+          lineHeight: 1.2,
+        }}
+      >
+        {axis.title}
+      </span>
+
+      {/* 副标题 */}
+      <span
+        style={{
+          display: "block",
+          marginTop: rpx(12),
+          fontSize: rpx(16),
+          fontWeight: 300,
+          color: "rgba(26,21,18,0.4)",
+          letterSpacing: rpx(3),
+          textAlign: "center",
+          lineHeight: 1.5,
+          textShadow: "0 1px 0 rgba(255,255,255,0.5)",
+        }}
+      >
+        {axis.subtitle}
+      </span>
+
+      {/* 隐式蚀刻分隔线 - 极简淡化，两端渐隐融入镜面 */}
+      {!isLast && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: "15%",
+            width: "70%",
+            height: "1px",
+            background: "linear-gradient(90deg, transparent, rgba(170,150,120,0.15) 30%, rgba(170,150,120,0.15) 70%, transparent)",
+            boxShadow: "0 1px 0 rgba(255,255,255,0.5)", // 底部白光描边，形成刻痕的高光
+            pointerEvents: "none",
+          }}
+        />
+      )}
     </div>
   );
 }

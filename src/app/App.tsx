@@ -2,30 +2,7 @@
  * 应用入口 - 元思想
  *
  * 简单状态路由：管理页面切换
- * 当前支持的页面：
- *   - home: 首页
- *   - handbook: 人类手册（听书学习主页）
- *   - book-detail: 书籍详情（章节列表）
- *   - chapter-player: 章节播放器（封面/文稿模式）
- *   - newlife: 新人生之路（课程+圈子主页）
- *   - circle: 新人生之路圈子（社区）
- *   - player: 音频播放页（从首页徐/止/定卡片进入）
- *   - article: 文章阅读页（从首页内容卡片进入）
- *   - podcast: 播客/故事详情页（从首页同行者的声音进入）
- *   - activity: 活动详情页（从首页正在发生的光点进入）
- *   - guide: 新人引导页
- *   - solar: 太阳系版引导页
- *   - breathing: 沉浸呼吸页
- *   - login: 登录页
- *
- * 转场策略：
- *   前进（home → 详情）: 上滑淡入
- *   返回（详情 → home）: 原地淡入
- *   Tab 切换（home ↔ handbook ↔ newlife）: 原地淡入（无方向感）
- *
- * 待后续 TARO 转换时替换为 TARO 路由系统
  */
-
 import { useState, useCallback, useRef } from "react";
 import { Home } from "./pages/Home";
 import { Handbook } from "./pages/Handbook";
@@ -326,18 +303,7 @@ export default function App() {
       default:
         return (
           <Home
-            onNavigateToPlayer={navigateToPlayer}
-            onNavigateToArticle={navigateToArticle}
-            onNavigateToPodcast={navigateToPodcast}
-            onNavigateToActivity={navigateToActivity}
-            onNavigateToGuide={navigateToGuide}
-            onNavigateToBreathing={navigateToBreathing}
-            onNavigateToLogin={navigateToLogin}
             onNavChange={handleNavChange}
-            restoreScrollY={homeScrollYRef.current}
-            isLoggedIn={!!userInfo}
-            userInfo={userInfo ?? undefined}
-            onLogout={() => setUserInfo(null)}
           />
         );
     }
