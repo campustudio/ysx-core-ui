@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>元思想平台 2.0 版本 - 模块架构思维导图</title>
+    <dateCreated>2026-03-25</dateCreated>
+  </head>
+  <body>
+    <outline text="元思想平台">
+      <outline text="平台定位：文明级、镜面级、碑感级的入口平台">
+        <outline text="核心定调：不要做&quot;疗愈空间&quot;，要做&quot;归位之镜&quot;"/>
+      </outline>
+      
+      <outline text="首页（镜）">
+        <outline text="品牌主名：元思想"/>
+        <outline text="穿透性总纲语言"/>
+        <outline text="五大主轴入口（镜碑式）"/>
+      </outline>
+      
+      <outline text="一、人类手册">
+        <outline text="定位：元思想思想体系核心载体"/>
+        <outline text="📖 电子书阅读">
+          <outline text="十部电子书列表"/>
+          <outline text="阅读器功能">
+            <outline text="章节导航"/>
+            <outline text="阅读进度记录"/>
+            <outline text="书签功能"/>
+            <outline text="字体大小调节（适配中老年用户）"/>
+            <outline text="夜间/日间模式"/>
+          </outline>
+          <outline text="阅读历史">
+            <outline text="继续阅读上次位置"/>
+          </outline>
+        </outline>
+        <outline text="🎧 音频课程">
+          <outline text="课程列表（与电子书章节对应）"/>
+          <outline text="音频播放器">
+            <outline text="播放/暂停"/>
+            <outline text="进度条拖动"/>
+            <outline text="倍速播放（0.5x/1x/1.5x/2x）"/>
+            <outline text="上一章/下一章"/>
+            <outline text="顺序播放/单曲循环"/>
+            <outline text="后台播放"/>
+          </outline>
+          <outline text="学习进度">
+            <outline text="已学习时长统计"/>
+            <outline text="章节完成状态"/>
+          </outline>
+        </outline>
+        <outline text="🛒 书籍购买入口（商城集成）">
+          <outline text="实体书购买"/>
+          <outline text="电子书付费解锁"/>
+        </outline>
+      </outline>
+      
+      <outline text="二、新人生之路">
+        <outline text="定位：学员学习与互动主阵地，取代小鹅通"/>
+        <outline text="🎧 课程学习（核心功能）">
+          <outline text="课程列表">
+            <outline text="课程封面"/>
+            <outline text="课程简介"/>
+            <outline text="章节数量"/>
+            <outline text="学习进度百分比"/>
+          </outline>
+          <outline text="课程详情页">
+            <outline text="章节列表"/>
+            <outline text="当前学习位置标记"/>
+            <outline text="继续学习按钮"/>
+          </outline>
+          <outline text="音频播放器"/>
+        </outline>
+        <outline text="💬 圈子（社区互动）">
+          <outline text="动态发布">
+            <outline text="文字动态"/>
+            <outline text="图片动态"/>
+            <outline text="音频/语音动态"/>
+          </outline>
+          <outline text="动态流浏览">
+            <outline text="最新动态"/>
+            <outline text="热门动态"/>
+            <outline text="关注的人"/>
+          </outline>
+          <outline text="互动功能">
+            <outline text="点赞"/>
+            <outline text="评论"/>
+            <outline text="分享"/>
+          </outline>
+        </outline>
+        <outline text="📢 动态/公告">
+          <outline text="官方公告"/>
+          <outline text="课程更新通知"/>
+          <outline text="活动预告"/>
+        </outline>
+        <outline text="📺 直播功能">
+          <outline text="直播预告"/>
+          <outline text="直播观看"/>
+          <outline text="直播回放"/>
+        </outline>
+        <outline text="🛒 课程购买入口（商城集成）"/>
+      </outline>
+      
+      <outline text="三、感知训练营">
+        <outline text="定位：线下感知特训课程入口"/>
+        <outline text="📋 课程介绍">
+          <outline text="训练营简介"/>
+          <outline text="课程内容大纲"/>
+          <outline text="导师介绍"/>
+          <outline text="往期学员反馈"/>
+        </outline>
+        <outline text="📅 期次安排">
+          <outline text="近期开班时间"/>
+          <outline text="地点信息"/>
+          <outline text="费用说明"/>
+          <outline text="人数限制"/>
+        </outline>
+        <outline text="✍️ 报名入口">
+          <outline text="在线报名表单"/>
+          <outline text="支付功能"/>
+          <outline text="报名状态查询"/>
+        </outline>
+        <outline text="👤 我的训练营">
+          <outline text="已报名课程"/>
+          <outline text="历史参与记录"/>
+          <outline text="证书/结业信息"/>
+        </outline>
+        <outline text="📸 往期回顾">
+          <outline text="图片集锦"/>
+          <outline text="学员分享"/>
+        </outline>
+      </outline>
+      
+      <outline text="四、元镜中心">
+        <outline text="定位：闭关修行体验入口"/>
+        <outline text="🏛️ 中心介绍">
+          <outline text="元镜中心理念"/>
+          <outline text="空间环境展示"/>
+          <outline text="地理位置"/>
+          <outline text="设施说明"/>
+        </outline>
+        <outline text="🧘 闭关项目">
+          <outline text="项目类型">
+            <outline text="短期闭关（3天/7天）"/>
+            <outline text="中期闭关（14天/21天）"/>
+            <outline text="长期闭关（定制）"/>
+          </outline>
+          <outline text="项目内容说明"/>
+          <outline text="费用与安排"/>
+        </outline>
+        <outline text="📅 档期预约">
+          <outline text="可预约时间段"/>
+          <outline text="在线预约"/>
+          <outline text="预约状态查询"/>
+        </outline>
+        <outline text="✍️ 报名/支付"/>
+        <outline text="📖 闭关指南">
+          <outline text="准备事项"/>
+          <outline text="注意事项"/>
+          <outline text="常见问题"/>
+        </outline>
+      </outline>
+      
+      <outline text="五、明镜">
+        <outline text="定位：AI对话助手，智能镜面"/>
+        <outline text="💬 AI对话">
+          <outline text="对话界面">
+            <outline text="消息输入"/>
+            <outline text="语音输入"/>
+            <outline text="流式响应显示"/>
+          </outline>
+          <outline text="对话历史">
+            <outline text="历史会话列表"/>
+            <outline text="会话内容查看"/>
+          </outline>
+          <outline text="对话设置">
+            <outline text="清空对话"/>
+          </outline>
+        </outline>
+        <outline text="🌟 觉醒引导">
+          <outline text="引导式问答"/>
+          <outline text="觉醒层级提示"/>
+        </outline>
+        <outline text="📊 个人洞察（后续扩展）">
+          <outline text="对话主题分析"/>
+          <outline text="成长轨迹"/>
+        </outline>
+      </outline>
+      
+      <outline text="通用底层能力">
+        <outline text="用户系统（微信OAuth）"/>
+        <outline text="商城支付（微信支付）">
+          <outline text="建议：内嵌到各模块，不独立"/>
+        </outline>
+        <outline text="消息通知（推送）"/>
+        <outline text="数据统计（埋点）"/>
+      </outline>
+      
+      <outline text="开发优先级">
+        <outline text="Phase 1（MVP）">
+          <outline text="用户模块（微信登录）"/>
+          <outline text="新人生之路 - 课程学习核心"/>
+          <outline text="明镜 - AI对话"/>
+        </outline>
+        <outline text="Phase 2">
+          <outline text="新人生之路 - 圈子/动态"/>
+          <outline text="人类手册 - 电子书+音频"/>
+          <outline text="商城/支付基础能力"/>
+        </outline>
+        <outline text="Phase 3">
+          <outline text="感知训练营 - 报名系统"/>
+          <outline text="元镜中心 - 预约系统"/>
+          <outline text="直播功能"/>
+          <outline text="消息通知系统"/>
+        </outline>
+      </outline>
+      
+      <outline text="待讨论事项">
+        <outline text="课程归属：跨模块还是严格分类？"/>
+        <outline text="圈子范围：只在新人生之路还是多模块？"/>
+        <outline text="直播频率：常态化还是活动性？"/>
+        <outline text="商城独立性：是否需要独立Tab？"/>
+        <outline text="用户中心入口：底部Tab还是右上角？"/>
+      </outline>
+    </outline>
+  </body>
+</opml>

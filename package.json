@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "build:deploy": "vite build && rm -rf deploy && mkdir -p deploy/app && cp showcase.html deploy/index.html && cp -r dist/* deploy/app/ && cp -r public/* deploy/",
+    "build:deploy": "vite build && rm -rf deploy && mkdir -p deploy/app && cp showcase.html deploy/index.html && cp -r dist/* deploy/app/",
     "dev": "vite"
   },
   "dependencies": {
