@@ -6,7 +6,7 @@
 
 ## 一、项目概览
 
-**元思想**是一个身心成长平台，React + Tailwind CSS 开发。
+**元思想**React + Tailwind CSS 开发。
 
 **技术定位**：
 

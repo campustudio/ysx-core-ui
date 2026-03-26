@@ -1188,9 +1188,9 @@ pnpm build:deploy
 
 ```bash
 # 微信公众号测试号配置
-WX_APPID=你的测试号appID
-WX_APPSECRET=你的测试号appsecret
-WX_TOKEN=你设置的Token
+WX_APPID=wx61079aa3f7c3bd14
+WX_APPSECRET=bcd7cf4323a9bbeb66a3ff776c74e76e
+WX_TOKEN=2f020c61662b855301d48de05350c72a
 ```
 
 重启后端服务：

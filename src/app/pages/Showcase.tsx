@@ -33,11 +33,36 @@ const SANS =
 // ─── 色板数据 ─────────────────────────────────────────
 
 const COLOR_PALETTE = [
-  { name: "琥珀金", hex: "#C49A6C", desc: "智慧之光 · 主色调", textDark: false },
-  { name: "鼠尾草绿", hex: "#8BAA7D", desc: "自然生长 · 辅助色", textDark: false },
-  { name: "绢轴底色", hex: "#F0E4CE", desc: "古纸温暖 · 背景色", textDark: true },
-  { name: "暖棕文字", hex: "#3A3028", desc: "温和可读 · 正文色", textDark: false },
-  { name: "薰衣草", hex: "#B4A0C8", desc: "宁静安定 · 点缀色", textDark: false },
+  {
+    name: "琥珀金",
+    hex: "#C49A6C",
+    desc: "智慧之光 · 主色调",
+    textDark: false,
+  },
+  {
+    name: "鼠尾草绿",
+    hex: "#8BAA7D",
+    desc: "自然生长 · 辅助色",
+    textDark: false,
+  },
+  {
+    name: "绢轴底色",
+    hex: "#F0E4CE",
+    desc: "古纸温暖 · 背景色",
+    textDark: true,
+  },
+  {
+    name: "暖棕文字",
+    hex: "#3A3028",
+    desc: "温和可读 · 正文色",
+    textDark: false,
+  },
+  {
+    name: "薰衣草",
+    hex: "#B4A0C8",
+    desc: "宁静安定 · 点缀色",
+    textDark: false,
+  },
   { name: "奶油白", hex: "#FAF7F2", desc: "柔和包容 · 底色", textDark: true },
 ];
 
@@ -134,7 +159,7 @@ const FEATURES = [
   {
     num: "03",
     title: "内容引导",
-    desc: "精心策划的文章、音频与练习指南，从\"为什么焦虑\"到\"如何回到当下\"，陪伴你走过每一步",
+    desc: '精心策划的文章、音频与练习指南，从"为什么焦虑"到"如何回到当下"，陪伴你走过每一步',
   },
   {
     num: "04",
@@ -159,7 +184,7 @@ function useInView(threshold = 0.15) {
           observer.unobserve(el);
         }
       },
-      { threshold }
+      { threshold },
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -293,7 +318,9 @@ function MockupStyles() {
 
 function PhoneMockup() {
   return (
-    <div style={{ position: "relative", width: 320, height: 650, flexShrink: 0 }}>
+    <div
+      style={{ position: "relative", width: 320, height: 650, flexShrink: 0 }}
+    >
       <MockupStyles />
       {/* 手机外框 */}
       <div
@@ -563,50 +590,52 @@ function PhoneMockup() {
                     willChange: "transform, opacity",
                   }}
                 >
-                {/* 文字容器 — 反向补偿缩放，文字大小视觉恒定 */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 5,
-                    animation: "mockTextCompensate 8s ease-in-out infinite",
-                    willChange: "transform",
-                  }}
-                >
-                  <span
+                  {/* 文字容器 — 反向补偿缩放，文字大小视觉恒定 */}
+                  <div
                     style={{
-                      fontFamily: SERIF,
-                      fontSize: 14,
-                      fontWeight: 400,
-                      textShadow: "0 1px 10px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.2)",
-                      animation: "mockHighlightIn 8s ease-in-out infinite",
-                      lineHeight: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                      animation: "mockTextCompensate 8s ease-in-out infinite",
+                      willChange: "transform",
                     }}
                   >
-                    收
-                  </span>
-                  <span
-                    style={{
-                      width: 1,
-                      height: 9,
-                      background: "rgba(255,255,255,0.3)",
-                      flexShrink: 0,
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontFamily: SERIF,
-                      fontSize: 14,
-                      fontWeight: 400,
-                      textShadow: "0 1px 10px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.2)",
-                      animation: "mockHighlightOut 8s ease-in-out infinite",
-                      lineHeight: 1,
-                    }}
-                  >
-                    清
-                  </span>
+                    <span
+                      style={{
+                        fontFamily: SERIF,
+                        fontSize: 14,
+                        fontWeight: 400,
+                        textShadow:
+                          "0 1px 10px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.2)",
+                        animation: "mockHighlightIn 8s ease-in-out infinite",
+                        lineHeight: 1,
+                      }}
+                    >
+                      收
+                    </span>
+                    <span
+                      style={{
+                        width: 1,
+                        height: 9,
+                        background: "rgba(255,255,255,0.3)",
+                        flexShrink: 0,
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontFamily: SERIF,
+                        fontSize: 14,
+                        fontWeight: 400,
+                        textShadow:
+                          "0 1px 10px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.2)",
+                        animation: "mockHighlightOut 8s ease-in-out infinite",
+                        lineHeight: 1,
+                      }}
+                    >
+                      清
+                    </span>
+                  </div>
                 </div>
-              </div>
               </div>
             </div>
 
@@ -811,7 +840,7 @@ function PhoneMockup() {
                     }}
                     strokeWidth={i === 0 ? 1.8 : 1.5}
                   />
-                )
+                ),
               )}
             </div>
           </div>
@@ -825,7 +854,9 @@ function PhoneMockup() {
 
 function PhoneMockupContent() {
   return (
-    <div style={{ position: "relative", width: 320, height: 650, flexShrink: 0 }}>
+    <div
+      style={{ position: "relative", width: 320, height: 650, flexShrink: 0 }}
+    >
       <div
         style={{
           position: "absolute",
@@ -1144,8 +1175,16 @@ function PhoneMockupContent() {
               {/* 两列卡片 — 与 ContentCard 实际结构一致：图片 + 下方文字（无背景框） */}
               <div style={{ display: "flex", gap: 6 }}>
                 {[
-                  { title: "为什么越努力反而越焦虑", sub: "【人生十字】周末生活的情感探索", img: PLACEHOLDER_IMAGES.a },
-                  { title: "为什么你总感觉不够好", sub: "【暇思空间】把理想追求当作锚点", img: PLACEHOLDER_IMAGES.b },
+                  {
+                    title: "为什么越努力反而越焦虑",
+                    sub: "【人生十字】周末生活的情感探索",
+                    img: PLACEHOLDER_IMAGES.a,
+                  },
+                  {
+                    title: "为什么你总感觉不够好",
+                    sub: "【暇思空间】把理想追求当作锚点",
+                    img: PLACEHOLDER_IMAGES.b,
+                  },
                 ].map((card, i) => (
                   <div key={i} style={{ flex: 1 }}>
                     {/* 图片 — 16:9 宽幅 */}
@@ -1158,7 +1197,15 @@ function PhoneMockupContent() {
                         marginBottom: 4,
                       }}
                     >
-                      <img src={card.img} alt={card.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      <img
+                        src={card.img}
+                        alt={card.title}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
                     </div>
                     {/* 文字 — 左对齐，自然换行 */}
                     <div
@@ -1253,7 +1300,15 @@ function PhoneMockupContent() {
                         marginBottom: 4,
                       }}
                     >
-                      <img src={card.img} alt={card.t} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      <img
+                        src={card.img}
+                        alt={card.t}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                        }}
+                      />
                     </div>
                     <div
                       style={{
@@ -1273,7 +1328,11 @@ function PhoneMockupContent() {
                         textAlign: "left",
                       }}
                     >
-                      {i === 0 ? "5分钟·呼吸引导" : i === 1 ? "5-10分钟·聚焦感" : "5分钟"}
+                      {i === 0
+                        ? "5分钟·呼吸引导"
+                        : i === 1
+                          ? "5-10分钟·聚焦感"
+                          : "5分钟"}
                     </div>
                   </div>
                 ))}
@@ -1296,20 +1355,18 @@ function PhoneMockupContent() {
               borderRadius: "0 0 40px 40px",
             }}
           >
-            {[PavilionIcon, ScrollIcon, BaguaIcon, TaijiIcon].map(
-              (Icon, i) => (
-                <Icon
-                  key={i}
-                  style={{
-                    width: 20,
-                    height: 20,
-                    color: i === 0 ? "white" : "rgba(255,255,255,0.6)",
-                    filter: "drop-shadow(0 0 0.3px currentColor)",
-                  }}
-                  strokeWidth={i === 0 ? 1.8 : 1.5}
-                />
-              )
-            )}
+            {[PavilionIcon, ScrollIcon, BaguaIcon, TaijiIcon].map((Icon, i) => (
+              <Icon
+                key={i}
+                style={{
+                  width: 20,
+                  height: 20,
+                  color: i === 0 ? "white" : "rgba(255,255,255,0.6)",
+                  filter: "drop-shadow(0 0 0.3px currentColor)",
+                }}
+                strokeWidth={i === 0 ? 1.8 : 1.5}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -1355,7 +1412,8 @@ export function Showcase() {
             width: 600,
             height: 600,
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(196,154,108,0.08) 0%, transparent 70%)",
+            background:
+              "radial-gradient(circle, rgba(196,154,108,0.08) 0%, transparent 70%)",
             pointerEvents: "none",
           }}
         />
@@ -1367,7 +1425,8 @@ export function Showcase() {
             width: 500,
             height: 500,
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(139,170,125,0.06) 0%, transparent 70%)",
+            background:
+              "radial-gradient(circle, rgba(139,170,125,0.06) 0%, transparent 70%)",
             pointerEvents: "none",
           }}
         />
@@ -1437,7 +1496,7 @@ export function Showcase() {
               元思想
             </h1>
 
-            <p
+            {/* <p
               style={{
                 fontFamily: SERIF,
                 fontSize: 22,
@@ -1449,7 +1508,7 @@ export function Showcase() {
               }}
             >
               身心成长平台
-            </p>
+            </p> */}
 
             <p
               style={{
@@ -1626,11 +1685,13 @@ export function Showcase() {
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.transform = "translateY(-4px)";
-                  e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.08)";
+                  e.currentTarget.style.boxShadow =
+                    "0 8px 32px rgba(0,0,0,0.08)";
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "0 4px 24px rgba(0,0,0,0.04)";
+                  e.currentTarget.style.boxShadow =
+                    "0 4px 24px rgba(0,0,0,0.04)";
                 }}
               >
                 <div
@@ -1683,7 +1744,8 @@ export function Showcase() {
                         width: 4,
                         height: 4,
                         borderRadius: "50%",
-                        background: dot === i ? item.color : "rgba(58,48,40,0.12)",
+                        background:
+                          dot === i ? item.color : "rgba(58,48,40,0.12)",
                       }}
                     />
                   ))}
@@ -1723,11 +1785,13 @@ export function Showcase() {
                   }}
                   onMouseEnter={(e) => {
                     e.currentTarget.style.transform = "translateY(-4px)";
-                    e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.08)";
+                    e.currentTarget.style.boxShadow =
+                      "0 8px 32px rgba(0,0,0,0.08)";
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.boxShadow = "0 4px 24px rgba(0,0,0,0.04)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 24px rgba(0,0,0,0.04)";
                   }}
                 >
                   <div
@@ -1806,7 +1870,8 @@ export function Showcase() {
             width: 400,
             height: 400,
             borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(196,154,108,0.06) 0%, transparent 70%)",
+            background:
+              "radial-gradient(circle, rgba(196,154,108,0.06) 0%, transparent 70%)",
             pointerEvents: "none",
           }}
         />
@@ -2122,10 +2187,7 @@ export function Showcase() {
                       color: "#3A3028",
                     }}
                   >
-                    <Icon
-                      style={{ width: 32, height: 32 }}
-                      strokeWidth={1.3}
-                    />
+                    <Icon style={{ width: 32, height: 32 }} strokeWidth={1.3} />
                   </div>
                   <div
                     style={{

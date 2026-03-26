@@ -93,6 +93,10 @@ export function NewLifePath({ onNavChange, onNavigateToCircle }: NewLifePathProp
         onNavChange?.(index);
         return;
       }
+      if (index === 3) {
+        onNavChange?.(index);
+        return;
+      }
       toast.show(`「${NAV_LABELS[index]}」正在用心打磨中，敬请期待`);
     },
     [onNavChange, toast]

@@ -1,7 +1,7 @@
 {
-  "name": "元思想平台",
+  "name": "元思想",
   "short_name": "元思想",
-  "description": "身心成长平台 - 用温暖的方式陪伴你慢下来、停下来、静下来",
+  "description": "用温暖的方式陪伴你慢下来、停下来、静下来",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F5F0E8",

@@ -105,11 +105,15 @@ export function Toast({
         <div
           className="pointer-events-auto"
           style={{
-            padding: `${rpx(20)} ${rpx(40)}`,
-            background: "rgba(60, 50, 38, 0.88)",
-            borderRadius: rpx(40),
+            padding: `${rpx(28)} ${rpx(48)}`,
+            // 完全融入现在的“冷米白、厚水晶”风格：微透明的霜白色玻璃质感
+            background: "rgba(255, 255, 255, 0.85)",
+            borderRadius: rpx(60),
+            // 更柔和、更大范围的浅色弥散阴影，以及边缘的微微高光和蚀刻感
             boxShadow:
-              "0 4px 20px rgba(0,0,0,0.12), 0 0 0 1px rgba(196,154,108,0.2)",
+              "0 12px 32px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.03), inset 0 1px 2px rgba(255,255,255,0.9), 0 0 0 1px rgba(230,230,235,0.5)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
             animation: exiting
               ? "meta-toast-out 0.28s ease-in forwards"
               : "meta-toast-in 0.32s cubic-bezier(0.25,0.1,0.25,1) both",
@@ -120,10 +124,11 @@ export function Toast({
           <span
             style={{
               fontFamily: FONT_SERIF,
-              fontSize: rpx(26),
+              fontSize: rpx(28),
               fontWeight: 400,
-              color: "#F0E4CE",
-              letterSpacing: rpx(1),
+              // 与碑面阴刻文字相同的深灰色，而不是反白的刺眼文字
+              color: "#1A1512",
+              letterSpacing: rpx(2),
               lineHeight: 1.5,
               wordBreak: "break-word",
             }}

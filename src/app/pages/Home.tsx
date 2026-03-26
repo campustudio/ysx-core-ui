@@ -18,11 +18,36 @@ import { useToast } from "../hooks/useToast";
 
 /* ═══ 五大主轴数据 ═══ */
 const MAIN_AXES = [
-  { id: "handbook", title: "人类手册", subtitle: "重新认识生命的底层逻辑", navIndex: 1 },
-  { id: "newlife", title: "新人生之路", subtitle: "从现状出发，一步步走向真实", navIndex: 2 },
-  { id: "voices", title: "感知者的声音", subtitle: "聆听真实的生命频率", navIndex: -1 },
-  { id: "circle", title: "元思想圈子", subtitle: "共鸣与同频的汇聚地", navIndex: -1 },
-  { id: "profile", title: "个人空间", subtitle: "记录你的归位旅程", navIndex: -1 },
+  {
+    id: "handbook",
+    title: "人类手册",
+    subtitle: "重新认识生命的底层逻辑",
+    navIndex: 1,
+  },
+  {
+    id: "newlife",
+    title: "新人生之路",
+    subtitle: "从现状出发，一步步走向真实",
+    navIndex: 2,
+  },
+  {
+    id: "bootcamp",
+    title: "感知训练营",
+    subtitle: "在实践中唤醒生命觉知",
+    navIndex: -1,
+  },
+  {
+    id: "mirror_center",
+    title: "元镜中心",
+    subtitle: "照见自我，校准生命频率",
+    navIndex: -1,
+  },
+  {
+    id: "bright_mirror",
+    title: "明镜",
+    subtitle: "澄澈通透的智慧映照",
+    navIndex: 3,
+  },
 ];
 
 /**
@@ -47,7 +72,15 @@ interface HomeProps {
   onLogout?: () => void;
 }
 
-export function Home({ onNavChange }: HomeProps) {
+export function Home({
+  onNavChange,
+  // 真实登录状态由 App.tsx 通过 useUserStore 传入
+  // 未登录时 isLoggedIn=false，不显示用户头像区域
+  isLoggedIn = false,
+  userInfo,
+  onLogout,
+  onNavigateToLogin,
+}: HomeProps) {
   const toast = useToast();
   const [phase, setPhase] = useState<"brand" | "axes">("brand");
   const [mounted, setMounted] = useState(false);
@@ -55,27 +88,35 @@ export function Home({ onNavChange }: HomeProps) {
 
   /* 品牌阶段初始化 */
   useEffect(() => {
-    if ('scrollRestoration' in history) {
-      history.scrollRestoration = 'manual';
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
     }
     window.scrollTo(0, 0);
     const t1 = setTimeout(() => setMounted(true), 50);
-    return () => { clearTimeout(t1); };
+    return () => {
+      clearTimeout(t1);
+    };
   }, []);
 
   /* 3s后切换到主轴阶段 */
   useEffect(() => {
     const t1 = setTimeout(() => setPhase("axes"), 3000);
     const t2 = setTimeout(() => setAxesRevealed(true), 3600);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
   const handleClick = useCallback(
     (axis: (typeof MAIN_AXES)[number]) => {
-      if (axis.navIndex >= 0) onNavChange?.(axis.navIndex);
-      else toast.show(`「${axis.title}」正在精心筹备中，敬请期待`);
+      if (axis.navIndex >= 0) {
+        onNavChange?.(axis.navIndex);
+      } else {
+        toast.show(`「${axis.title}」正在精心筹备中，敬请期待`);
+      }
     },
-    [onNavChange, toast]
+    [onNavChange, toast],
   );
 
   const isAxes = phase === "axes";
@@ -84,7 +125,8 @@ export function Home({ onNavChange }: HomeProps) {
     <div
       style={{
         height: "100vh",
-        background: "radial-gradient(circle at 50% 30%, #FFFFFF 0%, #F5F5F7 50%, #EAEBEF 100%)",
+        background:
+          "radial-gradient(circle at 50% 30%, #FFFFFF 0%, #F5F5F7 50%, #EAEBEF 100%)",
         position: "relative",
         overflow: "hidden",
       }}
@@ -131,7 +173,8 @@ export function Home({ onNavChange }: HomeProps) {
           transform: "translateX(-50%)",
           width: "1px",
           height: "100vh",
-          background: "linear-gradient(180deg, transparent 5%, rgba(196,178,148,0.06) 30%, rgba(196,178,148,0.12) 50%, rgba(196,178,148,0.06) 70%, transparent 95%)",
+          background:
+            "linear-gradient(180deg, transparent 5%, rgba(196,178,148,0.06) 30%, rgba(196,178,148,0.12) 50%, rgba(196,178,148,0.06) 70%, transparent 95%)",
           pointerEvents: "none",
           zIndex: 0,
         }}
@@ -162,7 +205,8 @@ export function Home({ onNavChange }: HomeProps) {
             margin: 0,
             lineHeight: 1,
             letterSpacing: rpx(14),
-            textShadow: "0 1px 0 rgba(255,255,255,0.7), 0 -0.5px 0 rgba(0,0,0,0.04)",
+            textShadow:
+              "0 1px 0 rgba(255,255,255,0.7), 0 -0.5px 0 rgba(0,0,0,0.04)",
             opacity: mounted ? 1 : 0,
             transition: "opacity 2s ease",
           }}
@@ -176,7 +220,8 @@ export function Home({ onNavChange }: HomeProps) {
             width: rpx(70),
             height: "1px",
             margin: `${rpx(28)} 0`,
-            background: "linear-gradient(90deg, transparent, rgba(186,170,140,0.3), transparent)",
+            background:
+              "linear-gradient(90deg, transparent, rgba(186,170,140,0.3), transparent)",
             opacity: mounted ? 1 : 0,
             transition: "opacity 2s ease",
           }}
@@ -218,11 +263,21 @@ export function Home({ onNavChange }: HomeProps) {
             style={{
               width: rpx(200),
               height: "1px",
-              background: "linear-gradient(90deg, transparent, rgba(180,160,130,0.35), transparent)",
-              animation: mounted ? "hint-breathe 2.8s ease-in-out infinite" : "none",
+              background:
+                "linear-gradient(90deg, transparent, rgba(180,160,130,0.35), transparent)",
+              animation: mounted
+                ? "hint-breathe 2.8s ease-in-out infinite"
+                : "none",
             }}
           />
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: rpx(16) }}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: rpx(16),
+            }}
+          >
             {[0, 0.5, 1.0].map((delay, idx) => (
               <div
                 key={idx}
@@ -261,7 +316,8 @@ export function Home({ onNavChange }: HomeProps) {
           style={{
             position: "relative",
             width: rpx(640), // 稍微加宽容纳内部阴影
-            background: "linear-gradient(150deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.15) 100%)",
+            background:
+              "linear-gradient(150deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.15) 100%)",
             borderTop: "1.5px solid rgba(255,255,255,0.9)", // 顶部迎光面极亮边缘
             borderLeft: "1.5px solid rgba(255,255,255,0.7)", // 左侧迎光边缘
             borderRight: "1px solid rgba(255,255,255,0.1)", // 右侧背光
@@ -282,7 +338,7 @@ export function Home({ onNavChange }: HomeProps) {
             WebkitBackdropFilter: "blur(28px)",
             display: "flex",
             flexDirection: "column",
-            overflow: "hidden", // 边缘裁剪，保持完美圆角
+            overflow: "hidden", // 边缘裁���，保持完美圆角
           }}
         >
           {MAIN_AXES.map((axis, i) => (
@@ -314,6 +370,75 @@ export function Home({ onNavChange }: HomeProps) {
           让思想归位，让生命在场
         </p>
       </div>
+
+      {/* ═══ 用户身份区（右上角浮窗） ═══ */}
+      {isLoggedIn && userInfo && (
+        <div
+          style={{
+            position: "fixed",
+            top: rpx(48),
+            right: rpx(48),
+            display: "flex",
+            alignItems: "center",
+            gap: rpx(10),
+            padding: `${rpx(6)} ${rpx(20)} ${rpx(6)} ${rpx(6)}`,
+            // 材质上与中间的“厚水晶碑”呼应，但更轻薄悬浮
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 100%)",
+            boxShadow:
+              "0 8px 24px rgba(0,0,0,0.03), inset 0 1px 2px rgba(255,255,255,0.8)",
+            borderRadius: rpx(40),
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            opacity: axesRevealed ? 1 : 0, // 与主轴同步淡入，不打扰前3秒的品牌展示
+            transition: "opacity 1.2s 0.8s ease, transform 0.3s ease",
+            zIndex: 10,
+            cursor: "pointer",
+            pointerEvents: axesRevealed ? "auto" : "none",
+          }}
+          onClick={() => {
+            // “个人中心”独立于5大主轴和底部4大导航
+            toast.show("个人中心正在精心筹备中");
+          }}
+          onPointerEnter={(e) => {
+            e.currentTarget.style.transform = "scale(1.02)";
+            e.currentTarget.style.background =
+              "linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.3) 100%)";
+          }}
+          onPointerLeave={(e) => {
+            e.currentTarget.style.transform = "scale(1)";
+            e.currentTarget.style.background =
+              "linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 100%)";
+          }}
+        >
+          {/* 头像：带有微白边光环，融入整体的镜面质感 */}
+          <img
+            src={userInfo.avatar}
+            alt="User Avatar"
+            style={{
+              width: rpx(36),
+              height: rpx(36),
+              borderRadius: "50%",
+              objectFit: "cover",
+              border: "1.5px solid rgba(255,255,255,0.9)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+            }}
+          />
+          {/* 名字：延续阴刻宋体字 */}
+          <span
+            style={{
+              fontFamily: FONT_SERIF,
+              fontSize: rpx(16),
+              fontWeight: 400,
+              color: "#1A1512",
+              letterSpacing: rpx(2),
+              textShadow: "0 1px 0 rgba(255,255,255,0.8)",
+            }}
+          >
+            {userInfo.name}
+          </span>
+        </div>
+      )}
 
       <Toast
         message={toast.message}
@@ -353,7 +478,8 @@ function AxisSlab({
       }}
       onPointerEnter={(e) => {
         const el = e.currentTarget;
-        el.style.background = "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%)";
+        el.style.background =
+          "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%)";
       }}
       onPointerLeave={(e) => {
         const el = e.currentTarget;
@@ -403,7 +529,8 @@ function AxisSlab({
             left: "15%",
             width: "70%",
             height: "1px",
-            background: "linear-gradient(90deg, transparent, rgba(170,150,120,0.15) 30%, rgba(170,150,120,0.15) 70%, transparent)",
+            background:
+              "linear-gradient(90deg, transparent, rgba(170,150,120,0.15) 30%, rgba(170,150,120,0.15) 70%, transparent)",
             boxShadow: "0 1px 0 rgba(255,255,255,0.5)", // 底部白光描边，形成刻痕的高光
             pointerEvents: "none",
           }}
