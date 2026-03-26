@@ -1118,38 +1118,189 @@ curl https://api.metamindpt.com/docs
 
 ---
 
-#### 阶段4：前端集成
+#### 阶段4：前端集成（Core UI + 微信公众号）
 
-##### 4.1 修改前端API地址
+> **背景说明**：
+>
+> - **Core UI** (ysx-core-ui)：元思想前端，部署在阿里云 www.metamindpt.com
+> - **明镜前端**：仍在 Vercel，暂不处理
+> - **阿里云后端** (api.metamindpt.com)：明镜后端迁移至阿里云，为 Core UI 提供服务
+>
+> **本阶段目标**：在微信公众号测试号中集成 Core UI，实现微信用户身份同步
 
-需要修改前端项目中的API基础地址，从Vercel改为阿里云：
+---
 
-**找到前端配置文件**（通常在）：
+##### 4.1 Core UI 与阿里云后端集成
 
-- `.env` 或 `.env.production`
-- `src/config.js` 或类似文件
+**4.1.1 配置 API 地址**
 
-**修改为**：
-
-```
-API_BASE_URL=https://api.metamindpt.com
-```
-
-##### 4.2 前端打包部署
+在 Core UI 项目中创建/修改环境配置：
 
 ```bash
-# 在本地前端项目目录执行
-npm run build
-
-# 将dist目录上传到www.metamindpt.com服务器
+# /Users/chrisdu/ysx-core-ui/.env.production
+VITE_API_BASE_URL=https://api.metamindpt.com
 ```
 
-##### 4.3 端到端测试
+**4.1.2 前端 API 调用封装**
 
-1. 访问 https://www.metamindpt.com
-2. 测试登录功能
-3. 测试AI对话功能
-4. 检查浏览器开发者工具Network面板，确认API请求指向 api.metamindpt.com
+确保前端 API 模块使用环境变量：
+
+```typescript
+// src/app/config/api.ts
+export const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "https://api.metamindpt.com";
+```
+
+**4.1.3 打包部署**
+
+```bash
+# 在 ysx-core-ui 目录执行
+pnpm build:deploy
+
+# 将 deploy 目录上传到阿里云服务器 www.metamindpt.com
+```
+
+---
+
+##### 4.2 微信公众号测试号配置
+
+**4.2.1 获取测试号信息**
+
+1. 访问 [微信公众平台测试号](https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login)
+2. 扫码登录，获取：
+   - **appID**：测试号的 appID
+   - **appsecret**：测试号的 appsecret
+
+**4.2.2 配置接口信息**
+
+在测试号管理页面配置：
+
+| 配置项             | 值                                       |
+| ------------------ | ---------------------------------------- |
+| **接口配置URL**    | `https://api.metamindpt.com/wx/callback` |
+| **Token**          | 自定义一个安全字符串，需与后端一致       |
+| **JS接口安全域名** | `www.metamindpt.com`                     |
+| **网页授权域名**   | `www.metamindpt.com`                     |
+
+**4.2.3 后端环境变量配置**
+
+在阿里云服务器 `/home/ubuntu/mingjing-fastapi-proxy/.env` 添加：
+
+```bash
+# 微信公众号测试号配置
+WX_APPID=你的测试号appID
+WX_APPSECRET=你的测试号appsecret
+WX_TOKEN=你设置的Token
+```
+
+重启后端服务：
+
+```bash
+sudo systemctl restart mingjing-backend
+```
+
+---
+
+##### 4.3 微信用户身份同步流程
+
+**流程概述**：
+
+```
+用户在微信中打开链接
+       ↓
+微信授权页面（获取 code）
+       ↓
+前端携带 code 调用后端
+       ↓
+后端用 code 换取 access_token + openid
+       ↓
+后端创建/更新用户记录，返回 JWT
+       ↓
+前端保存 JWT，后续请求携带
+```
+
+**4.3.1 前端：微信授权入口**
+
+```typescript
+// src/app/hooks/useWxAuth.ts
+const WX_APPID = "your_test_appid";
+const REDIRECT_URI = encodeURIComponent(
+  "https://www.metamindpt.com/auth/callback",
+);
+
+export function redirectToWxAuth() {
+  const authUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${WX_APPID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect`;
+  window.location.href = authUrl;
+}
+```
+
+**4.3.2 前端：授权回调处理**
+
+```typescript
+// src/app/pages/AuthCallback.tsx
+// 从 URL 获取 code，调用后端换取用户信息
+const code = new URLSearchParams(window.location.search).get("code");
+if (code) {
+  const response = await fetch(`${API_BASE_URL}/auth/wx/login?code=${code}`);
+  const { token, user } = await response.json();
+  localStorage.setItem("token", token);
+  // 跳转到首页
+}
+```
+
+**4.3.3 后端：微信登录接口**
+
+后端需实现 `/auth/wx/login` 接口：
+
+1. 用 code 调用微信 API 获取 access_token 和 openid
+2. 用 access_token 获取用户信息（昵称、头像等）
+3. 创建或更新用户记录
+4. 生成 JWT 返回给前端
+
+---
+
+##### 4.4 端到端测试验证
+
+**测试环境**：微信公众号测试号 + Core UI + 阿里云后端
+
+**验证步骤**：
+
+1. **在测试号中添加测试用户**
+   - 扫描测试号二维码关注
+2. **发送测试链接**
+   - 在测试号中发送消息包含链接：`https://www.metamindpt.com`
+   - 或配置自定义菜单跳转
+
+3. **验证微信授权流程**
+   - 点击链接，应跳转到微信授权页面
+   - 同意授权后，跳转回 Core UI
+   - 检查是否成功获取用户信息
+
+4. **验证用户身份同步**
+   - 检查后端数据库是否创建了用户记录
+   - 确认 openid、昵称、头像等信息已保存
+
+5. **验证 API 连通性**
+   - 打开浏览器开发者工具 Network 面板
+   - 确认 API 请求指向 `api.metamindpt.com`
+   - 确认请求携带正确的 JWT Token
+
+**预期结果**：
+
+- [ ] 微信授权流程正常跳转
+- [ ] 用户信息成功同步到后端
+- [ ] 前端能正常调用后端 API
+- [ ] 用户登录状态正确保持
+
+---
+
+##### 4.5 后续步骤
+
+验证通过后：
+
+1. **正式公众号集成**：将测试号配置迁移到正式公众号
+2. **V0.1 版本上线**：完成正式环境部署验证
+3. **课程功能开发**：在用户体系基础上开发业务功能
 
 ---
 
