@@ -147,7 +147,7 @@ export function LogoPreviewPage({ onBack }: LogoPreviewPageProps) {
 
       <div style={{ textAlign: "center", marginBottom: "4rem" }}>
         <h1 style={{ fontSize: "28px", color: "#111", marginBottom: "1rem" }}>Logo 视觉实验室</h1>
-        <p style={{ color: "#666", maxWidth: "600px", margin: "0 auto", lineHeight: "1.6" }}>
+        <p className="px-6" style={{ color: "#666", maxWidth: "600px", margin: "0 auto", lineHeight: "1.6" }}>
           在这里您可以放大查看 Logo 的每一处细节。
           所有版本均统一应用了“玻璃折射+石刻凹陷”的材质滤镜，并统一固定了“感知星芒”的对称坐标点。
         </p>
@@ -157,11 +157,10 @@ export function LogoPreviewPage({ onBack }: LogoPreviewPageProps) {
         
         {/* 1. 原始基底版 (同色系石刻) */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%", maxWidth: "800px" }}>
-          <h2 style={{ fontSize: "20px", color: "#333", marginBottom: "2rem", letterSpacing: "2px" }}>1. 原始基底版 (同色系石刻)</h2>
-          <div style={{ display: "flex", gap: "4rem", flexWrap: "nowrap", justifyContent: "center", padding: "2rem", width: "100%", overflowX: "auto" }}>
+          <h2 className="text-center px-4" style={{ fontSize: "20px", color: "#333", marginBottom: "2rem", letterSpacing: "2px" }}>1. 原始基底版 (同色系石刻)</h2>
+          <div className="flex flex-col md:flex-row gap-8 md:gap-16 justify-center items-center w-full px-4 md:px-8">
             {/* 方形大图 */}
-            <div style={{ 
-              padding: "40px", 
+            <div className="p-6 md:p-10" style={{ 
               backgroundColor: "#F5F5F7", 
               borderRadius: "40px", 
               boxShadow: "inset 8px 8px 20px rgba(0,0,0,0.06), inset -8px -8px 20px rgba(255,255,255,1), 4px 4px 15px rgba(0,0,0,0.05)" 
@@ -169,8 +168,7 @@ export function LogoPreviewPage({ onBack }: LogoPreviewPageProps) {
               <MetaLogo size={240} variant="engraved" />
             </div>
             {/* 圆形大图 */}
-            <div style={{ 
-              padding: "40px", 
+            <div className="p-6 md:p-10" style={{ 
               backgroundColor: "#F5F5F7", 
               borderRadius: "50%", 
               boxShadow: "inset 8px 8px 20px rgba(0,0,0,0.06), inset -8px -8px 20px rgba(255,255,255,1), 4px 4px 15px rgba(0,0,0,0.05)" 
@@ -188,11 +186,10 @@ export function LogoPreviewPage({ onBack }: LogoPreviewPageProps) {
 
         {/* 2. 高维发光金版 */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%", maxWidth: "800px" }}>
-          <h2 style={{ fontSize: "20px", color: "#D4A353", marginBottom: "2rem", letterSpacing: "2px" }}>2. 高维能量版 (发光金)</h2>
-          <div style={{ display: "flex", gap: "4rem", flexWrap: "nowrap", justifyContent: "center", width: "100%", boxSizing: "border-box", overflowX: "auto" }}>
+          <h2 className="text-center px-4" style={{ fontSize: "20px", color: "#D4A353", marginBottom: "2rem", letterSpacing: "2px" }}>2. 高维能量版 (发光金)</h2>
+          <div className="flex flex-col md:flex-row gap-8 md:gap-16 justify-center items-center w-full px-4 md:px-8">
             {/* 方形大图 - 恢复透亮、通透的玻璃底板感，抛弃向内的凹洞错觉 */}
-            <div style={{ 
-              padding: "40px", 
+            <div className="p-6 md:p-10" style={{ 
               backgroundColor: "#13100A", // 透着微弱金色的极暗玻璃板
               borderRadius: "40px", 
               border: "1px solid rgba(212, 163, 83, 0.15)", // 玻璃边缘的微光反光
@@ -202,8 +199,7 @@ export function LogoPreviewPage({ onBack }: LogoPreviewPageProps) {
               <MetaLogo size={240} variant="gold" />
             </div>
             {/* 圆形大图 */}
-            <div style={{ 
-              padding: "40px", 
+            <div className="p-6 md:p-10" style={{ 
               backgroundColor: "#13100A", 
               borderRadius: "50%", 
               border: "1px solid rgba(212, 163, 83, 0.15)",
@@ -223,11 +219,10 @@ export function LogoPreviewPage({ onBack }: LogoPreviewPageProps) {
 
         {/* 3. 科技全息蓝版 */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", width: "100%", maxWidth: "800px" }}>
-          <h2 style={{ fontSize: "20px", color: "#00E5FF", marginBottom: "2rem", letterSpacing: "2px" }}>3. 全息水晶蓝版 (科技宇宙)</h2>
-          <div style={{ display: "flex", gap: "4rem", flexWrap: "nowrap", justifyContent: "center", width: "100%", boxSizing: "border-box", overflowX: "auto" }}>
+          <h2 className="text-center px-4" style={{ fontSize: "20px", color: "#00E5FF", marginBottom: "2rem", letterSpacing: "2px" }}>3. 全息水晶蓝版 (科技宇宙)</h2>
+          <div className="flex flex-col md:flex-row gap-8 md:gap-16 justify-center items-center w-full px-4 md:px-8">
             {/* 方形大图 - 恢复透亮通透的全息蓝玻璃底板 */}
-            <div style={{ 
-              padding: "40px", 
+            <div className="p-6 md:p-10" style={{ 
               backgroundColor: "#050914", // 深邃的星空蓝暗玻璃
               borderRadius: "40px", 
               border: "1px solid rgba(0, 229, 255, 0.15)", // 蓝光玻璃倒角
@@ -237,8 +232,7 @@ export function LogoPreviewPage({ onBack }: LogoPreviewPageProps) {
               <MetaLogo size={240} variant="blue" />
             </div>
             {/* 圆形大图 */}
-            <div style={{ 
-              padding: "40px", 
+            <div className="p-6 md:p-10" style={{ 
               backgroundColor: "#050914", 
               borderRadius: "50%", 
               border: "1px solid rgba(0, 229, 255, 0.15)",
