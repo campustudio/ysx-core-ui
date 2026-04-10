@@ -1,0 +1,82 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="bg-glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(0, 229, 255, 0.15)" />
+      <stop offset="100%" stop-color="rgba(0, 229, 255, 0)" />
+    </radialGradient>
+    
+    <radialGradient id="blue-grad" gradientUnits="userSpaceOnUse" cx="100" cy="100" r="120">
+      <stop offset="0%" stop-color="#E0FFFF" />
+      <stop offset="40%" stop-color="#00E5FF" />
+      <stop offset="80%" stop-color="#007BFF" />
+      <stop offset="100%" stop-color="#0A2A5C" />
+    </radialGradient>
+
+    <filter id="engrave-dark" x="-30%" y="-30%" width="160%" height="160%">
+      <feOffset dx="1" dy="1" in="SourceAlpha" result="darkOffAlpha1A"/>
+      <feGaussianBlur stdDeviation="0.6" in="darkOffAlpha1A" result="darkBlurAlpha1A"/>
+      <feComposite operator="out" in="SourceGraphic" in2="darkBlurAlpha1A" result="darkInnerShadowMask1A"/>
+      <feFlood flood-color="#000000" flood-opacity="1" result="darkShadowColor1A"/>
+      <feComposite operator="in" in="darkShadowColor1A" in2="darkInnerShadowMask1A" result="darkInnerShadow1A"/>
+
+      <feOffset dx="3" dy="3" in="SourceAlpha" result="darkOffAlpha1B"/>
+      <feGaussianBlur stdDeviation="2.5" in="darkOffAlpha1B" result="darkBlurAlpha1B"/>
+      <feComposite operator="out" in="SourceGraphic" in2="darkBlurAlpha1B" result="darkInnerShadowMask1B"/>
+      <feFlood flood-color="#000000" flood-opacity="1" result="darkShadowColor1B"/>
+      <feComposite operator="in" in="darkShadowColor1B" in2="darkInnerShadowMask1B" result="darkInnerShadow1B"/>
+
+      <feMerge result="darkTrench">
+        <feMergeNode in="SourceGraphic"/>
+        <feMergeNode in="darkInnerShadow1B"/>
+        <feMergeNode in="darkInnerShadow1A"/>
+      </feMerge>
+
+      <feGaussianBlur stdDeviation="8" in="SourceGraphic" result="glowBlur" />
+      <feComponentTransfer in="glowBlur" result="glowBoost">
+        <feFuncA type="linear" slope="0.4" />
+      </feComponentTransfer>
+
+      <feMerge>
+        <feMergeNode in="glowBoost" />
+        <feMergeNode in="darkTrench" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" fill="#050914" />
+  <rect width="1024" height="1024" fill="url(#bg-glow)" />
+
+  <g transform="translate(212, 212) scale(3)" filter="url(#engrave-dark)">
+    <g opacity="0.95">
+      <ellipse cx="100" cy="100" rx="76" ry="24" stroke="url(#blue-grad)" stroke-width="1.8" fill="none" />
+      <ellipse cx="100" cy="100" rx="82" ry="28" stroke="url(#blue-grad)" stroke-width="0.5" opacity="0.6" fill="none" />
+      <g transform="rotate(22 100 100)">
+        <ellipse cx="100" cy="100" rx="76" ry="24" stroke="url(#blue-grad)" stroke-width="1.8" fill="none" />
+        <ellipse cx="100" cy="100" rx="82" ry="28" stroke="url(#blue-grad)" stroke-width="0.5" opacity="0.6" fill="none" />
+      </g>
+      <g transform="rotate(-22 100 100)">
+        <ellipse cx="100" cy="100" rx="76" ry="24" stroke="url(#blue-grad)" stroke-width="1.8" fill="none" />
+        <ellipse cx="100" cy="100" rx="82" ry="28" stroke="url(#blue-grad)" stroke-width="0.5" opacity="0.6" fill="none" />
+      </g>
+    </g>
+
+    <circle cx="100" cy="100" r="22" stroke="url(#blue-grad)" stroke-width="3" fill="none" />
+    <circle cx="100" cy="100" r="17" stroke="url(#blue-grad)" stroke-width="0.8" opacity="0.7" fill="none" />
+
+    <path d="M100 16 L100 78" stroke="url(#blue-grad)" stroke-width="2.5" stroke-linecap="round" fill="none" />
+    <path d="M100 122 L100 184" stroke="url(#blue-grad)" stroke-width="2.5" stroke-linecap="round" fill="none" />
+
+    <path d="M100 0 Q100 24 116 24 Q100 24 100 48 Q100 24 84 24 Q100 24 100 0 Z" fill="url(#blue-grad)" />
+    <path d="M100 152 Q100 176 116 176 Q100 176 100 200 Q100 176 84 176 Q100 176 100 152 Z" fill="url(#blue-grad)" />
+
+    <path d="M34 34 Q40 40 46 34 Q40 40 40 46 Q40 40 34 40 Q40 40 34 34 Z" fill="url(#blue-grad)" />
+    <path d="M166 166 Q160 160 154 166 Q160 160 160 154 Q160 160 166 160 Q160 160 166 166 Z" fill="url(#blue-grad)" />
+    <path d="M166 34 Q160 40 154 34 Q160 40 160 46 Q160 40 166 40 Q160 40 166 34 Z" fill="url(#blue-grad)" />
+    <path d="M34 166 Q40 160 46 166 Q40 160 40 154 Q40 160 34 160 Q40 160 34 166 Z" fill="url(#blue-grad)" />
+
+    <circle cx="68" cy="80" r="1.8" fill="url(#blue-grad)" />
+    <circle cx="132" cy="120" r="1.8" fill="url(#blue-grad)" />
+    <circle cx="132" cy="80" r="1.8" fill="url(#blue-grad)" />
+    <circle cx="68" cy="120" r="1.8" fill="url(#blue-grad)" />
+  </g>
+</svg>

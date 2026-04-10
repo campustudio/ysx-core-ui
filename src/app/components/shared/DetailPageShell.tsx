@@ -1,174 +1,109 @@
 /**
- * DetailPageShell - 详情页通用外壳
+ * DetailPageShell - 详情页通用外壳 (极致极简无图版)
  *
  * 抽离文章/播客/活动详情页的通用结构：
- *   ① 封面图 + 返回按钮 + 栏目标签
+ *   ① 极简返回按钮 + 纯文字栏目标签
  *   ② 内容区（children）
- *
- * 复用场景：ArticleReader、PodcastDetail、ActivityDetail
- *
- * Props:
- *   - coverImage: 封面图 URL
- *   - category: 栏目名称
- *   - categoryColor: amber | sage
- *   - bgColor: 背景色起始值
- *   - bgColorEnd: 背景色结束值
- *   - onBack: 返回回调
- *   - children: 内容区
+ *   - 完全去图片化，去除背景渐变，只保留纯净的阅读空间
  */
 
 import { useEffect, type ReactNode } from "react";
 import { ArrowLeft } from "lucide-react";
-import { ImageWithFallback } from "../figma/ImageWithFallback";
 import { rpx, PAGE_PX } from "../../config/styles";
+import { FONT_SERIF } from "../../config/styles";
 
 const CATEGORY_COLORS = {
-  amber: { bg: "rgba(196,154,108,0.12)", text: "#A07D55" },
-  sage: { bg: "rgba(139,170,125,0.12)", text: "#5E8A52" },
+  amber: { bg: "transparent", text: "#111" },
+  sage: { bg: "transparent", text: "#111" },
 } as const;
 
 interface Props {
-  coverImage: string;
+  coverImage?: string; // 留着兼容老代码，但不使用
   coverAlt?: string;
   category: string;
   categoryColor: "amber" | "sage";
-  /** 背景起始色 */
   bgColor?: string;
-  /** 背景结束色 */
   bgColorEnd?: string;
-  /** 封面高度（rpx），默认 500 */
   coverHeight?: number;
   onBack?: () => void;
   children: ReactNode;
 }
 
 export function DetailPageShell({
-  coverImage,
-  coverAlt = "",
   category,
   categoryColor,
-  bgColor = "#F0E4CE",
-  bgColorEnd = "#F5E8D2",
-  coverHeight = 500,
+  bgColor = "#F2F2F5", // 统一底色为冷灰白
+  bgColorEnd = "#F2F2F5",
   onBack,
   children,
 }: Props) {
-  /** 进入页面时滚动到顶部 */
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const catStyle = CATEGORY_COLORS[categoryColor];
+  const colorConfig = CATEGORY_COLORS[categoryColor];
 
   return (
     <div
       style={{
         width: "100%",
         minHeight: "100vh",
-        background: `linear-gradient(to bottom, ${bgColor} 0%, ${bgColorEnd} 100%)`,
-        overflowY: "auto",
+        background: bgColor,
+        paddingBottom: rpx(160),
+        display: "flex",
+        flexDirection: "column",
       }}
     >
-      {/* ═══ 封面图区域 ═══ */}
+      {/* 极简纯白文字头部 */}
       <div
-        className="relative"
         style={{
-          width: "100%",
-          height: rpx(coverHeight),
-          overflow: "hidden",
+          padding: `calc(env(safe-area-inset-top) + ${rpx(40)}) ${PAGE_PX} ${rpx(60)}`,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          borderBottom: "1px solid rgba(0,0,0,0.05)",
         }}
       >
-        <ImageWithFallback
-          src={coverImage}
-          alt={coverAlt}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
-
-        {/* 底部渐变遮罩 */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(to bottom, 
-              rgba(30,20,10,0.08) 0%, 
-              rgba(30,20,10,0.02) 40%, 
-              transparent 50%,
-              ${bgColor}AA 75%, 
-              ${bgColor} 100%)`,
-          }}
-        />
-
-        {/* 返回按钮 */}
-        <div
-          className="absolute cursor-pointer"
+        <button
           onClick={onBack}
           style={{
-            top: `calc(max(${rpx(24)}, env(safe-area-inset-top)) + ${rpx(4)})`,
-            left: rpx(24),
-            width: rpx(64),
-            height: rpx(64),
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.7)",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+            background: "transparent",
+            border: "none",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            zIndex: 5,
+            width: rpx(64),
+            height: rpx(64),
+            cursor: "pointer",
+            padding: 0,
+            margin: `0 0 0 -${rpx(16)}`, // 抵消内边距，使其视觉左对齐
           }}
         >
-          <ArrowLeft
-            style={{
-              width: rpx(32),
-              height: rpx(32),
-              color: "var(--color-text-primary)",
-            }}
-            strokeWidth={1.8}
-          />
-        </div>
+          <ArrowLeft size={24} color="#111" strokeWidth={1.5} />
+        </button>
 
-        {/* 栏目标签 */}
-        <div
-          className="absolute"
+        <span
           style={{
-            bottom: rpx(72),
-            left: PAGE_PX,
-            padding: `${rpx(8)} ${rpx(20)}`,
-            borderRadius: rpx(20),
-            background: catStyle.bg,
-            zIndex: 5,
+            fontFamily: FONT_SERIF,
+            fontSize: rpx(24),
+            fontWeight: 500,
+            color: "#111",
+            letterSpacing: rpx(4),
           }}
         >
-          <span
-            style={{
-              fontSize: rpx(22),
-              fontWeight: 500,
-              color: catStyle.text,
-              letterSpacing: rpx(1),
-              lineHeight: 1,
-            }}
-          >
-            {category}
-          </span>
-        </div>
+          {category}
+        </span>
       </div>
 
-      {/* ═══ 内容区 ═══ */}
+      {/* 内容容器 */}
       <div
-        className="app-container"
         style={{
-          padding: `0 ${PAGE_PX}`,
-          marginTop: rpx(-20),
-          position: "relative",
-          zIndex: 2,
+          flex: 1,
+          background: "transparent",
+          padding: `${rpx(60)} ${PAGE_PX}`,
         }}
       >
         {children}
-
-        {/* 底部留白 */}
-        <div style={{ height: rpx(120) }} />
       </div>
     </div>
   );

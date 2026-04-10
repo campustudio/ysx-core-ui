@@ -1,68 +1,41 @@
 /**
- * Handbook - 人类手册 · 听书学习主页
+ * Handbook - 人类手册 · 知识殿堂 (version 2.2 - 极致极简版)
  *
- * 底部导航第二个 Tab 对应的页面
- * 宇宙星空深色主题，区别于首页的古纸暖色调
- *
- * 布局（上→下）：
- *   ① 星空背景 + 顶部标题栏
- *   ② 分类标签条（推荐/视频/音频/电子书/图文）
- *   ③ 书籍列表（深色卡片，封面+标题+作者+进度）
- *
- * 配色：
- *   背景：深空蓝 #0B1120 → #111D35
- *   卡片：rgba(255,255,255,0.06)
- *   文字：白色系
- *   强调：鼠尾草绿 #8BAA7D（标签） + 琥珀金 #C49A6C（进度）
+ * 核心定位：
+ * - 极致极简、无图片、零视觉噪音
+ * - 纯净、透明、深刻的碑感文字排版
+ * - 以字传神，字即是碑
  */
 
 import { useState, useCallback, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, BookOpen, Headphones } from "lucide-react";
 import {
   HANDBOOK_CATEGORIES,
   BOOKS,
   getBooksByCategory,
   calcBookPercent,
-  getCompletedCount,
   type Book,
 } from "../config/handbook-data";
 import { FONT_SERIF, rpx } from "../config/styles";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { BottomNavigation } from "../components/navigation/BottomNavigation";
 import { Toast } from "../components/shared/Toast";
 import { useToast } from "../hooks/useToast";
-
-// ─── 星空主题色 ──────────────────────────────────────
-
-const COSMIC = {
-  bgStart: "#0B1120",
-  bgEnd: "#111D35",
-  card: "rgba(255,255,255,0.06)",
-  cardBorder: "rgba(255,255,255,0.06)",
-  textPrimary: "rgba(255,255,255,0.92)",
-  textSecondary: "rgba(255,255,255,0.6)",
-  textTertiary: "rgba(255,255,255,0.35)",
-  accent: "#8BAA7D",
-  accentBg: "rgba(139,170,125,0.2)",
-  amber: "#C49A6C",
-  amberBg: "rgba(196,154,108,0.15)",
-  star: "rgba(255,255,255,0.03)",
-} as const;
 
 interface HandbookProps {
   onSelectBook?: (bookId: string) => void;
   onNavChange?: (index: number) => void;
 }
 
-const NAV_LABELS = ["首页", "人类手册", "新人生之路", "明镜"];
-
 export function Handbook({ onSelectBook, onNavChange }: HandbookProps) {
   const [activeCategory, setActiveCategory] = useState("recommend");
   const [books, setBooks] = useState<Book[]>(BOOKS);
+  const [isLoaded, setIsLoaded] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleCategoryChange = useCallback((catId: string) => {
@@ -70,23 +43,14 @@ export function Handbook({ onSelectBook, onNavChange }: HandbookProps) {
     setBooks(getBooksByCategory(catId));
   }, []);
 
-  const handleSearch = useCallback(() => {
-    toast.show("搜索功能正在用心打磨中，敬请期待");
-  }, [toast]);
-
   const handleNavChange = useCallback(
     (index: number) => {
       if (index === 1) return; // 当前页
-      if (index === 0 || index === 2) {
-        // 回首页 / 新人生之路 → 委托 App.tsx
-        onNavChange?.(index);
-        return;
-      }
       if (index === 3) {
-        onNavChange?.(index);
+        toast.show("「明镜」正在精心筹备中，敬请期待");
         return;
       }
-      toast.show(`「${NAV_LABELS[index]}」正在用心打磨中，敬请期待`);
+      onNavChange?.(index);
     },
     [onNavChange, toast]
   );
@@ -96,246 +60,230 @@ export function Handbook({ onSelectBook, onNavChange }: HandbookProps) {
       style={{
         width: "100%",
         minHeight: "100vh",
-        background: `linear-gradient(180deg, ${COSMIC.bgStart} 0%, ${COSMIC.bgEnd} 100%)`,
+        background: "#F2F2F5", // 维持与首页一致的极简浅灰白底色
         position: "relative",
         overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        opacity: isLoaded ? 1 : 0,
+        transition: "opacity 1.2s ease",
       }}
     >
-      {/* 星点装饰 */}
+      {/* 极简顶部区域 */}
       <div
-        className="absolute"
         style={{
-          top: rpx(60),
-          right: rpx(80),
-          width: rpx(4),
-          height: rpx(4),
-          borderRadius: "50%",
-          background: "rgba(255,255,255,0.5)",
-          boxShadow: `
-            ${rpx(120)} ${rpx(40)} 0 rgba(255,255,255,0.3),
-            ${rpx(-180)} ${rpx(100)} 0 rgba(255,255,255,0.2),
-            ${rpx(60)} ${rpx(200)} 0 rgba(255,255,255,0.4),
-            ${rpx(-100)} ${rpx(300)} 0 rgba(255,255,255,0.15),
-            ${rpx(200)} ${rpx(150)} 0 rgba(255,255,255,0.25)
-          `,
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* ═══ 顶部标题栏 ═══ */}
-      <div
-        className="app-container"
-        style={{
-          paddingTop: `max(${rpx(24)}, env(safe-area-inset-top))`,
+          padding: `calc(env(safe-area-inset-top) + ${rpx(60)}) ${rpx(40)} ${rpx(40)}`,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
         }}
       >
-        <div
-          className="flex items-center justify-between"
-          style={{
-            padding: `${rpx(24)} ${rpx(36)} ${rpx(16)}`,
-          }}
-        >
+        <div>
           <h1
             style={{
               fontFamily: FONT_SERIF,
-              fontSize: "var(--font-size-2xl)",
-              color: COSMIC.textPrimary,
+              fontSize: rpx(64), // 放大标题，形成重量感
+              fontWeight: 600,
+              color: "#18181A",
+              letterSpacing: rpx(10),
               margin: 0,
-              letterSpacing: rpx(2),
+              textShadow: "0 1px 1px rgba(255,255,255,1)",
             }}
           >
             人类手册
           </h1>
-          <button
-            className="cursor-pointer flex items-center justify-center"
+          <p
             style={{
-              width: rpx(64),
-              height: rpx(64),
-              borderRadius: "50%",
-              background: COSMIC.card,
-              border: "none",
+              fontFamily: FONT_SERIF,
+              fontSize: rpx(22),
+              color: "#888",
+              letterSpacing: rpx(8),
+              marginTop: rpx(16),
             }}
-            onClick={handleSearch}
           >
-            <Search
-              size={18}
-              strokeWidth={1.5}
-              style={{ color: COSMIC.textSecondary }}
-            />
-          </button>
+            知识的殿堂
+          </p>
         </div>
 
-        {/* ═══ 分类标签 ═══ */}
-        <div
-          className="flex"
+        <button
+          onClick={() => toast.show("搜索功能正在精心筹备中")}
           style={{
-            padding: `0 ${rpx(36)} ${rpx(20)}`,
-            gap: rpx(16),
-            overflowX: "auto",
+            background: "transparent",
+            border: "none",
+            padding: rpx(16),
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          {HANDBOOK_CATEGORIES.map((cat) => {
-            const isActive = activeCategory === cat.id;
-            return (
-              <button
-                key={cat.id}
-                className="cursor-pointer flex-shrink-0"
-                style={{
-                  padding: `${rpx(12)} ${rpx(28)}`,
-                  borderRadius: rpx(32),
-                  border: isActive
-                    ? "none"
-                    : `1px solid rgba(255,255,255,0.12)`,
-                  background: isActive ? COSMIC.accent : "transparent",
-                  color: isActive ? "#fff" : COSMIC.textSecondary,
-                  fontSize: "var(--font-size-xs)",
-                  transition: "all 0.25s ease",
-                }}
-                onClick={() => handleCategoryChange(cat.id)}
-              >
-                {cat.label}
-              </button>
-            );
-          })}
-        </div>
+          <Search size={22} strokeWidth={1.5} color="#555" />
+        </button>
       </div>
 
-      {/* ═══ 书籍列表 ═══ */}
+      {/* 极简分类导航 (纯文字) */}
       <div
-        className="app-container"
         style={{
-          padding: `0 ${rpx(36)}`,
-          paddingBottom: "calc(var(--nav-height) + var(--spacing-xl))",
+          display: "flex",
+          gap: rpx(40),
+          padding: `0 ${rpx(40)} ${rpx(20)}`,
+          overflowX: "auto",
+          borderBottom: "1px solid rgba(0,0,0,0.05)",
         }}
       >
-        {books.map((book) => {
-          const percent = calcBookPercent(book);
-          const completedCount = getCompletedCount(book);
+        {HANDBOOK_CATEGORIES.map((cat) => {
+          const isActive = activeCategory === cat.id;
+          return (
+            <button
+              key={cat.id}
+              onClick={() => handleCategoryChange(cat.id)}
+              style={{
+                background: "transparent",
+                border: "none",
+                padding: `${rpx(10)} 0`,
+                position: "relative",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(28),
+                fontWeight: isActive ? 600 : 400,
+                color: isActive ? "#111" : "#A1A1A1",
+                letterSpacing: rpx(4),
+                transition: "color 0.3s ease",
+              }}
+            >
+              {cat.name}
+              {isActive && (
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: rpx(-20),
+                    left: 0,
+                    width: "100%",
+                    height: "1px",
+                    background: "#111",
+                  }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
 
+      {/* 纯文字书籍列表 (去图片化，回归本质) */}
+      <div
+        style={{
+          flex: 1,
+          padding: `${rpx(40)} ${rpx(40)} ${rpx(160)}`, // 底部留出导航栏空间
+          overflowY: "auto",
+        }}
+      >
+        {books.map((book, index) => {
+          const percent = calcBookPercent(book);
           return (
             <div
               key={book.id}
-              className="cursor-pointer"
+              onClick={() => onSelectBook?.(book.id)}
               style={{
                 display: "flex",
-                gap: rpx(24),
-                padding: `${rpx(24)} 0`,
-                borderBottom: `1px solid rgba(255,255,255,0.04)`,
+                flexDirection: "column",
+                padding: `${rpx(40)} 0`,
+                borderBottom: "1px solid rgba(0,0,0,0.04)",
+                cursor: "pointer",
+                position: "relative",
               }}
-              onClick={() => onSelectBook?.(book.id)}
             >
-              {/* 封面 */}
+              {/* 背景修饰：超大序列号，代替封面图 */}
               <div
-                className="flex-shrink-0 overflow-hidden"
                 style={{
-                  width: rpx(180),
-                  height: rpx(240),
-                  borderRadius: rpx(12),
-                  boxShadow:
-                    "0 4px 20px rgba(0,0,0,0.3), 0 1px 4px rgba(0,0,0,0.2)",
+                  position: "absolute",
+                  top: rpx(20),
+                  right: rpx(0),
+                  fontFamily: FONT_SERIF,
+                  fontSize: rpx(100),
+                  fontWeight: 300,
+                  color: "rgba(0,0,0,0.02)",
+                  pointerEvents: "none",
+                  letterSpacing: rpx(-4),
                 }}
               >
-                <ImageWithFallback
-                  src={book.cover}
-                  alt={book.title}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
+                {String(index + 1).padStart(2, "0")}
               </div>
 
-              {/* 信息 */}
-              <div
-                className="flex-1 flex flex-col justify-between"
-                style={{ minWidth: 0, padding: `${rpx(4)} 0` }}
-              >
-                <div>
-                  <h3
-                    style={{
-                      fontFamily: FONT_SERIF,
-                      fontSize: "var(--font-size-lg)",
-                      color: COSMIC.textPrimary,
-                      margin: 0,
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {book.title}
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: "var(--font-size-xs)",
-                      color: COSMIC.textTertiary,
-                      margin: `${rpx(6)} 0 0`,
-                    }}
-                  >
-                    {book.author}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "var(--font-size-xs)",
-                      color: COSMIC.textSecondary,
-                      margin: `${rpx(12)} 0 0`,
-                      lineHeight: 1.6,
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {book.description}
-                  </p>
-                </div>
+              {/* 书名与作者 */}
+              <div style={{ marginBottom: rpx(16), zIndex: 1 }}>
+                <h3
+                  style={{
+                    fontFamily: FONT_SERIF,
+                    fontSize: rpx(40), // 放大书名
+                    fontWeight: 600,
+                    color: "#222",
+                    margin: 0,
+                    lineHeight: 1.4,
+                    letterSpacing: rpx(4),
+                  }}
+                >
+                  {book.title}
+                </h3>
+                <p
+                  style={{
+                    fontFamily: FONT_SERIF,
+                    fontSize: rpx(20),
+                    color: "#999",
+                    margin: `${rpx(12)} 0 0`,
+                    letterSpacing: rpx(2),
+                  }}
+                >
+                  {book.author}
+                </p>
+              </div>
 
-                {/* 进度 */}
-                <div>
-                  <div
-                    className="flex items-center"
-                    style={{ gap: rpx(8), marginBottom: rpx(8) }}
-                  >
-                    <span
-                      style={{
-                        fontSize: rpx(20),
-                        color: percent > 0 ? COSMIC.accent : COSMIC.textTertiary,
-                      }}
-                    >
-                      {percent > 0 ? `已学 ${percent}%` : "未开始"}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: rpx(20),
-                        color: COSMIC.textTertiary,
-                      }}
-                    >
-                      · {book.totalChapters}章
-                      {completedCount > 0 && ` · 已完成${completedCount}章`}
-                    </span>
-                  </div>
-                  {/* 进度条 */}
+              {/* 简介 */}
+              <p
+                style={{
+                  fontSize: rpx(26),
+                  color: "#666",
+                  margin: `${rpx(10)} 0 ${rpx(24)}`,
+                  lineHeight: 1.8,
+                  fontWeight: 300,
+                  zIndex: 1,
+                  maxWidth: "90%",
+                }}
+              >
+                {book.description}
+              </p>
+
+              {/* 阅读进度 */}
+              <div style={{ display: "flex", alignItems: "center", gap: rpx(24), zIndex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: rpx(16) }}>
+                  <BookOpen size={16} color="#A1A1A1" strokeWidth={1.5} />
+                  <Headphones size={16} color="#A1A1A1" strokeWidth={1.5} />
+                </div>
+                
+                {/* 极简进度条 */}
+                <div style={{ flex: 1, height: "1px", background: "rgba(0,0,0,0.05)", position: "relative" }}>
                   <div
                     style={{
-                      width: "100%",
-                      height: rpx(6),
-                      borderRadius: rpx(3),
-                      background: "rgba(255,255,255,0.06)",
-                      overflow: "hidden",
+                      position: "absolute",
+                      left: 0,
+                      top: 0,
+                      height: "100%",
+                      width: `${percent}%`,
+                      background: "#222",
                     }}
-                  >
-                    <div
-                      style={{
-                        width: `${percent}%`,
-                        height: "100%",
-                        borderRadius: rpx(3),
-                        background:
-                          percent > 0
-                            ? `linear-gradient(90deg, ${COSMIC.accent}, #A8C09D)`
-                            : "transparent",
-                        transition: "width 0.3s ease",
-                      }}
-                    />
-                  </div>
+                  />
                 </div>
+                
+                <span
+                  style={{
+                    fontFamily: FONT_SERIF,
+                    fontSize: rpx(20),
+                    color: percent > 0 ? "#222" : "#A1A1A1",
+                    letterSpacing: rpx(2),
+                  }}
+                >
+                  {percent > 0 ? `已感知 ${percent}%` : "未翻阅"}
+                </span>
               </div>
             </div>
           );
@@ -343,25 +291,26 @@ export function Handbook({ onSelectBook, onNavChange }: HandbookProps) {
 
         {books.length === 0 && (
           <div
-            className="flex items-center justify-center"
             style={{
-              padding: `${rpx(120)} 0`,
-              color: COSMIC.textTertiary,
-              fontSize: "var(--font-size-sm)",
+              padding: `${rpx(160)} 0`,
+              textAlign: "center",
+              color: "#A1A1A1",
+              fontSize: rpx(24),
+              letterSpacing: rpx(4),
+              fontFamily: FONT_SERIF,
             }}
           >
-            暂无相关内容
+            无形之书，尚未落笔。
           </div>
         )}
       </div>
 
-      {/* 底部导航 */}
       <BottomNavigation active={1} onChange={handleNavChange} />
 
       <Toast
         message={toast.message}
         visible={toast.visible}
-        duration={toast.duration}
+        duration={2500}
         onDismiss={toast.dismiss}
       />
     </div>

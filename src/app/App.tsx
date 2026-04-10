@@ -18,11 +18,17 @@ import { OnboardingGuide } from "./pages/OnboardingGuide";
 import { OnboardingSolar } from "./pages/OnboardingSolar";
 import { BreathingSession } from "./pages/BreathingSession";
 import { LoginPage } from "./pages/LoginPage";
+import { LogoPreviewPage } from "./pages/LogoPreviewPage";
 import { PageTransition } from "./components/shared/PageTransition";
 import { Toast } from "./components/shared/Toast";
 import { useToast } from "./hooks/useToast";
-import { useUserStore } from "./hooks/useUserStore";
-import { useWxAuth } from "./hooks/useWxAuth";
+
+/** 用户信息（模拟） */
+interface UserInfo {
+  name: string;
+  avatar: string;
+  days: number;
+}
 
 /** 页面路由状态 */
 type PageRoute =
@@ -39,7 +45,8 @@ type PageRoute =
   | { page: "guide" }
   | { page: "solar" }
   | { page: "breathing" }
-  | { page: "login" };
+  | { page: "login" }
+  | { page: "logo-preview" };
 
 /** 导航方向：用于决定转场动画 */
 type NavDirection = "forward" | "back";
@@ -49,9 +56,8 @@ export default function App() {
   const [route, setRoute] = useState<PageRoute>({ page: "home" });
   /** 导航方向，驱动 PageTransition 选择动画 */
   const [navDirection, setNavDirection] = useState<NavDirection>("forward");
-  /** 用户状态管理 */
-  const { isLoggedIn, userInfo, loading, setUser, logout } = useUserStore();
-  const { login: wxLogin } = useWxAuth();
+  /** 用户登录状态（模拟） */
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 
   /**
    * 路由切换计数器，作为 PageTransition 的 key
@@ -79,7 +85,7 @@ export default function App() {
       setNavDirection("forward");
       setRoute(newRoute);
     },
-    [saveHomeScroll],
+    [saveHomeScroll]
   );
 
   /** 从首页进入播放页 */
@@ -87,7 +93,7 @@ export default function App() {
     (trackLabel: string) => {
       navigateForward({ page: "player", trackLabel });
     },
-    [navigateForward],
+    [navigateForward]
   );
 
   /** 从首页进入文章阅读页 */
@@ -95,7 +101,7 @@ export default function App() {
     (articleId: string) => {
       navigateForward({ page: "article", articleId });
     },
-    [navigateForward],
+    [navigateForward]
   );
 
   /** 从首页进入播客详情页 */
@@ -103,7 +109,7 @@ export default function App() {
     (podcastId: string) => {
       navigateForward({ page: "podcast", podcastId });
     },
-    [navigateForward],
+    [navigateForward]
   );
 
   /** 从首页进入活动详情页 */
@@ -111,7 +117,7 @@ export default function App() {
     (activityId: string) => {
       navigateForward({ page: "activity", activityId });
     },
-    [navigateForward],
+    [navigateForward]
   );
 
   /** 进入新人引导页 */
@@ -132,6 +138,11 @@ export default function App() {
   /** 进入登录页 */
   const navigateToLogin = useCallback(() => {
     navigateForward({ page: "login" });
+  }, [navigateForward]);
+
+  /** 进入 Logo 预览页 */
+  const navigateToLogoPreview = useCallback(() => {
+    navigateForward({ page: "logo-preview" });
   }, [navigateForward]);
 
   /** 进入人类手册 */
@@ -167,7 +178,7 @@ export default function App() {
     (bookId: string) => {
       navigateForward({ page: "book-detail", bookId });
     },
-    [navigateForward],
+    [navigateForward]
   );
 
   /** 从书籍详情进入章节播放器 */
@@ -175,7 +186,7 @@ export default function App() {
     (bookId: string, chapterId: string) => {
       navigateForward({ page: "chapter-player", bookId, chapterId });
     },
-    [navigateForward],
+    [navigateForward]
   );
 
   /** 返回手册主页（从书籍详情/播放器） */
@@ -186,11 +197,14 @@ export default function App() {
   }, []);
 
   /** 返回书籍详情（从播放器） */
-  const navigateBackToBookDetail = useCallback((bookId: string) => {
-    routeKeyRef.current += 1;
-    setNavDirection("back");
-    setRoute({ page: "book-detail", bookId });
-  }, []);
+  const navigateBackToBookDetail = useCallback(
+    (bookId: string) => {
+      routeKeyRef.current += 1;
+      setNavDirection("back");
+      setRoute({ page: "book-detail", bookId });
+    },
+    []
+  );
 
   /** 底部导航统一处理（从任意页面切换 Tab） */
   const handleNavChange = useCallback(
@@ -207,7 +221,7 @@ export default function App() {
         toast.show("「明镜」正在精心筹备中，敬请期待");
       }
     },
-    [navigateToHandbook, navigateToNewLife, toast],
+    [navigateToHandbook, navigateToNewLife, toast]
   );
 
   /** 返回首页 */
@@ -216,11 +230,6 @@ export default function App() {
     setNavDirection("back");
     setRoute({ page: "home" });
   }, []);
-
-  // 初始化完成前不渲染任何内容，避免首页闪烁
-  if (loading) {
-    return null;
-  }
 
   /** 渲染当前页面内容 */
   const renderPage = () => {
@@ -259,15 +268,24 @@ export default function App() {
         return <CirclePage onBack={navigateBackToNewLife} />;
       case "player":
         return (
-          <AudioPlayer trackLabel={route.trackLabel} onBack={navigateToHome} />
+          <AudioPlayer
+            trackLabel={route.trackLabel}
+            onBack={navigateToHome}
+          />
         );
       case "article":
         return (
-          <ArticleReader articleId={route.articleId} onBack={navigateToHome} />
+          <ArticleReader
+            articleId={route.articleId}
+            onBack={navigateToHome}
+          />
         );
       case "podcast":
         return (
-          <PodcastDetail podcastId={route.podcastId} onBack={navigateToHome} />
+          <PodcastDetail
+            podcastId={route.podcastId}
+            onBack={navigateToHome}
+          />
         );
       case "activity":
         return (
@@ -287,28 +305,19 @@ export default function App() {
           <LoginPage
             onBack={navigateToHome}
             onLoginSuccess={(info) => {
-              setUser(info);
+              setUserInfo(info);
               navigateToHome();
             }}
           />
         );
+      case "logo-preview":
+        return <LogoPreviewPage onBack={navigateToHome} />;
       case "home":
       default:
         return (
           <Home
             onNavChange={handleNavChange}
-            isLoggedIn={isLoggedIn}
-            userInfo={
-              userInfo
-                ? {
-                    name: userInfo.nickname,
-                    avatar: userInfo.avatar,
-                    days: userInfo.days,
-                  }
-                : undefined
-            }
-            onLogout={logout}
-            onNavigateToLogin={wxLogin}
+            onNavigateToLogoPreview={navigateToLogoPreview}
           />
         );
     }

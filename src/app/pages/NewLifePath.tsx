@@ -1,24 +1,14 @@
 /**
- * NewLifePath - 新人生之路 · 主页
+ * NewLifePath - 新人生之路 · 活的道路 (version 2.2 - 极致极简版)
  *
- * 底部导航第三个 Tab
- * 融合课程学习 + 社区互动的综合页面
- *
- * 布局（上→下）：
- *   ① 顶部标题栏
- *   ② 分类 Tab（推荐 / 课程 / 练习 / 互动）
- *   ③ 内容区：
- *      推荐 — 继续学习卡片 + 全部课程列表
- *      课程 — 按子分类分组的课程列表
- *      练习 — 练习类课程列表
- *      互动 — 进入圈子社区入口
- *
- * 配色：清新现代白底，暖琥珀金强调色
- * 与首页古纸色、人类手册深空蓝形成差异化
+ * 核心定位：
+ * - 活的道路，文明级路径的雏形
+ * - 聚集、践行、共振
+ * - 纯净冷白底色（#F2F2F5），极简文字排版，无图片
  */
 
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { Search, Play, ChevronRight, Users, MessageCircle } from "lucide-react";
+import { Search, Play, ChevronRight, Users, MessageCircle, Navigation, Layers } from "lucide-react";
 import {
   NEWLIFE_TABS,
   COURSES,
@@ -27,96 +17,53 @@ import {
   type Course,
 } from "../config/newlife-data";
 import { FONT_SERIF, rpx } from "../config/styles";
-import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { BottomNavigation } from "../components/navigation/BottomNavigation";
 import { Toast } from "../components/shared/Toast";
 import { useToast } from "../hooks/useToast";
-
-// ─── 主题色 ──────────────────────────────────────────
-
-const THEME = {
-  bg: "#FAFAF7",
-  surface: "#FFFFFF",
-  textPrimary: "#2C2417",
-  textSecondary: "#7A7062",
-  textTertiary: "#B0A89C",
-  accent: "#C49A6C",
-  accentLight: "rgba(196,154,108,0.1)",
-  sage: "#8BAA7D",
-  sageLight: "rgba(139,170,125,0.1)",
-  border: "rgba(196,154,108,0.08)",
-  heroBanner:
-    "https://images.unsplash.com/photo-1627745537419-7fda207a0a38?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzcHJpbmclMjBncmVlbiUyMG1lYWRvdyUyMHN1bmxpZ2h0JTIwZnJlc2glMjBuYXR1cmV8ZW58MXx8fHwxNzcxMDYxODM0fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
-} as const;
 
 interface NewLifePathProps {
   onNavChange?: (index: number) => void;
   onNavigateToCircle?: () => void;
 }
 
-const NAV_LABELS = ["首页", "人类手册", "新人生之路", "明镜"];
-
 export function NewLifePath({ onNavChange, onNavigateToCircle }: NewLifePathProps) {
   const [activeTab, setActiveTab] = useState("recommend");
   const [courses, setCourses] = useState<Course[]>(COURSES);
+  const [isLoaded, setIsLoaded] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleTabChange = useCallback((tabId: string) => {
-    if (tabId === "interact") {
-      // 互动 Tab → 跳转到圈子页
-      onNavigateToCircle?.();
-      return;
-    }
     setActiveTab(tabId);
     setCourses(getCoursesByCategory(tabId));
-  }, [onNavigateToCircle]);
-
-  const handleSearch = useCallback(() => {
-    toast.show("搜索功能正在用心打磨中，敬请期待");
-  }, [toast]);
-
-  const handleCourseClick = useCallback(
-    (_courseId: string) => {
-      toast.show("课程详情正在用心打磨中，敬请期待");
-    },
-    [toast]
-  );
+  }, []);
 
   const handleNavChange = useCallback(
     (index: number) => {
-      if (index === 2) return; // 当前页
-      if (index === 0 || index === 1) {
-        onNavChange?.(index);
-        return;
-      }
+      if (index === 2) return;
       if (index === 3) {
-        onNavChange?.(index);
+        toast.show("「明镜」正在精心筹备中，敬请期待");
         return;
       }
-      toast.show(`「${NAV_LABELS[index]}」正在用心打磨中，敬请期待`);
+      onNavChange?.(index);
     },
     [onNavChange, toast]
   );
 
-  // 继续学习的课程
-  const lastStudied = useMemo(
-    () => COURSES.find((c) => c.status === "in-progress"),
-    []
-  );
-
-  // 按子分类分组
-  const groupedCourses = useMemo(() => {
-    const groups: Record<string, Course[]> = {};
-    courses.forEach((c) => {
-      const key = c.subCategory || "其他";
-      if (!groups[key]) groups[key] = [];
-      groups[key].push(c);
-    });
-    return groups;
+  const { lastStudied, groupedCourses } = useMemo(() => {
+    const last = courses.find((c) => c.status === "in-progress" && c.lastStudied);
+    const grouped = courses.reduce((acc, c) => {
+      const g = c.group || "其他";
+      if (!acc[g]) acc[g] = [];
+      acc[g].push(c);
+      return acc;
+    }, {} as Record<string, Course[]>);
+    return { lastStudied: last, groupedCourses: grouped };
   }, [courses]);
 
   return (
@@ -124,447 +71,312 @@ export function NewLifePath({ onNavChange, onNavigateToCircle }: NewLifePathProp
       style={{
         width: "100%",
         minHeight: "100vh",
-        background: THEME.bg,
+        background: "#F2F2F5", // 与首页一致的冷灰白
+        position: "relative",
+        overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        opacity: isLoaded ? 1 : 0,
+        transition: "opacity 1.2s ease",
       }}
     >
-      {/* ═══ Banner 区 ═══ */}
+      {/* 极简顶部标题 */}
       <div
-        className="relative overflow-hidden"
         style={{
-          width: "100%",
-          height: rpx(360),
+          padding: `calc(env(safe-area-inset-top) + ${rpx(60)}) ${rpx(40)} ${rpx(40)}`,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
         }}
       >
-        <ImageWithFallback
-          src={THEME.heroBanner}
-          alt="新人生之路"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
-        />
-        {/* 底部渐变融合 */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(to bottom, 
-              rgba(30,20,10,0.15) 0%, 
-              transparent 40%,
-              ${THEME.bg}CC 80%, 
-              ${THEME.bg} 100%)`,
-          }}
-        />
-        {/* 顶部安全区 + 标题 */}
-        <div
-          className="absolute left-0 right-0 flex items-center justify-between"
-          style={{
-            top: 0,
-            paddingTop: `max(${rpx(24)}, env(safe-area-inset-top))`,
-            padding: `max(${rpx(24)}, env(safe-area-inset-top)) ${rpx(36)} 0`,
-          }}
-        >
+        <div>
           <h1
             style={{
               fontFamily: FONT_SERIF,
-              fontSize: "var(--font-size-2xl)",
-              color: "#fff",
+              fontSize: rpx(64),
+              fontWeight: 600,
+              color: "#18181A",
+              letterSpacing: rpx(10),
               margin: 0,
-              letterSpacing: rpx(2),
-              textShadow:
-                "0 1px 3px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.15)",
+              textShadow: "0 1px 1px rgba(255,255,255,1)",
             }}
           >
-            新人生之路
+            新人生
           </h1>
-          <button
-            className="cursor-pointer flex items-center justify-center"
+          <p
             style={{
-              width: rpx(64),
-              height: rpx(64),
-              borderRadius: "50%",
-              background: "rgba(255,255,255,0.2)",
-              border: "none",
+              fontFamily: FONT_SERIF,
+              fontSize: rpx(22),
+              color: "#888",
+              letterSpacing: rpx(8),
+              marginTop: rpx(16),
             }}
-            onClick={handleSearch}
           >
-            <Search size={18} strokeWidth={1.5} style={{ color: "#fff" }} />
+            活的道路
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: rpx(16) }}>
+          <button
+            onClick={() => toast.show("搜索功能筹备中")}
+            style={{
+              background: "transparent",
+              border: "none",
+              padding: rpx(16),
+              cursor: "pointer",
+            }}
+          >
+            <Search size={22} strokeWidth={1.5} color="#555" />
           </button>
         </div>
       </div>
 
-      {/* ═══ Tab 栏 ═══ */}
-      <div
-        style={{
-          padding: `${rpx(4)} ${rpx(36)} ${rpx(16)}`,
-          background: THEME.bg,
-        }}
-      >
-        <div className="flex" style={{ gap: rpx(32) }}>
-          {NEWLIFE_TABS.map((tab) => {
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                className="cursor-pointer relative"
-                style={{
-                  padding: `${rpx(12)} 0`,
-                  border: "none",
-                  background: "none",
-                  fontSize: "var(--font-size-sm)",
-                  color: isActive ? THEME.accent : THEME.textSecondary,
-                  fontFamily: isActive ? FONT_SERIF : undefined,
-                  transition: "color 0.2s ease",
-                }}
-                onClick={() => handleTabChange(tab.id)}
-              >
-                {tab.label}
-                {isActive && (
-                  <div
-                    className="absolute"
-                    style={{
-                      bottom: 0,
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      width: rpx(32),
-                      height: rpx(4),
-                      borderRadius: rpx(2),
-                      background: THEME.accent,
-                    }}
-                  />
-                )}
-              </button>
-            );
-          })}
+      {/* 圈子入口 - 极简文字版 */}
+      <div style={{ padding: `0 ${rpx(40)} ${rpx(40)}` }}>
+        <div
+          onClick={() => {
+            if (onNavigateToCircle) onNavigateToCircle();
+            else toast.show("圈子社区加载中");
+          }}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: `${rpx(32)} 0`,
+            borderBottom: "1px solid rgba(0,0,0,0.05)",
+            cursor: "pointer",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: rpx(16) }}>
+            <span
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(36),
+                fontWeight: 600,
+                color: "#111",
+                letterSpacing: rpx(4),
+              }}
+            >
+              感知圈子
+            </span>
+            <span
+              style={{
+                fontSize: rpx(20),
+                color: "#999",
+                background: "rgba(0,0,0,0.03)",
+                padding: `${rpx(4)} ${rpx(12)}`,
+                borderRadius: rpx(20),
+              }}
+            >
+              {CIRCLE_INFO.memberCount.toLocaleString()} 觉醒者
+            </span>
+          </div>
+          <ChevronRight size={20} color="#999" strokeWidth={1.5} />
         </div>
       </div>
 
-      {/* ═══ 内容区 ═══ */}
+      {/* 分类导航 - 纯文字极简版 */}
       <div
         style={{
-          padding: `0 ${rpx(36)}`,
-          paddingBottom: "calc(var(--nav-height) + var(--spacing-xl))",
+          display: "flex",
+          gap: rpx(40),
+          padding: `0 ${rpx(40)} ${rpx(20)}`,
+          overflowX: "auto",
+          borderBottom: "1px solid rgba(0,0,0,0.05)",
         }}
       >
-        {/* ── 继续学习卡片（推荐 Tab） ── */}
-        {activeTab === "recommend" && lastStudied && (
-          <div
-            className="cursor-pointer overflow-hidden relative"
-            style={{
-              borderRadius: rpx(16),
-              marginBottom: rpx(28),
-              boxShadow:
-                "0 4px 20px rgba(30,20,10,0.08), 0 1px 4px rgba(30,20,10,0.04)",
-            }}
-            onClick={() => handleCourseClick(lastStudied.id)}
-          >
-            <div
+        {NEWLIFE_TABS.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
               style={{
-                width: "100%",
-                height: rpx(280),
+                background: "transparent",
+                border: "none",
+                padding: `${rpx(10)} 0`,
                 position: "relative",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(28),
+                fontWeight: isActive ? 600 : 400,
+                color: isActive ? "#111" : "#A1A1A1",
+                letterSpacing: rpx(4),
+                transition: "color 0.3s ease",
               }}
             >
-              <ImageWithFallback
-                src={lastStudied.cover}
-                alt={lastStudied.title}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.5) 100%)",
-                }}
-              />
-              {/* 上次学到标签 */}
-              <div
-                className="absolute"
-                style={{
-                  top: rpx(16),
-                  left: rpx(16),
-                  padding: `${rpx(6)} ${rpx(16)}`,
-                  borderRadius: rpx(16),
-                  background: THEME.accent,
-                  fontSize: rpx(20),
-                  color: "#fff",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: rpx(6),
-                }}
-              >
-                <Play size={10} strokeWidth={2.5} fill="#fff" />
-                上次学到
-              </div>
-              {/* 底部信息 */}
-              <div
-                className="absolute"
-                style={{
-                  bottom: rpx(16),
-                  left: rpx(16),
-                  right: rpx(16),
-                }}
-              >
-                <p
+              {tab.name}
+              {isActive && (
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: rpx(-20),
+                    left: 0,
+                    width: "100%",
+                    height: "1px",
+                    background: "#111",
+                  }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 课程内容列表 */}
+      <div
+        style={{
+          flex: 1,
+          padding: `${rpx(40)} ${rpx(40)} ${rpx(160)}`,
+          overflowY: "auto",
+        }}
+      >
+        {/* 上次学习 - 极简排版 */}
+        {lastStudied && (
+          <div style={{ marginBottom: rpx(60) }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                padding: `${rpx(40)} 0`,
+                borderBottom: "2px solid #111", // 加粗底线区分“继续”
+                cursor: "pointer",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: rpx(16) }}>
+                <span
                   style={{
                     fontSize: rpx(20),
-                    color: "rgba(255,255,255,0.7)",
-                    margin: 0,
+                    color: "#111",
+                    letterSpacing: rpx(2),
+                    fontWeight: 600,
                   }}
                 >
-                  {lastStudied.type === "video" ? "视频" : "音频"} ·{" "}
-                  {lastStudied.title}
-                </p>
+                  继续前行
+                </span>
+                <span style={{ fontSize: rpx(20), color: "#888" }}>
+                  {lastStudied.lastStudied}
+                </span>
+              </div>
+
+              <p style={{ fontFamily: FONT_SERIF, fontSize: rpx(48), color: "#111", margin: 0, letterSpacing: rpx(4), fontWeight: 600 }}>
+                {lastStudied.title}
+              </p>
+              
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: rpx(24) }}>
                 <div
-                  className="flex items-center justify-between"
-                  style={{ marginTop: rpx(8) }}
+                  style={{
+                    width: rpx(64),
+                    height: rpx(64),
+                    borderRadius: "50%",
+                    border: "1px solid #111",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                 >
-                  <span
-                    style={{
-                      fontSize: rpx(22),
-                      color: "rgba(255,255,255,0.85)",
-                    }}
-                  >
-                    {lastStudied.lastStudied || ""}
-                  </span>
-                  <div
-                    style={{
-                      padding: `${rpx(6)} ${rpx(20)}`,
-                      borderRadius: rpx(20),
-                      background: THEME.accent,
-                      fontSize: rpx(22),
-                      color: "#fff",
-                    }}
-                  >
-                    继续学习
-                  </div>
+                  <Play size={20} fill="#111" color="#111" style={{ marginLeft: 2 }} />
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* ── 圈子入口（推荐 Tab） ── */}
-        {activeTab === "recommend" && (
-          <div
-            className="cursor-pointer flex items-center"
-            style={{
-              padding: rpx(20),
-              borderRadius: rpx(16),
-              background: THEME.surface,
-              boxShadow:
-                "0 2px 12px rgba(30,20,10,0.04), 0 1px 3px rgba(30,20,10,0.02)",
-              gap: rpx(16),
-              marginBottom: rpx(28),
-            }}
-            onClick={() => onNavigateToCircle?.()}
-          >
-            <div
-              className="flex-shrink-0 overflow-hidden"
-              style={{
-                width: rpx(80),
-                height: rpx(80),
-                borderRadius: rpx(12),
-              }}
-            >
-              <ImageWithFallback
-                src={CIRCLE_INFO.cover}
-                alt={CIRCLE_INFO.name}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
-            </div>
-            <div className="flex-1" style={{ minWidth: 0 }}>
-              <p
-                style={{
-                  fontFamily: FONT_SERIF,
-                  fontSize: "var(--font-size-sm)",
-                  color: THEME.textPrimary,
-                  margin: 0,
-                }}
-              >
-                {CIRCLE_INFO.name}
-              </p>
-              <div
-                className="flex items-center"
-                style={{
-                  gap: rpx(12),
-                  marginTop: rpx(6),
-                }}
-              >
-                <span
-                  className="flex items-center"
-                  style={{
-                    gap: rpx(4),
-                    fontSize: rpx(20),
-                    color: THEME.textTertiary,
-                  }}
-                >
-                  <MessageCircle size={11} strokeWidth={1.5} />
-                  {CIRCLE_INFO.postCount} 动态
-                </span>
-                <span
-                  className="flex items-center"
-                  style={{
-                    gap: rpx(4),
-                    fontSize: rpx(20),
-                    color: THEME.textTertiary,
-                  }}
-                >
-                  <Users size={11} strokeWidth={1.5} />
-                  {CIRCLE_INFO.memberCount} 成员
-                </span>
-              </div>
-            </div>
-            <ChevronRight
-              size={16}
-              strokeWidth={1.5}
-              style={{ color: THEME.textTertiary, flexShrink: 0 }}
-            />
-          </div>
-        )}
-
-        {/* ── 课程列表 ── */}
+        {/* 课程列表分组 - 纯文字块 */}
         {Object.entries(groupedCourses).map(([group, items]) => (
-          <div key={group} style={{ marginBottom: rpx(28) }}>
-            {/* 子分类标题 */}
-            <div
-              className="flex items-baseline"
+          <div key={group} style={{ marginBottom: rpx(60) }}>
+            <h3
               style={{
-                gap: rpx(12),
-                marginBottom: rpx(16),
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(32),
+                color: "#111",
+                margin: `0 0 ${rpx(32)} 0`,
+                letterSpacing: rpx(6),
+                fontWeight: 600,
               }}
             >
-              <h3
-                style={{
-                  fontFamily: FONT_SERIF,
-                  fontSize: "var(--font-size-sm)",
-                  color: THEME.textPrimary,
-                  margin: 0,
-                }}
-              >
-                {group}
-              </h3>
-            </div>
+              {group}
+            </h3>
 
-            {/* 课程卡片 */}
-            {items.map((course) => (
-              <CourseCard
-                key={course.id}
-                course={course}
-                onClick={() => handleCourseClick(course.id)}
-              />
-            ))}
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {items.map((course, idx) => (
+                <div
+                  key={course.id}
+                  onClick={() => toast.show("详情筹备中")}
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    justifyContent: "space-between",
+                    padding: `${rpx(32)} 0`,
+                    borderBottom: "1px solid rgba(0,0,0,0.05)",
+                    cursor: "pointer",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "baseline", gap: rpx(24) }}>
+                    <span
+                      style={{
+                        fontFamily: FONT_SERIF,
+                        fontSize: rpx(24),
+                        color: "#CCC",
+                        fontWeight: 300,
+                      }}
+                    >
+                      {String(idx + 1).padStart(2, "0")}
+                    </span>
+                    <p
+                      style={{
+                        fontFamily: FONT_SERIF,
+                        fontSize: rpx(32),
+                        color: "#222",
+                        margin: 0,
+                        letterSpacing: rpx(2),
+                        fontWeight: 400,
+                      }}
+                    >
+                      {course.title}
+                    </p>
+                  </div>
+
+                  <span
+                    style={{
+                      fontSize: rpx(20),
+                      color: course.status === "completed" ? "#111" : course.status === "in-progress" ? "#666" : "#A1A1A1",
+                      letterSpacing: rpx(2),
+                    }}
+                  >
+                    {course.status === "completed" ? "已走过" : course.status === "in-progress" ? "跋涉中" : "未涉足"}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         ))}
+        
+        {courses.length === 0 && (
+          <div
+            style={{
+              padding: `${rpx(160)} 0`,
+              textAlign: "center",
+              color: "#A1A1A1",
+              fontSize: rpx(24),
+              letterSpacing: rpx(4),
+              fontFamily: FONT_SERIF,
+            }}
+          >
+            前方道路尚未显现
+          </div>
+        )}
       </div>
 
-      {/* 底部导航 */}
       <BottomNavigation active={2} onChange={handleNavChange} />
 
       <Toast
         message={toast.message}
         visible={toast.visible}
-        duration={toast.duration}
+        duration={2500}
         onDismiss={toast.dismiss}
       />
-    </div>
-  );
-}
-
-// ─── 课程卡片子组件 ──────────────────────────────────
-
-function CourseCard({
-  course,
-  onClick,
-}: {
-  course: Course;
-  onClick: () => void;
-}) {
-  const statusInfo = {
-    "not-started": { label: "未学习", color: THEME.textTertiary, bg: "rgba(176,168,156,0.08)" },
-    "in-progress": { label: "学习中", color: THEME.accent, bg: THEME.accentLight },
-    completed: { label: "已完成", color: THEME.sage, bg: THEME.sageLight },
-  };
-  const s = statusInfo[course.status];
-
-  return (
-    <div
-      className="cursor-pointer flex"
-      style={{
-        gap: rpx(20),
-        padding: `${rpx(16)} 0`,
-        borderBottom: `1px solid ${THEME.border}`,
-      }}
-      onClick={onClick}
-    >
-      {/* 封面 */}
-      <div
-        className="flex-shrink-0 overflow-hidden"
-        style={{
-          width: rpx(140),
-          height: rpx(100),
-          borderRadius: rpx(10),
-          boxShadow: "0 2px 8px rgba(30,20,10,0.06)",
-        }}
-      >
-        <ImageWithFallback
-          src={course.cover}
-          alt={course.title}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      </div>
-
-      {/* 信息 */}
-      <div
-        className="flex-1 flex flex-col justify-between"
-        style={{ minWidth: 0 }}
-      >
-        <div>
-          <p
-            style={{
-              fontSize: "var(--font-size-sm)",
-              color: THEME.textPrimary,
-              margin: 0,
-              lineHeight: 1.4,
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
-            {course.title}
-          </p>
-          <p
-            style={{
-              fontSize: rpx(20),
-              color: THEME.textTertiary,
-              margin: `${rpx(4)} 0 0`,
-            }}
-          >
-            {course.taskCount}个任务
-            {course.lastStudied && ` · ${course.lastStudied}`}
-          </p>
-        </div>
-
-        {/* 状态标签 */}
-        <div
-          style={{
-            alignSelf: "flex-start",
-            padding: `${rpx(4)} ${rpx(14)}`,
-            borderRadius: rpx(12),
-            background: s.bg,
-            fontSize: rpx(20),
-            color: s.color,
-            marginTop: rpx(6),
-          }}
-        >
-          {s.label}
-        </div>
-      </div>
     </div>
   );
 }
