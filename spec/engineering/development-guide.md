@@ -6,7 +6,7 @@
 
 ## 一、项目概览
 
-**元思想**React + Tailwind CSS 开发。
+**元感知**React + Tailwind CSS 开发。
 
 **技术定位**：
 

@@ -108,7 +108,7 @@ export function PrivacyDialog({ open, onCancel, onAgree }: PrivacyDialogProps) {
               textAlign: "center",
             }}
           >
-            在使用元思想前，请你仔细阅读并同意
+            在使用元感知前，请你仔细阅读并同意
             <span
               style={{ color: "#C49A6C", cursor: "pointer" }}
               onClick={(e) => e.stopPropagation()}

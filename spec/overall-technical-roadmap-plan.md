@@ -97,9 +97,9 @@
 
 ```json
 {
-  "name": "元思想平台",
-  "short_name": "元思想",
-  "description": "元思想 × 明镜智慧平台",
+  "name": "元感知平台",
+  "short_name": "元感知",
+  "description": "元感知 × 明镜智慧平台",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
@@ -140,7 +140,7 @@
   name="apple-mobile-web-app-status-bar-style"
   content="black-translucent"
 />
-<meta name="apple-mobile-web-app-title" content="元思想" />
+<meta name="apple-mobile-web-app-title" content="元感知" />
 <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
 
 <!-- 主题色 -->

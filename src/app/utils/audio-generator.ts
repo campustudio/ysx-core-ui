@@ -1,5 +1,5 @@
 /**
- * 音频合成器 - 元思想
+ * 音频合成器 - 元感知
  *
  * 使用 Web Audio API（OfflineAudioContext）在浏览器中合成音频。
  * 生成的音频以 Blob URL 形式返回，可直接用于 <audio> 或 new Audio(url)。
@@ -83,7 +83,11 @@ function audioBufferToWavUrl(buffer: AudioBuffer): string {
   for (let i = 0; i < length; i++) {
     for (let ch = 0; ch < numChannels; ch++) {
       const sample = Math.max(-1, Math.min(1, channels[ch][i]));
-      view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7FFF, true);
+      view.setInt16(
+        offset,
+        sample < 0 ? sample * 0x8000 : sample * 0x7fff,
+        true,
+      );
       offset += 2;
     }
   }
@@ -103,7 +107,7 @@ function writeString(view: DataView, offset: number, str: string) {
 /** 创建白噪音 Buffer（单声道） */
 function createNoiseBuffer(
   ctx: OfflineAudioContext,
-  duration: number
+  duration: number,
 ): AudioBuffer {
   const length = Math.floor(ctx.sampleRate * duration);
   const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
@@ -477,7 +481,9 @@ async function synthesizeZhi(duration = 30): Promise<AudioBuffer> {
   breathLfo.connect(breathGain);
   breathGain.connect(g1.gain);
 
-  [osc1, osc2, osc3, osc4].forEach((o) => o.connect(o === osc1 ? g1 : o === osc2 ? g2 : o === osc3 ? g3 : g4));
+  [osc1, osc2, osc3, osc4].forEach((o) =>
+    o.connect(o === osc1 ? g1 : o === osc2 ? g2 : o === osc3 ? g3 : g4),
+  );
   [g1, g2, g3, g4].forEach((g) => g.connect(ctx.destination));
   [osc1, osc2, osc3, osc4, vibrato, breathLfo].forEach((o) => o.start());
 

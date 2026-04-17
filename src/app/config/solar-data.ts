@@ -37,9 +37,8 @@ export const SUN_GLYPH = "元";
 export const SUN_SUB = "思想";
 
 /** 页面文案 */
-export const SOLAR_TITLE = "欢迎来到元思想";
-export const SOLAR_SUBTITLE =
-  "每一步，都通向更好的自己";
+export const SOLAR_TITLE = "欢迎来到元感知";
+export const SOLAR_SUBTITLE = "每一步，都通向更好的自己";
 
 /** 七星行星（内→外） */
 export const SOLAR_PLANETS: SolarPlanet[] = [

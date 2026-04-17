@@ -1,5 +1,5 @@
 /**
- * 沉浸呼吸页 - 元思想（白绿生命力系）
+ * 沉浸呼吸页 - 元感知（白绿生命力系）
  *
  * 从首页呼吸圆环（收/清）点击进入的全屏沉浸式呼吸体验
  * 视觉：白→浅鼠尾草绿渐变，像晨光穿过树叶的光感
@@ -49,10 +49,8 @@ export function BreathingSession({ onBack }: Props) {
 
   const selectedOption =
     DURATION_OPTIONS.find((o) => o.id === selectedId) || DURATION_OPTIONS[0];
-  const completion =
-    COMPLETION_MESSAGES[selectedId] || DEFAULT_COMPLETION;
-  const ambientSrc =
-    AMBIENT_SOUNDS.find((s) => s.id === ambientId)?.src || "";
+  const completion = COMPLETION_MESSAGES[selectedId] || DEFAULT_COMPLETION;
+  const ambientSrc = AMBIENT_SOUNDS.find((s) => s.id === ambientId)?.src || "";
 
   const clearTimer = useCallback(() => {
     if (timerRef.current) {
@@ -100,10 +98,10 @@ export function BreathingSession({ onBack }: Props) {
   };
 
   /* ── 浅绿生命力色系 ── */
-  const textPrimary = "#3A4A38";       /* 深苔绿 — 主文字 */
+  const textPrimary = "#3A4A38"; /* 深苔绿 — 主文字 */
   const textSecondary = "rgba(58,74,56,0.55)"; /* 中等 — 副文字 */
-  const textTertiary = "rgba(58,74,56,0.32)";  /* 淡 — 辅助信息 */
-  const accentGreen = "#6B8F63";       /* 鼠尾草绿深一度 — 按钮/高亮 */
+  const textTertiary = "rgba(58,74,56,0.32)"; /* 淡 — 辅助信息 */
+  const accentGreen = "#6B8F63"; /* 鼠尾草绿深一度 — 按钮/高亮 */
 
   return (
     <div

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <opml version="2.0">
   <head>
-    <title>元思想平台 2.0 版本 - 模块架构思维导图</title>
+    <title>元感知平台 2.0 版本 - 模块架构思维导图</title>
     <dateCreated>2026-03-25</dateCreated>
   </head>
   <body>
-    <outline text="元思想平台">
+    <outline text="元感知平台">
       <outline text="平台定位：文明级、镜面级、碑感级的入口平台">
         <outline text="核心定调：不要做&quot;疗愈空间&quot;，要做&quot;归位之镜&quot;"/>
       </outline>
       
       <outline text="首页（镜）">
-        <outline text="品牌主名：元思想"/>
+        <outline text="品牌主名：元感知"/>
         <outline text="穿透性总纲语言"/>
         <outline text="五大主轴入口（镜碑式）"/>
       </outline>
       
       <outline text="一、人类手册">
-        <outline text="定位：元思想思想体系核心载体"/>
+        <outline text="定位：元感知思想体系核心载体"/>
         <outline text="📖 电子书阅读">
           <outline text="十部电子书列表"/>
           <outline text="阅读器功能">

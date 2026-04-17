@@ -1,5 +1,5 @@
 /**
- * Showcase - 元思想官网首页 Landing Page
+ * Showcase - 元感知官网首页 Landing Page
  *
  * 面向公众的产品介绍落地页
  * 包含：品牌介绍、产品体验、核心理念、功能空间、设计语言、品牌视觉
@@ -1066,7 +1066,7 @@ function PhoneMockupContent() {
                   margin: 0,
                 }}
               >
-                —— 元思想 · 感知笔记
+                —— 元感知 · 感知笔记
               </p>
             </div>
 
@@ -1493,7 +1493,7 @@ export function Showcase() {
                 margin: 0,
               }}
             >
-              元思想
+              元感知
             </h1>
 
             {/* <p
@@ -1522,7 +1522,7 @@ export function Showcase() {
               }}
             >
               在快节奏的世界中，我们需要一个回到自己的入口。
-              元思想以东方智慧为底色，用温暖的方式陪伴你慢下来、停下来、静下来。
+              元感知以东方智慧为底色，用温暖的方式陪伴你慢下来、停下来、静下来。
             </p>
 
             <div
@@ -1915,7 +1915,7 @@ export function Showcase() {
               letterSpacing: 2,
             }}
           >
-            —— 元思想 · 感知笔记
+            —— 元感知 · 感知笔记
           </p>
           <div
             style={{
@@ -2242,7 +2242,7 @@ export function Showcase() {
               lineHeight: 1.4,
             }}
           >
-            元思想内测进行中
+            元感知内测进行中
           </div>
           <p
             style={{
@@ -2256,7 +2256,7 @@ export function Showcase() {
           >
             我们正在用心打磨每一个细节。
             <br />
-            如果你也相信「慢下来才能看见自己」，期待与你在元思想相遇。
+            如果你也相信「慢下来才能看见自己」，期待与你在元感知相遇。
           </p>
           <div
             style={{
@@ -2308,7 +2308,7 @@ export function Showcase() {
             marginBottom: 8,
           }}
         >
-          元思想
+          元感知
         </div>
         <p
           style={{

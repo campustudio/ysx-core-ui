@@ -35,7 +35,7 @@ export interface SectionData {
 export const DAILY_WISDOM = {
   tag: "今日之光",
   text: "当你回到自己，世界便回到了它本来的样子",
-  source: "元思想 · 成长笔记",
+  source: "元感知 · 成长笔记",
 } as const;
 
 // ─── 精选推荐 ────────────────────────────────────────
@@ -161,6 +161,6 @@ export const HOME_SECTIONS: SectionData[] = [
 
 export const ANNOUNCEMENT = {
   sectionTitle: "官方公告",
-  title: "元思想内测进行中",
+  title: "元感知内测进行中",
   description: "在忙碌中找回自己的节奏",
 } as const;

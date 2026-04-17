@@ -4,7 +4,7 @@
  * 点击左上角头像后弹出，覆盖约 60% 屏幕高度
  *
  * 未登录状态：
- *   空头像 + "登录元思想" + 菜单项（灰色禁用需登录的项）
+ *   空头像 + "登录元感知" + 菜单项（灰色禁用需登录的项）
  *   点击登录区域 → 跳转登录页
  *
  * 已登录状态（模拟）：
@@ -31,7 +31,14 @@ import { FONT_SERIF, rpx } from "../../config/styles";
 
 // ─── 图标映射 ──────────────────────────────────────────
 
-const ICON_MAP: Record<string, React.ComponentType<{ size?: number; strokeWidth?: number; style?: React.CSSProperties }>> = {
+const ICON_MAP: Record<
+  string,
+  React.ComponentType<{
+    size?: number;
+    strokeWidth?: number;
+    style?: React.CSSProperties;
+  }>
+> = {
   heart: Heart,
   bookmark: Bookmark,
   clock: Clock,
@@ -126,7 +133,8 @@ export function UserDrawer({
           boxShadow: "0 -8px 40px rgba(30, 20, 10, 0.15)",
           opacity: visible ? 1 : 0,
           transform: visible ? "translateY(0)" : "translateY(100%)",
-          transition: "transform 0.35s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.3s ease",
+          transition:
+            "transform 0.35s cubic-bezier(0.33, 1, 0.68, 1), opacity 0.3s ease",
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",

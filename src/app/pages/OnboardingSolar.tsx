@@ -1,5 +1,5 @@
 /**
- * 新人引导页 - 元思想 · 太阳系版
+ * 新人引导页 - 元感知 · 太阳系版
  *
  * 「元」为太阳，功能模块为行星
  * 缓慢公转 + CSS 3D 透视 → 沉浸式太阳系氛围
@@ -24,10 +24,13 @@ import { useToast } from "../hooks/useToast";
 // ─── 背景星尘 ──────────────────────────────────────
 
 interface Dust {
-  left: string; top: string;
+  left: string;
+  top: string;
   size: string;
-  loOp: number; hiOp: number;
-  dur: string; delay: string;
+  loOp: number;
+  hiOp: number;
+  dur: string;
+  delay: string;
   anim: string;
 }
 
@@ -36,7 +39,7 @@ function makeDust(): Dust[] {
   for (let i = 0; i < 35; i++) {
     out.push({
       left: `${Math.round((Math.sin(i * 5.1 + 0.9) * 0.5 + 0.5) * 96 + 2)}%`,
-      top:  `${Math.round((Math.cos(i * 3.5 + 1.4) * 0.5 + 0.5) * 96 + 2)}%`,
+      top: `${Math.round((Math.cos(i * 3.5 + 1.4) * 0.5 + 0.5) * 96 + 2)}%`,
       size: rpx(2 + (i % 3) * 0.7),
       loOp: 0.08 + (i % 5) * 0.03,
       hiOp: 0.45 + (i % 4) * 0.08,
@@ -48,7 +51,7 @@ function makeDust(): Dust[] {
   for (let i = 0; i < 18; i++) {
     out.push({
       left: `${Math.round((Math.sin(i * 4.3 + 2.6) * 0.5 + 0.5) * 92 + 4)}%`,
-      top:  `${Math.round((Math.cos(i * 3.1 + 3.3) * 0.5 + 0.5) * 92 + 4)}%`,
+      top: `${Math.round((Math.cos(i * 3.1 + 3.3) * 0.5 + 0.5) * 92 + 4)}%`,
       size: rpx(3 + (i % 3) * 0.9),
       loOp: 0.15 + (i % 3) * 0.06,
       hiOp: 0.65 + (i % 3) * 0.1,
@@ -60,7 +63,7 @@ function makeDust(): Dust[] {
   for (let i = 0; i < 8; i++) {
     out.push({
       left: `${Math.round((Math.sin(i * 6.7 + 1.1) * 0.5 + 0.5) * 86 + 7)}%`,
-      top:  `${Math.round((Math.cos(i * 4.9 + 0.5) * 0.5 + 0.5) * 86 + 7)}%`,
+      top: `${Math.round((Math.cos(i * 4.9 + 0.5) * 0.5 + 0.5) * 86 + 7)}%`,
       size: rpx(4.5 + (i % 2) * 1.2),
       loOp: 0.25 + (i % 2) * 0.1,
       hiOp: 0.85 + (i % 2) * 0.15,
@@ -76,14 +79,19 @@ const DUST = makeDust();
 
 // ─── 组件 ────────────────────────────────────────────
 
-interface Props { onBack?: () => void }
+interface Props {
+  onBack?: () => void;
+}
 
 export function OnboardingSolar({ onBack }: Props) {
   const toast = useToast();
 
-  const handlePlanetClick = useCallback((planetId: string, planetTitle: string) => {
-    toast.show(`「${planetTitle}」的详细内容正在用心打磨中，敬请期待`);
-  }, [toast.show]);
+  const handlePlanetClick = useCallback(
+    (planetId: string, planetTitle: string) => {
+      toast.show(`「${planetTitle}」的详细内容正在用心打磨中，敬请期待`);
+    },
+    [toast.show],
+  );
 
   return (
     <div
@@ -134,8 +142,10 @@ export function OnboardingSolar({ onBack }: Props) {
           key={`d-${i}`}
           style={{
             position: "absolute",
-            left: p.left, top: p.top,
-            width: p.size, height: p.size,
+            left: p.left,
+            top: p.top,
+            width: p.size,
+            height: p.size,
             borderRadius: "50%",
             background:
               "radial-gradient(circle, rgba(255,250,240,0.95) 0%, rgba(230,215,190,0.5) 100%)",
@@ -153,9 +163,12 @@ export function OnboardingSolar({ onBack }: Props) {
       {/* ═══ 内容层 ═══ */}
       <div
         style={{
-          position: "relative", zIndex: 1,
-          display: "flex", flexDirection: "column",
-          flex: 1, minHeight: "100vh",
+          position: "relative",
+          zIndex: 1,
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          minHeight: "100vh",
         }}
       >
         {/* 返回 */}
@@ -163,13 +176,22 @@ export function OnboardingSolar({ onBack }: Props) {
           className="cursor-pointer"
           onClick={onBack}
           style={{
-            position: "fixed", top: 0, left: 0, zIndex: 10,
+            position: "fixed",
+            top: 0,
+            left: 0,
+            zIndex: 10,
             paddingTop: "max(calc(var(--rpx) * 24), env(safe-area-inset-top))",
-            paddingLeft: rpx(18), paddingRight: rpx(20), paddingBottom: rpx(20),
+            paddingLeft: rpx(18),
+            paddingRight: rpx(20),
+            paddingBottom: rpx(20),
           }}
         >
           <ChevronLeft
-            style={{ width: rpx(44), height: rpx(44), color: "rgba(232,213,184,0.4)" }}
+            style={{
+              width: rpx(44),
+              height: rpx(44),
+              color: "rgba(232,213,184,0.4)",
+            }}
             strokeWidth={1.8}
           />
         </div>
@@ -185,8 +207,12 @@ export function OnboardingSolar({ onBack }: Props) {
         >
           <h1
             style={{
-              fontSize: rpx(48), fontFamily: FONT_SERIF, fontWeight: 600,
-              color: "#E8D5B8", letterSpacing: rpx(8), lineHeight: 1.3,
+              fontSize: rpx(48),
+              fontFamily: FONT_SERIF,
+              fontWeight: 600,
+              color: "#E8D5B8",
+              letterSpacing: rpx(8),
+              lineHeight: 1.3,
               margin: 0,
               textShadow: `0 0 ${rpx(24)} rgba(196,154,108,0.2)`,
             }}
@@ -195,9 +221,13 @@ export function OnboardingSolar({ onBack }: Props) {
           </h1>
           <p
             style={{
-              fontSize: rpx(24), fontFamily: FONT_SERIF, fontWeight: 400,
-              color: "rgba(232,213,184,0.4)", letterSpacing: rpx(3),
-              lineHeight: 1.5, margin: `${rpx(12)} 0 0`,
+              fontSize: rpx(24),
+              fontFamily: FONT_SERIF,
+              fontWeight: 400,
+              color: "rgba(232,213,184,0.4)",
+              letterSpacing: rpx(3),
+              lineHeight: 1.5,
+              margin: `${rpx(12)} 0 0`,
               textAlign: "center",
             }}
           >
@@ -228,8 +258,10 @@ export function OnboardingSolar({ onBack }: Props) {
             className="cursor-pointer"
             onClick={onBack}
             style={{
-              display: "flex", alignItems: "center",
-              justifyContent: "center", gap: rpx(16),
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: rpx(16),
               animation: "cta-breathe 4s ease-in-out infinite",
               marginBottom: rpx(14),
               padding: `${rpx(12)} ${rpx(24)}`,
@@ -237,15 +269,20 @@ export function OnboardingSolar({ onBack }: Props) {
           >
             <div
               style={{
-                width: rpx(48), height: "1px",
-                background: "linear-gradient(to right, transparent, rgba(196,154,108,0.35))",
+                width: rpx(48),
+                height: "1px",
+                background:
+                  "linear-gradient(to right, transparent, rgba(196,154,108,0.35))",
               }}
             />
             <span
               style={{
-                fontFamily: FONT_SERIF, fontSize: rpx(30), fontWeight: 500,
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(30),
+                fontWeight: 500,
                 color: "rgba(196,154,108,0.7)",
-                letterSpacing: rpx(12), lineHeight: 1,
+                letterSpacing: rpx(12),
+                lineHeight: 1,
                 textShadow: `0 0 ${rpx(20)} rgba(196,154,108,0.25)`,
               }}
             >
@@ -253,16 +290,22 @@ export function OnboardingSolar({ onBack }: Props) {
             </span>
             <div
               style={{
-                width: rpx(48), height: "1px",
-                background: "linear-gradient(to left, transparent, rgba(196,154,108,0.35))",
+                width: rpx(48),
+                height: "1px",
+                background:
+                  "linear-gradient(to left, transparent, rgba(196,154,108,0.35))",
               }}
             />
           </div>
           <p
             style={{
-              fontFamily: FONT_SERIF, fontSize: rpx(17), fontWeight: 400,
-              color: "rgba(196,154,108,0.22)", letterSpacing: rpx(4),
-              lineHeight: 1, margin: 0,
+              fontFamily: FONT_SERIF,
+              fontSize: rpx(17),
+              fontWeight: 400,
+              color: "rgba(196,154,108,0.22)",
+              letterSpacing: rpx(4),
+              lineHeight: 1,
+              margin: 0,
             }}
           >
             与光同行，步步生花

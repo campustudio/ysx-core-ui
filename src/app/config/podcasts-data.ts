@@ -1,5 +1,5 @@
 /**
- * 播客/故事数据源 - 元思想
+ * 播客/故事数据源 - 元感知
  *
  * 承接首页「同行者的声音」卡片的点击跳转
  * 用户的真实分享：音频故事、播客节目
@@ -65,8 +65,7 @@ export const PODCASTS: Record<string, Podcast> = {
     title: "新人生之路圈子分享",
     subtitle: "感知者的声音 · 播客",
     category: "感知者的声音",
-    coverImage:
-      "/images/img-169888429218.jpg",
+    coverImage: "/images/img-169888429218.jpg",
     author: { name: "小林", role: "练习者 · 3个月" },
     duration: "12 分钟",
     description:
@@ -90,8 +89,7 @@ export const PODCASTS: Record<string, Podcast> = {
     title: "社群分享",
     subtitle: "感知者的声音 · 故事",
     category: "感知者的声音",
-    coverImage:
-      "/images/img-176537151433.jpg",
+    coverImage: "/images/img-176537151433.jpg",
     author: { name: "让舒", role: "引导师 · 2年" },
     duration: "18 分钟",
     description:
@@ -115,8 +113,7 @@ export const PODCASTS: Record<string, Podcast> = {
     title: "个人分享",
     subtitle: "感知者的声音 · 故事",
     category: "感知者的声音",
-    coverImage:
-      "/images/img-1555069855-e.jpg",
+    coverImage: "/images/img-1555069855-e.jpg",
     author: { name: "老张", role: "企业管理者 · 1年" },
     duration: "15 分钟",
     description:

@@ -20,11 +20,7 @@ import {
   Apple,
   Check,
 } from "lucide-react";
-import {
-  LOGIN_METHODS,
-  AUTH_COPY,
-  LOGIN_BG_IMAGE,
-} from "../config/auth-data";
+import { LOGIN_METHODS, AUTH_COPY, LOGIN_BG_IMAGE } from "../config/auth-data";
 import { FONT_SERIF, rpx } from "../config/styles";
 import { PrivacyDialog } from "../components/auth/PrivacyDialog";
 
@@ -63,7 +59,7 @@ export function LoginPage({ onBack, onLoginSuccess }: LoginPageProps) {
   const [showPrivacyDialog, setShowPrivacyDialog] = useState(false);
   /** 当前尝试登录的方式 ID（用于弹框后继续） */
   const [pendingLoginMethod, setPendingLoginMethod] = useState<string | null>(
-    null
+    null,
   );
 
   /** 执行模拟登录 */
@@ -71,13 +67,13 @@ export function LoginPage({ onBack, onLoginSuccess }: LoginPageProps) {
     (_methodId: string) => {
       // 模拟登录成功 — 返回假用户数据
       onLoginSuccess({
-        name: "元思想用户",
+        name: "元感知用户",
         avatar:
           "https://images.unsplash.com/photo-1587362869854-3898f1e5c2ac?w=100&h=100&fit=crop",
         days: 7,
       });
     },
-    [onLoginSuccess]
+    [onLoginSuccess],
   );
 
   /** 点击登录按钮 */
@@ -90,7 +86,7 @@ export function LoginPage({ onBack, onLoginSuccess }: LoginPageProps) {
       }
       doMockLogin(methodId);
     },
-    [privacyAgreed, doMockLogin]
+    [privacyAgreed, doMockLogin],
   );
 
   /** 隐私弹框 - 同意 */
@@ -308,9 +304,7 @@ export function LoginPage({ onBack, onLoginSuccess }: LoginPageProps) {
               border: privacyAgreed
                 ? "none"
                 : "1.5px solid rgba(255,255,255,0.35)",
-              background: privacyAgreed
-                ? "#C49A6C"
-                : "rgba(255,255,255,0.08)",
+              background: privacyAgreed ? "#C49A6C" : "rgba(255,255,255,0.08)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -320,11 +314,7 @@ export function LoginPage({ onBack, onLoginSuccess }: LoginPageProps) {
             onClick={() => setPrivacyAgreed(!privacyAgreed)}
           >
             {privacyAgreed && (
-              <Check
-                size={14}
-                strokeWidth={2.5}
-                style={{ color: "#ffffff" }}
-              />
+              <Check size={14} strokeWidth={2.5} style={{ color: "#ffffff" }} />
             )}
           </button>
           <p
@@ -336,15 +326,11 @@ export function LoginPage({ onBack, onLoginSuccess }: LoginPageProps) {
             }}
           >
             {AUTH_COPY.privacyCheckLabel}{" "}
-            <span
-              style={{ color: "rgba(196,154,108,0.8)", cursor: "pointer" }}
-            >
+            <span style={{ color: "rgba(196,154,108,0.8)", cursor: "pointer" }}>
               {AUTH_COPY.privacyTerms}
             </span>{" "}
             和{" "}
-            <span
-              style={{ color: "rgba(196,154,108,0.8)", cursor: "pointer" }}
-            >
+            <span style={{ color: "rgba(196,154,108,0.8)", cursor: "pointer" }}>
               {AUTH_COPY.privacyPolicy}
             </span>
           </p>

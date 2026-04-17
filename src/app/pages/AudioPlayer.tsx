@@ -1,5 +1,5 @@
 /**
- * 音频播放页 - 元思想
+ * 音频播放页 - 元感知
  *
  * 沉浸式全屏音频播放体验
  * 从首页「徐/止/定」卡片进入
@@ -22,7 +22,10 @@ import { useState } from "react";
 import { TRACKS, DEFAULT_TRACK } from "../config/player-data";
 import { FONT_SERIF, TEXT_SHADOW_HERO } from "../config/styles";
 import { HeroBackground } from "../components/hero/HeroBackground";
-import { PlayerHeader, PAGE_PADDING_H } from "../components/player/PlayerHeader";
+import {
+  PlayerHeader,
+  PAGE_PADDING_H,
+} from "../components/player/PlayerHeader";
 import { TrackCover } from "../components/player/TrackCover";
 import { AudioControl } from "../components/player/AudioControl";
 
@@ -75,8 +78,7 @@ export function AudioPlayer({ trackLabel, onBack }: AudioPlayerProps) {
         <div
           className="flex-1 flex flex-col justify-center"
           style={{
-            paddingTop:
-              "max(calc(var(--rpx) * 24), env(safe-area-inset-top))",
+            paddingTop: "max(calc(var(--rpx) * 24), env(safe-area-inset-top))",
             paddingBottom: "calc(var(--rpx) * 60)",
           }}
         >
@@ -85,10 +87,7 @@ export function AudioPlayer({ trackLabel, onBack }: AudioPlayerProps) {
             className="flex justify-center"
             style={{ marginBottom: "var(--spacing-xl)" }}
           >
-            <TrackCover
-              src={track.coverImage}
-              isPlaying={isPlaying}
-            />
+            <TrackCover src={track.coverImage} isPlaying={isPlaying} />
           </div>
 
           {/* 曲目信息 — 左对齐，与返回箭头/进度条对齐 */}

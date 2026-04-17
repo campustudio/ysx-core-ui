@@ -76,9 +76,8 @@ export const BOOKS: Book[] = [
   {
     id: "book-human-handbook",
     title: "人类手册",
-    author: "元思想",
-    cover:
-      "/images/img-163691431565.jpg",
+    author: "元感知",
+    cover: "/images/img-163691431565.jpg",
     description:
       "探索人类存在的本质，从身体、情绪、思维到意识，系统性地认识自己。每一章都是一把钥匙，帮助你打开自我认知的大门。",
     category: "audio",
@@ -204,9 +203,8 @@ export const BOOKS: Book[] = [
   {
     id: "book-inner-peace",
     title: "当下的力量",
-    author: "元思想",
-    cover:
-      "/images/img-175934937543.jpg",
+    author: "元感知",
+    cover: "/images/img-175934937543.jpg",
     description:
       "学会在忙碌的生活中找到内心的宁静。这不是逃避现实，而是一种更深层次的面对生活的方式。",
     category: "audio",
@@ -301,9 +299,8 @@ export const BOOKS: Book[] = [
   {
     id: "book-life-exploration",
     title: "生命的探索",
-    author: "元思想",
-    cover:
-      "/images/img-170940863515.jpg",
+    author: "元感知",
+    cover: "/images/img-170940863515.jpg",
     description:
       "从宇宙的视角重新审视人类的生命历程。每一个生命都是独一无二的旅程，这本书帮你找到属于自己的方向。",
     category: "audio",
@@ -436,7 +433,7 @@ export function getBookProgress(bookId: string): BookProgress {
 /** 获取某章节的进度 */
 export function getChapterProgress(
   bookId: string,
-  chapterId: string
+  chapterId: string,
 ): ChapterProgress {
   const bookProg = getBookProgress(bookId);
   return (
@@ -452,7 +449,7 @@ export function getChapterProgress(
 export function updateChapterProgress(
   bookId: string,
   chapterId: string,
-  update: Partial<ChapterProgress>
+  update: Partial<ChapterProgress>,
 ): void {
   const all = loadAllProgress();
   if (!all[bookId]) all[bookId] = {};

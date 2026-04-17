@@ -17,11 +17,16 @@ export interface DrawerMenuItem {
 }
 
 export const DRAWER_MENU_ITEMS: DrawerMenuItem[] = [
-  { id: "my-meta", label: "我的元思想", icon: "heart", requiresAuth: true },
-  { id: "my-collection", label: "我的收藏", icon: "bookmark", requiresAuth: true },
+  { id: "my-meta", label: "我的元感知", icon: "heart", requiresAuth: true },
+  {
+    id: "my-collection",
+    label: "我的收藏",
+    icon: "bookmark",
+    requiresAuth: true,
+  },
   { id: "my-history", label: "最近浏览", icon: "clock", requiresAuth: true },
   { id: "settings", label: "设置", icon: "settings", requiresAuth: false },
-  { id: "about", label: "关于元思想", icon: "info", requiresAuth: false },
+  { id: "about", label: "关于元感知", icon: "info", requiresAuth: false },
 ];
 
 // ─── 登录方式 ──────────────────────────────────────────
@@ -66,16 +71,16 @@ export const LOGIN_METHODS: LoginMethod[] = [
 
 export const AUTH_COPY = {
   /** 登录面板 - 未登录提示 */
-  drawerTitle: "登录元思想",
+  drawerTitle: "登录元感知",
   drawerSubtitle: "登录后解锁全部功能",
   /** 登录页 */
   loginWelcome: "欢迎来到",
-  loginBrand: "元思想",
+  loginBrand: "元感知",
   loginSubtitle: "在忙碌中找回自己的节奏",
   /** 隐私协议 */
   privacyTitle: "服务条款与隐私协议",
   privacyContent:
-    "在使用元思想前，请你仔细阅读并同意《服务条款》和《隐私协议》。我们将依法保护你的个人信息安全。",
+    "在使用元感知前，请你仔细阅读并同意《服务条款》和《隐私协议》。我们将依法保护你的个人信息安全。",
   privacyCheckLabel: "我已阅读并同意",
   privacyTerms: "《服务条款》",
   privacyPolicy: "《隐私协议》",

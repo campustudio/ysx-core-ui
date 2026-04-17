@@ -36,9 +36,8 @@ export interface GuideStar {
 /** 星座连线定义 [fromId, toId] */
 export type StarConnection = [string, string];
 
-export const ONBOARDING_TITLE = "欢迎来到元思想";
-export const ONBOARDING_SUBTITLE =
-  "人生的方向，不在剩下的路，而在心中的光";
+export const ONBOARDING_TITLE = "欢迎来到元感知";
+export const ONBOARDING_SUBTITLE = "人生的方向，不在剩下的路，而在心中的光";
 
 // ─── 七星（斗口→柄尖，远→近） ────────────────────────
 
@@ -49,7 +48,8 @@ export const GUIDE_STARS: GuideStar[] = [
     glyph: "新",
     title: "新人生之路",
     description: "重塑生命旅程",
-    x: 28, y: 7,
+    x: 28,
+    y: 7,
     starName: "天枢",
     depth: 0.24,
   },
@@ -58,7 +58,8 @@ export const GUIDE_STARS: GuideStar[] = [
     glyph: "行",
     title: "成长轨迹",
     description: "每一步都算数",
-    x: 78, y: 10,
+    x: 78,
+    y: 10,
     starName: "天璇",
     depth: 0.22,
   },
@@ -67,7 +68,8 @@ export const GUIDE_STARS: GuideStar[] = [
     glyph: "归",
     title: "人类手册",
     description: "认识自己的指南",
-    x: 36, y: 27,
+    x: 36,
+    y: 27,
     starName: "天权",
     depth: 0.42,
   },
@@ -76,7 +78,8 @@ export const GUIDE_STARS: GuideStar[] = [
     glyph: "镜",
     title: "明镜对话",
     description: "看见清晰的自己",
-    x: 72, y: 30,
+    x: 72,
+    y: 30,
     starName: "天玑",
     depth: 0.38,
   },
@@ -86,7 +89,8 @@ export const GUIDE_STARS: GuideStar[] = [
     glyph: "启",
     title: "入门营地",
     description: "成长的旅程从这里开始",
-    x: 28, y: 47,
+    x: 28,
+    y: 47,
     starName: "玉衡",
     depth: 0.58,
   },
@@ -95,7 +99,8 @@ export const GUIDE_STARS: GuideStar[] = [
     glyph: "聚",
     title: "社群聚集地",
     description: "因热爱而聚",
-    x: 32, y: 64,
+    x: 32,
+    y: 64,
     starName: "开阳",
     depth: 0.78,
   },
@@ -104,7 +109,8 @@ export const GUIDE_STARS: GuideStar[] = [
     glyph: "习",
     title: "日常练习",
     description: "每天进步一点点",
-    x: 44, y: 80,
+    x: 44,
+    y: 80,
     starName: "摇光",
     depth: 1.0,
   },
@@ -114,14 +120,14 @@ export const GUIDE_STARS: GuideStar[] = [
 
 export const STAR_CONNECTIONS: StarConnection[] = [
   // 斗体四边
-  ["newlife", "growth"],    // 天枢─天璇（斗口顶边）
-  ["newlife", "handbook"],  // 天枢─天权（斗体左侧）
-  ["growth", "mirror"],     // 天璇─天玑（斗体右侧）
-  ["handbook", "mirror"],   // 天权─天玑（斗底边）
+  ["newlife", "growth"], // 天枢─天璇（斗口顶边）
+  ["newlife", "handbook"], // 天枢─天权（斗体左侧）
+  ["growth", "mirror"], // 天璇─天玑（斗体右侧）
+  ["handbook", "mirror"], // 天权─天玑（斗底边）
   // 弧柄三段
-  ["handbook", "camp"],     // 天权─玉衡
-  ["camp", "community"],    // 玉衡─开阳
-  ["community", "daily"],   // 开阳─摇光
+  ["handbook", "camp"], // 天权─玉衡
+  ["camp", "community"], // 玉衡─开阳
+  ["community", "daily"], // 开阳─摇光
 ];
 
 /** 功能一览（近→远：习聚启镜归行新） */

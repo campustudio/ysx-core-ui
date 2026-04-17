@@ -1,5 +1,5 @@
 /**
- * 文章数据源 - 元思想
+ * 文章数据源 - 元感知
  *
  * 所有文章内容集中管理，按 card id 索引
  * 承接首页「今日频率指南」和「明镜之声」卡片的点击跳转
@@ -75,9 +75,8 @@ export const ARTICLES: Record<string, Article> = {
     subtitle: "今日之光 · 感知笔记",
     category: "今日之光",
     categoryColor: "amber",
-    coverImage:
-      "/images/img-176572773975.jpg",
-    author: { name: "元思想编辑部" },
+    coverImage: "/images/img-176572773975.jpg",
+    author: { name: "元感知编辑部" },
     readTime: "3 分钟",
     paragraphs: [
       {
@@ -152,9 +151,8 @@ export const ARTICLES: Record<string, Article> = {
     subtitle: "今日频率指南 · 感知笔记",
     category: "今日频率指南",
     categoryColor: "amber",
-    coverImage:
-      "/images/img-168146563742.jpg",
-    author: { name: "元思想编辑部" },
+    coverImage: "/images/img-168146563742.jpg",
+    author: { name: "元感知编辑部" },
     readTime: "4 分钟",
     paragraphs: [
       {
@@ -240,9 +238,8 @@ export const ARTICLES: Record<string, Article> = {
     subtitle: "今日频率指南 · 感知笔记",
     category: "今日频率指南",
     categoryColor: "amber",
-    coverImage:
-      "/images/img-176389991080.jpg",
-    author: { name: "元思想编辑部" },
+    coverImage: "/images/img-176389991080.jpg",
+    author: { name: "元感知编辑部" },
     readTime: "5 分钟",
     paragraphs: [
       {
@@ -271,8 +268,7 @@ export const ARTICLES: Record<string, Article> = {
       },
       {
         type: "quote",
-        content:
-          "改变不是靠「想通」就能发生的，它需要你的整个身心都到场。",
+        content: "改变不是靠「想通」就能发生的，它需要你的整个身心都到场。",
       },
       {
         type: "text",
@@ -306,8 +302,7 @@ export const ARTICLES: Record<string, Article> = {
       },
       {
         type: "quote",
-        content:
-          "不是先改变才能接纳自己，而是先接纳自己才有空间改变。",
+        content: "不是先改变才能接纳自己，而是先接纳自己才有空间改变。",
       },
     ],
     practice: {
@@ -332,9 +327,8 @@ export const ARTICLES: Record<string, Article> = {
     subtitle: "明镜之声 · 自我观察",
     category: "明镜之声",
     categoryColor: "sage",
-    coverImage:
-      "/images/img-175813598666.jpg",
-    author: { name: "元思想编辑部" },
+    coverImage: "/images/img-175813598666.jpg",
+    author: { name: "元感知编辑部" },
     readTime: "4 分钟",
     paragraphs: [
       {
@@ -349,8 +343,7 @@ export const ARTICLES: Record<string, Article> = {
       },
       {
         type: "question",
-        content:
-          "你上一次什么都不做地、安静地待着，是什么时候？",
+        content: "你上一次什么都不做地、安静地待着，是什么时候？",
       },
       {
         type: "heading",
@@ -419,9 +412,8 @@ export const ARTICLES: Record<string, Article> = {
     subtitle: "明镜之声 · 自我观察",
     category: "明镜之声",
     categoryColor: "sage",
-    coverImage:
-      "/images/img-167800831389.jpg",
-    author: { name: "元思想编辑部" },
+    coverImage: "/images/img-167800831389.jpg",
+    author: { name: "元感知编辑部" },
     readTime: "5 分钟",
     paragraphs: [
       {
@@ -436,8 +428,7 @@ export const ARTICLES: Record<string, Article> = {
       },
       {
         type: "question",
-        content:
-          "你有没有这样的时刻——觉得「不知道」反而更轻松？",
+        content: "你有没有这样的时刻——觉得「不知道」反而更轻松？",
       },
       {
         type: "heading",
@@ -450,8 +441,7 @@ export const ARTICLES: Record<string, Article> = {
       },
       {
         type: "quote",
-        content:
-          "自我认知不会制造痛苦。它只是照亮了那些一直在暗处的东西。",
+        content: "自我认知不会制造痛苦。它只是照亮了那些一直在暗处的东西。",
       },
       {
         type: "text",

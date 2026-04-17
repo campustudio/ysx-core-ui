@@ -1,7 +1,7 @@
 /**
  * BreathingCircle - 呼吸引导圆环
  *
- * 元思想品牌标志性交互元素
+ * 元感知品牌标志性交互元素
  * 4秒吸气 + 4秒呼气 = 8秒一个呼吸周期
  *
  * 内圈文字：收 ｜ 清
@@ -52,8 +52,7 @@ export function BreathingCircle({
   leftText = "收",
   onClick,
 }: BreathingCircleProps) {
-  const textShadow =
-    "0 1px 10px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.2)";
+  const textShadow = "0 1px 10px rgba(0,0,0,0.5), 0 0 30px rgba(0,0,0,0.2)";
 
   const outerSize = `calc(var(--rpx) * ${size})`;
   const midSize = `calc(var(--rpx) * ${Math.round(size * 0.714)})`;

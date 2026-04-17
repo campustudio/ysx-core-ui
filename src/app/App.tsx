@@ -1,5 +1,5 @@
 /**
- * 应用入口 - 元思想
+ * 应用入口 - 元感知
  *
  * 简单状态路由：管理页面切换
  */
@@ -85,7 +85,7 @@ export default function App() {
       setNavDirection("forward");
       setRoute(newRoute);
     },
-    [saveHomeScroll]
+    [saveHomeScroll],
   );
 
   /** 从首页进入播放页 */
@@ -93,7 +93,7 @@ export default function App() {
     (trackLabel: string) => {
       navigateForward({ page: "player", trackLabel });
     },
-    [navigateForward]
+    [navigateForward],
   );
 
   /** 从首页进入文章阅读页 */
@@ -101,7 +101,7 @@ export default function App() {
     (articleId: string) => {
       navigateForward({ page: "article", articleId });
     },
-    [navigateForward]
+    [navigateForward],
   );
 
   /** 从首页进入播客详情页 */
@@ -109,7 +109,7 @@ export default function App() {
     (podcastId: string) => {
       navigateForward({ page: "podcast", podcastId });
     },
-    [navigateForward]
+    [navigateForward],
   );
 
   /** 从首页进入活动详情页 */
@@ -117,7 +117,7 @@ export default function App() {
     (activityId: string) => {
       navigateForward({ page: "activity", activityId });
     },
-    [navigateForward]
+    [navigateForward],
   );
 
   /** 进入新人引导页 */
@@ -178,7 +178,7 @@ export default function App() {
     (bookId: string) => {
       navigateForward({ page: "book-detail", bookId });
     },
-    [navigateForward]
+    [navigateForward],
   );
 
   /** 从书籍详情进入章节播放器 */
@@ -186,7 +186,7 @@ export default function App() {
     (bookId: string, chapterId: string) => {
       navigateForward({ page: "chapter-player", bookId, chapterId });
     },
-    [navigateForward]
+    [navigateForward],
   );
 
   /** 返回手册主页（从书籍详情/播放器） */
@@ -197,14 +197,11 @@ export default function App() {
   }, []);
 
   /** 返回书籍详情（从播放器） */
-  const navigateBackToBookDetail = useCallback(
-    (bookId: string) => {
-      routeKeyRef.current += 1;
-      setNavDirection("back");
-      setRoute({ page: "book-detail", bookId });
-    },
-    []
-  );
+  const navigateBackToBookDetail = useCallback((bookId: string) => {
+    routeKeyRef.current += 1;
+    setNavDirection("back");
+    setRoute({ page: "book-detail", bookId });
+  }, []);
 
   /** 底部导航统一处理（从任意页面切换 Tab） */
   const handleNavChange = useCallback(
@@ -221,7 +218,7 @@ export default function App() {
         toast.show("「明镜」正在精心筹备中，敬请期待");
       }
     },
-    [navigateToHandbook, navigateToNewLife, toast]
+    [navigateToHandbook, navigateToNewLife, toast],
   );
 
   /** 返回首页 */
@@ -268,24 +265,15 @@ export default function App() {
         return <CirclePage onBack={navigateBackToNewLife} />;
       case "player":
         return (
-          <AudioPlayer
-            trackLabel={route.trackLabel}
-            onBack={navigateToHome}
-          />
+          <AudioPlayer trackLabel={route.trackLabel} onBack={navigateToHome} />
         );
       case "article":
         return (
-          <ArticleReader
-            articleId={route.articleId}
-            onBack={navigateToHome}
-          />
+          <ArticleReader articleId={route.articleId} onBack={navigateToHome} />
         );
       case "podcast":
         return (
-          <PodcastDetail
-            podcastId={route.podcastId}
-            onBack={navigateToHome}
-          />
+          <PodcastDetail podcastId={route.podcastId} onBack={navigateToHome} />
         );
       case "activity":
         return (
