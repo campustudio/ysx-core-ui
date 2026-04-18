@@ -1,24 +1,8 @@
-/**
- * 首页 v7.0 - 元感知 (version 2.2)
- *
- * 核心定位：
- * - 深刻、厚重、大气、未来感、立体透明（苹果锁屏厚玻璃质感）
- * - 纯净冷白底色（#F5F5F7 -> 升级为带极微弱环境光的空间灰白，以支持折射）
- * - 动画追求冲击感与沉浸体验，依靠极简艺术和高级材质（Glassmorphism）呈现
- * - “三尊未来透明碑”提供厚重感、立体感和清透感
- */
-import { useState, useCallback, useEffect } from "react";
-import { rpx, FONT_SERIF } from "../config/styles";
-import { Toast } from "../components/shared/Toast";
+import { useState, useEffect } from "react";
+import { FONT_SERIF } from "../config/styles";
 import { useToast } from "../hooks/useToast";
-import { MetaLogo } from "../components/shared/MetaLogo";
-
-/* ═══ 三大核心支柱数据 ═══ */
-const MAIN_AXES = [
-  { id: "handbook", title: "人类手册", subtitle: "知识", navIndex: 1 },
-  { id: "newlife", title: "新人生之路", subtitle: "践行", navIndex: 2 },
-  { id: "bright_mirror", title: "明镜", subtitle: "引导", navIndex: 3 },
-];
+import { Toast } from "../components/shared/Toast";
+import { Book, Compass, Orbit, Grid } from "lucide-react";
 
 interface HomeProps {
   onNavChange?: (index: number) => void;
@@ -27,430 +11,431 @@ interface HomeProps {
   userInfo?: { name: string; avatar: string; days: number };
 }
 
-export function Home({
-  onNavChange,
-  onNavigateToLogoPreview,
-  isLoggedIn = true,
-  userInfo = {
-    name: "感知者",
-    avatar:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80",
-    days: 1,
-  },
-}: HomeProps) {
+export function Home({ onNavChange }: HomeProps) {
   const toast = useToast();
-  // 动画阶段状态：0(空白) -> 1(Logo凝结) -> 2(平台名) -> 3(主标语) -> 4(副标语) -> 5(三大支柱+头像)
-  const [phase, setPhase] = useState(0);
+  // 1 = 门前, 2 = 穿门, 3 = 内殿
+  const [layer, setLayer] = useState<1 | 2 | 3>(1);
+  const [phase1, setPhase1] = useState(0); // Layer 1 animations
+  const [phase2, setPhase2] = useState(0); // Layer 2 animations
+  const [phase3, setPhase3] = useState(0); // Layer 3 animations
 
+  // Layer 1 Init
   useEffect(() => {
-    if ("scrollRestoration" in history) {
-      history.scrollRestoration = "manual";
+    if (layer === 1) {
+      const t1 = setTimeout(() => setPhase1(1), 800); // 浮现主文字
+      const t2 = setTimeout(() => setPhase1(2), 2500); // 浮现"进入"
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
     }
-    window.scrollTo(0, 0);
+  }, [layer]);
 
-    const t1 = setTimeout(() => setPhase(1), 400); // Logo 率先在虚空中凝结
-    const t2 = setTimeout(() => setPhase(2), 2200); // 平台名沉降
-    const t3 = setTimeout(() => setPhase(3), 3500); // 主标语
-    const t4 = setTimeout(() => setPhase(4), 4800); // 副标语
-    const t5 = setTimeout(() => setPhase(5), 6200); // 三大透明碑
+  // Layer 2 Init
+  useEffect(() => {
+    if (layer === 2) {
+      const t1 = setTimeout(() => setPhase2(1), 1000); // 浮现中心句
+      const t2 = setTimeout(() => setPhase2(2), 3500); // 2.5s后浮现"继续"
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
+    }
+  }, [layer]);
 
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
-      clearTimeout(t5);
-    };
-  }, []);
+  // Layer 3 Init
+  useEffect(() => {
+    if (layer === 3) {
+      const t1 = setTimeout(() => setPhase3(1), 1000); // 浮现四个入口
+      return () => clearTimeout(t1);
+    }
+  }, [layer]);
 
-  const handleClick = useCallback(
-    (axis: (typeof MAIN_AXES)[number]) => {
-      if (axis.navIndex === 3) {
-        toast.show("「明镜」正在精心筹备中，敬请期待");
-      } else {
-        onNavChange?.(axis.navIndex);
-      }
-    },
-    [onNavChange, toast],
-  );
+  const handleEnterLayer2 = () => {
+    setPhase1(0); // Fade out Layer 1
+    setTimeout(() => {
+      setLayer(2);
+    }, 1200);
+  };
+
+  const handleEnterLayer3 = () => {
+    setPhase2(0); // Fade out Layer 2
+    setTimeout(() => {
+      setLayer(3);
+    }, 1500);
+  };
+
+  const handleNavClick = (navIndex: number, title: string) => {
+    if (navIndex === 1 || navIndex === 2) {
+      onNavChange?.(navIndex);
+    } else {
+      toast.show(`「${title}」正在精心筹备中，敬请期待`);
+    }
+  };
 
   return (
     <div
       style={{
         height: "100vh",
-        background: "#F2F2F5", // 从纯平冷白升级为稍微深一点的冷灰色，以便透明玻璃有对比度
         position: "relative",
         overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
+        backgroundColor: "#EFEFF2", // 统一极简冷白底色，主要依靠全局背景图片定调
+        fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
-      {/* 环境光场 (为高透玻璃提供折射源，强化苹果式玻璃质感) */}
+      {/* 贯穿全剧的高级通透光场图片 (满足你对 1、2 层也要有通透立体感的要求) */}
       <div
+        className="absolute inset-0 transition-all duration-[3000ms] ease-out pointer-events-none"
         style={{
-          position: "absolute",
-          top: "10%",
-          left: "15%",
-          width: rpx(800),
-          height: rpx(800),
-          background:
-            "radial-gradient(circle, rgba(139,170,125,0.15) 0%, transparent 60%)",
-          filter: "blur(60px)",
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          bottom: "5%",
-          right: "10%",
-          width: rpx(900),
-          height: rpx(900),
-          background:
-            "radial-gradient(circle, rgba(196,154,108,0.12) 0%, transparent 60%)",
-          filter: "blur(80px)",
-          pointerEvents: "none",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          top: "30%",
-          left: "40%",
-          width: rpx(600),
-          height: rpx(600),
-          background:
-            "radial-gradient(circle, rgba(150,150,155,0.08) 0%, transparent 65%)",
-          filter: "blur(50px)",
-          pointerEvents: "none",
+          opacity: 1, // 全局显示！
+          backgroundImage: `url('https://images.unsplash.com/photo-1760891847887-57578cee649d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxldGhlcmVhbCUyMGdvbGRlbiUyMGdsb3dpbmclMjBsaWdodCUyMGFic3RyYWN0JTIwZGFya3xlbnwxfHx8fDE3NzY1MTcwNzR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          // 随着层级递进，画面从"极度朦胧深邃"逐渐变清晰，产生穿梭感
+          filter:
+            layer === 1
+              ? "blur(60px) saturate(0.8)"
+              : layer === 2
+                ? "blur(40px) saturate(1)"
+                : "blur(20px) saturate(1.2)",
+          transform:
+            layer === 1
+              ? "scale(1.2)"
+              : layer === 2
+                ? "scale(1.1)"
+                : "scale(1)",
         }}
       />
 
-      {/* 核心三句话 (极强阴刻感、厚重) */}
+      {/* 极简冷白/古纸的渐变遮罩 - 动态压暗底图，防止五颜六色 */}
       <div
+        className="absolute inset-0 transition-all duration-[3000ms] pointer-events-none"
         style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginBottom: rpx(80),
-          zIndex: 2,
+          background:
+            layer === 1
+              ? "linear-gradient(to bottom, rgba(250,250,247,0.95) 0%, rgba(240,228,206,0.85) 100%)" // 门前：极简干净，隐约透出背景
+              : layer === 2
+                ? "linear-gradient(to bottom, rgba(235,235,232,0.9) 0%, rgba(225,213,191,0.8) 100%)" // 穿门：稍暗，凸显文字
+                : "linear-gradient(to bottom, rgba(250,250,247,0.85) 0%, rgba(240,228,206,0.4) 100%)", // 内殿：最高透
         }}
-      >
-        {/* Logo 从虚无中凝结出绝对理性的实体，不需要Y轴位移，表现出“它原本就在那里” */}
-        {/* 
+      />
+
+      {/* =========== 第一层：门前层 =========== */}
+      {layer === 1 && (
         <div
           style={{
-            opacity: phase >= 1 ? 1 : 0,
-            transition: "opacity 4s ease, transform 4s cubic-bezier(0.16, 1, 0.3, 1), filter 4s ease",
-            marginBottom: rpx(40),
-            transform: phase >= 1 ? "scale(1)" : "scale(1.15)",
-            filter: phase >= 1 ? "blur(0px)" : "blur(20px)",
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            opacity: phase1 === 0 ? 0 : 1,
+            transition: "opacity 1.2s ease",
           }}
         >
-          <MetaLogo size={140} variant="engraved" />
-        </div>
-        */}
-
-        {/* 元感知 - 深刻、厚重、阴刻感 (Debossed) */}
-        <h1
-          style={{
-            fontFamily: FONT_SERIF,
-            fontSize: rpx(96),
-            fontWeight: 800,
-            color: "#1C1C1E", // 极深的冷灰黑
-            margin: 0,
-            letterSpacing: rpx(20),
-            // 物理级厚重阴刻 (Debossed)：上方受光所以内部产生暗影，下方内壁受光产生极细高光
-            textShadow: `
-              0px 1px 1px rgba(255,255,255,0.9), 
-              0px -1px 2px rgba(0,0,0,0.15),
-              0px 4px 12px rgba(0,0,0,0.06)
-            `,
-            opacity: phase >= 2 ? 1 : 0,
-            transition: "all 3.5s cubic-bezier(0.16, 1, 0.3, 1)",
-            transform:
-              phase >= 2
-                ? "translateY(0) scale(1)"
-                : "translateY(-15px) scale(1.03)",
-            filter: phase >= 2 ? "blur(0px)" : "blur(16px)",
-            marginBottom: rpx(60),
-          }}
-        >
-          元感知
-        </h1>
-
-        <p
-          style={{
-            fontFamily: FONT_SERIF,
-            fontSize: rpx(32),
-            fontWeight: 600,
-            color: "#2C2C2E",
-            letterSpacing: rpx(10),
-            margin: 0,
-            marginBottom: rpx(24),
-            // 阴刻阴影
-            textShadow:
-              "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
-            opacity: phase >= 3 ? 1 : 0,
-            transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
-            transform: phase >= 3 ? "translateY(0)" : "translateY(-10px)",
-            filter: phase >= 3 ? "blur(0px)" : "blur(8px)",
-            textAlign: "center",
-          }}
-        >
-          为人类打开一条清明之路。
-        </p>
-
-        <p
-          style={{
-            fontFamily: FONT_SERIF,
-            fontSize: rpx(22),
-            fontWeight: 500,
-            color: "#666666",
-            letterSpacing: rpx(8),
-            margin: 0,
-            // 极细的阴刻感
-            textShadow:
-              "0px 1px 1px rgba(255,255,255,1), 0px -0.5px 1px rgba(0,0,0,0.05)",
-            opacity: phase >= 4 ? 1 : 0,
-            transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
-            transform: phase >= 4 ? "translateY(0)" : "translateY(-8px)",
-            filter: phase >= 4 ? "blur(0px)" : "blur(8px)",
-            textAlign: "center",
-          }}
-        >
-          在这里，真实高于一切。
-        </p>
-      </div>
-
-      {/* 三大核心支柱 (极简、高透玻璃碑、无位移出现) */}
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-          maxWidth: rpx(750),
-          padding: `0 ${rpx(32)}`,
-          boxSizing: "border-box",
-          gap: rpx(20),
-          opacity: phase >= 5 ? 1 : 0,
-          transition: "all 3.5s cubic-bezier(0.16, 1, 0.3, 1)",
-          transform: phase >= 5 ? "translateY(0)" : "translateY(15px)",
-          filter: phase >= 5 ? "blur(0px)" : "blur(12px)",
-          pointerEvents: phase >= 5 ? "auto" : "none",
-          zIndex: 2,
-        }}
-      >
-        {MAIN_AXES.map((axis) => (
+          <div style={{ height: "30vh" }} />
           <div
-            key={axis.id}
-            onClick={() => handleClick(axis)}
             style={{
-              flex: 1, // 自适应宽度，避免横向撑爆
-              height: rpx(440),
-              // 苹果级极透毛玻璃：极低的白底透明度，完全靠折射和边框定义形状
-              background:
-                "linear-gradient(145deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 100%)",
-              borderRadius: rpx(20),
-              // 物理级玻璃切边高光
-              borderTop: "1px solid rgba(255,255,255,0.7)",
-              borderLeft: "1px solid rgba(255,255,255,0.4)",
-              borderRight: "1px solid rgba(0,0,0,0.02)",
-              borderBottom: "1px solid rgba(0,0,0,0.05)",
-              // 物理投影：去除厚重的底边黑影，改用清透的发光与极柔投影
-              boxShadow: `
-                inset 1px 1px 2px rgba(255,255,255,0.5), 
-                inset -1px -1px 2px rgba(0,0,0,0.02), 
-                0 20px 40px -10px rgba(0,0,0,0.05)
-              `,
-              // 强劲的毛玻璃滤镜（这是苹果透明感的灵魂）
-              backdropFilter: "blur(32px) saturate(1.5)",
-              WebkitBackdropFilter: "blur(32px) saturate(1.5)",
+              height: "40vh",
               display: "flex",
               flexDirection: "column",
+              justifyContent: "center",
               alignItems: "center",
-              justifyContent: "space-between",
-              padding: `${rpx(60)} 0 ${rpx(50)}`,
-              cursor: "pointer",
-              transition: "all 0.6s cubic-bezier(0.16, 1, 0.3, 1)",
+              position: "relative",
+              top: "-2vh",
             }}
-            onPointerEnter={(e) => {
-              // 悬浮时，玻璃内折射光增强，变亮一点
-              e.currentTarget.style.background =
-                "linear-gradient(145deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.05) 100%)";
-              e.currentTarget.style.boxShadow = `
-                inset 1px 1px 4px rgba(255,255,255,0.8), 
-                0 30px 50px -10px rgba(0,0,0,0.08)
-              `;
-              e.currentTarget.style.transform = "translateY(-4px)";
+          >
+            <h1
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: "clamp(3rem, 10vw, 4.5rem)",
+                fontWeight: 500,
+                color: "#18181A",
+                letterSpacing: "0.2em",
+                margin: 0,
+                marginBottom: "4rem", // 门与路的距离感
+                opacity: phase1 >= 1 ? 1 : 0,
+                filter: phase1 >= 1 ? "blur(0px)" : "blur(12px)",
+                transform: phase1 >= 1 ? "scale(1)" : "scale(1.02)",
+                transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
+                textShadow:
+                  "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
+              }}
+            >
+              元感知
+            </h1>
+            <p
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: "clamp(1.125rem, 3vw, 1.5rem)",
+                fontWeight: 400,
+                color: "#3A3A3C",
+                letterSpacing: "0.3em",
+                margin: 0,
+                opacity: phase1 >= 1 ? 1 : 0,
+                filter: phase1 >= 1 ? "blur(0px)" : "blur(8px)",
+                transition: "all 3.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s",
+                textShadow:
+                  "0px 1px 1px rgba(255,255,255,1), 0px -0.5px 1px rgba(0,0,0,0.05)",
+                textAlign: "center",
+                padding: "0 1rem",
+              }}
+            >
+              为人类留下一条清明之路。
+            </p>
+          </div>
+          <div
+            style={{
+              height: "30vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
             }}
-            onPointerLeave={(e) => {
-              e.currentTarget.style.background =
-                "linear-gradient(145deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 100%)";
-              e.currentTarget.style.boxShadow = `
-                inset 1px 1px 2px rgba(255,255,255,0.5), 
-                inset -1px -1px 2px rgba(0,0,0,0.02), 
-                0 20px 40px -10px rgba(0,0,0,0.05)
-              `;
-              e.currentTarget.style.transform = "translateY(0)";
+          >
+            <span
+              onClick={handleEnterLayer2}
+              style={{
+                fontFamily: "system-ui",
+                fontSize: "0.875rem",
+                color: "#999",
+                letterSpacing: "0.4em",
+                cursor: "pointer",
+                opacity: phase1 >= 2 ? 1 : 0,
+                transition: "opacity 2s ease",
+              }}
+            >
+              进入
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* =========== 第二层：穿门层 =========== */}
+      {layer === 2 && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            opacity: phase2 === 0 ? 0 : 1,
+            transition: "opacity 1.5s ease",
+          }}
+        >
+          <div
+            style={{
+              height: "70vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "0 2rem",
+            }}
+          >
+            <h2
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
+                fontWeight: 500,
+                color: "#1C1C1E",
+                letterSpacing: "0.2em",
+                margin: 0,
+                textAlign: "center",
+                lineHeight: 2,
+                opacity: phase2 >= 1 ? 1 : 0,
+                transform: phase2 >= 1 ? "scale(1)" : "scale(0.98)",
+                filter: phase2 >= 1 ? "blur(0px)" : "blur(12px)", // 增强失焦沉降
+                transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
+                textShadow:
+                  "0px 1px 1px rgba(255,255,255,0.8), 0px -1px 1px rgba(0,0,0,0.05), 0 0 40px rgba(255,255,255,0.5)", // 让这句话自己带着光场
+              }}
+            >
+              在这里，
+              <br className="md:hidden" />
+              真实高于一切。
+            </h2>
+          </div>
+          <div
+            style={{
+              height: "30vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <span
+              onClick={handleEnterLayer3}
+              style={{
+                fontFamily: "system-ui",
+                fontSize: "0.875rem",
+                color: "#999",
+                letterSpacing: "0.4em",
+                cursor: "pointer",
+                opacity: phase2 >= 2 ? 1 : 0,
+                transition: "opacity 2s ease",
+              }}
+            >
+              继续
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* =========== 第三层：内殿层 =========== */}
+      {layer === 3 && (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            opacity: phase3 === 0 ? 0 : 1,
+            transition: "opacity 1.5s ease",
+            padding: "1rem",
+          }}
+        >
+          {/* 第三层顶部极轻保留的元感知小字 */}
+          <div
+            style={{
+              height: "10vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "flex-end",
+              paddingBottom: "1.5rem",
+              opacity: phase3 >= 1 ? 1 : 0,
+              transition: "opacity 3s ease 1s",
             }}
           >
             <span
               style={{
                 fontFamily: FONT_SERIF,
-                fontSize: rpx(32), // 统一字号，保证三大支柱视觉一致
-                fontWeight: 600,
-                color: "#18181A",
-                letterSpacing: rpx(6),
-                // 碑文：深刻的阴刻效果，字陷在玻璃里
-                textShadow:
-                  "0px 1px 1px rgba(255,255,255,0.9), 0px -1px 1px rgba(0,0,0,0.1)",
-                textAlign: "center",
-                width: "100%",
-                transform: "scaleY(1.05)", // 增加宋体修长感
+                fontSize: "0.875rem",
+                color: "#999",
+                letterSpacing: "0.3em",
+                textShadow: "0 1px 1px white",
               }}
             >
-              {axis.title}
+              元感知
             </span>
+          </div>
 
+          <div className="flex-1 w-full max-w-4xl flex items-center justify-center pb-[5vh]">
             <div
+              className="grid grid-cols-2 gap-3 sm:gap-6 md:gap-10 w-full"
               style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: rpx(20),
+                opacity: phase3 >= 1 ? 1 : 0,
+                transform:
+                  phase3 >= 1
+                    ? "translateY(0) scale(1)"
+                    : "translateY(-20px) scale(1.03)",
+                filter: phase3 >= 1 ? "blur(0px)" : "blur(16px)",
+                transition: "all 3.5s cubic-bezier(0.16, 1, 0.3, 1)",
               }}
             >
-              {/* 装饰线 - 强化刻线感 */}
-              <div
-                style={{
-                  width: rpx(20),
-                  height: "1.5px",
-                  background: "rgba(0,0,0,0.12)",
-                  boxShadow: "0 1px 1px rgba(255,255,255,0.6)",
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: FONT_SERIF,
-                  fontSize: rpx(16),
-                  fontWeight: 500,
-                  color: "#555",
-                  letterSpacing: rpx(6),
-                  // 副标题极轻阴刻
-                  textShadow: "0 1px 1px rgba(255,255,255,0.9)",
-                }}
-              >
-                {axis.subtitle}
-              </span>
+              {[
+                {
+                  id: 1,
+                  title: "人类手册馆",
+                  subtitle: "看见真相，回到生命本身。",
+                  icon: <Book size={36} strokeWidth={1.5} color="#A27D51" />,
+                  navIndex: 1,
+                },
+                {
+                  id: 2,
+                  title: "新人生之路",
+                  subtitle: "把感知，真正活进现实人生。",
+                  icon: <Compass size={36} strokeWidth={1.5} color="#68815F" />,
+                  navIndex: 2,
+                },
+                {
+                  id: 3,
+                  title: "明镜源频AI",
+                  subtitle: "与你共振，照见更真实的自己。",
+                  icon: <Orbit size={36} strokeWidth={1.5} color="#556F88" />,
+                  navIndex: 3,
+                },
+                {
+                  id: 4,
+                  title: "平台其他板块",
+                  subtitle: "更多入口，持续通往共感文明。",
+                  icon: <Grid size={36} strokeWidth={1.5} color="#948074" />,
+                  navIndex: 4,
+                },
+              ].map((box) => (
+                <div
+                  key={box.id}
+                  onClick={() => handleNavClick(box.navIndex, box.title)}
+                  className="flex flex-col items-center justify-center p-4 sm:p-6 md:p-10 aspect-square sm:aspect-auto sm:min-h-[260px] relative overflow-hidden active:scale-[0.97] transition-all duration-300"
+                  style={{
+                    cursor: "pointer",
+                    // 【颠覆性的移动端优雅降级方案：纯渐变透明玻璃】
+                    // 我们不再用死板的纯白色打底！而是用透明度极低的白色渐变。
+                    // 即使老安卓机不支持 blur，它看到的依然是一块带着高光切边、极高通透度的"透明亚克力板"，仍然非常立体且晶莹剔透！
+                    background:
+                      "linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 100%)",
+                    backdropFilter: "blur(20px) saturate(1.2)",
+                    WebkitBackdropFilter: "blur(20px) saturate(1.2)",
+                    borderRadius: "24px",
+                    // 强烈的高光边缘定义物理体积感（最核心的立体感来源）
+                    borderTop: "1.5px solid rgba(255, 255, 255, 0.9)",
+                    borderLeft: "1px solid rgba(255, 255, 255, 0.6)",
+                    borderRight: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+                    // 内发光与外投影，强化物理材质
+                    boxShadow:
+                      "inset 0 0 30px rgba(255,255,255,0.4), 0 10px 30px -10px rgba(0,0,0,0.05)",
+                    transform: "translateZ(0)",
+                  }}
+                >
+                  {/* 触摸反馈光效 (专为移动端打造，代替 PC 的 hover) */}
+                  <div className="absolute inset-0 bg-white/20 opacity-0 active:opacity-100 transition-opacity duration-200 pointer-events-none" />
+
+                  {/* 极简图标 */}
+                  <div
+                    className="relative z-10 mb-3 md:mb-5"
+                    style={{
+                      filter:
+                        "drop-shadow(0px 1.5px 1px rgba(255,255,255,0.9)) drop-shadow(0px -1px 1px rgba(0,0,0,0.1))",
+                    }}
+                  >
+                    {box.icon}
+                  </div>
+
+                  <h3
+                    className="relative z-10 text-center"
+                    style={{
+                      fontFamily: FONT_SERIF,
+                      fontSize: "clamp(0.95rem, 2.5vw, 1.75rem)",
+                      fontWeight: 600,
+                      color: "#18181A",
+                      letterSpacing: "0.15em",
+                      margin: 0,
+                      marginBottom: "0.75rem",
+                      textShadow:
+                        "0px 1.5px 1px rgba(255,255,255,0.9), 0px -1px 2px rgba(0,0,0,0.08)",
+                    }}
+                  >
+                    {box.title}
+                  </h3>
+
+                  <p
+                    className="relative z-10 text-center"
+                    style={{
+                      fontFamily: "system-ui",
+                      fontSize: "clamp(0.7rem, 1.5vw, 0.95rem)",
+                      color: "#555",
+                      letterSpacing: "0.1em",
+                      margin: 0,
+                      marginBottom: "1.5rem",
+                      textShadow:
+                        "0px 1px 1px rgba(255,255,255,0.9), 0px -0.5px 1px rgba(0,0,0,0.02)",
+                    }}
+                  >
+                    {box.subtitle}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* ═══ Logo 实验室入口（厚玻璃质感） ═══ */}
-      <div
-        onClick={onNavigateToLogoPreview}
-        style={{
-          position: "fixed",
-          top: rpx(48),
-          left: rpx(48),
-          display: "flex",
-          alignItems: "center",
-          gap: rpx(10),
-          padding: `${rpx(10)} ${rpx(20)}`,
-          background:
-            "linear-gradient(145deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 100%)",
-          borderTop: "1px solid rgba(255,255,255,0.8)",
-          borderLeft: "1px solid rgba(255,255,255,0.6)",
-          borderBottom: "1px solid rgba(0,0,0,0.05)",
-          borderRight: "1px solid rgba(0,0,0,0.05)",
-          borderRadius: rpx(40),
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
-          boxShadow:
-            "inset 1px 1px 2px rgba(255,255,255,0.8), 0 8px 24px rgba(0,0,0,0.06)",
-          cursor: "pointer",
-          zIndex: 10,
-          opacity: phase >= 5 ? 1 : 0,
-          transition: "all 2.5s ease",
-        }}
-      >
-        <MetaLogo size={18} variant="engraved" />
-        <span
-          style={{
-            fontSize: rpx(13),
-            fontWeight: 600,
-            color: "#222",
-            letterSpacing: "1px",
-            textShadow:
-              "0px 1px 1px rgba(255,255,255,0.9), 0px -0.5px 1px rgba(0,0,0,0.05)",
-          }}
-        >
-          Logo 实验室
-        </span>
-      </div>
-
-      {/* ═══ 用户身份区（厚玻璃质感） ═══ */}
-      {isLoggedIn && userInfo && (
-        <div
-          onClick={() => {
-            toast.show("明镜台正在精心筹备中");
-          }}
-          style={{
-            position: "fixed",
-            top: rpx(48),
-            right: rpx(48),
-            display: "flex",
-            alignItems: "center",
-            gap: rpx(12),
-            padding: `${rpx(8)} ${rpx(20)} ${rpx(8)} ${rpx(8)}`,
-            background:
-              "linear-gradient(145deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 100%)",
-            borderTop: "1px solid rgba(255,255,255,0.8)",
-            borderLeft: "1px solid rgba(255,255,255,0.6)",
-            borderBottom: "1px solid rgba(0,0,0,0.05)",
-            borderRight: "1px solid rgba(0,0,0,0.05)",
-            borderRadius: rpx(40),
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            boxShadow:
-              "inset 1px 1px 2px rgba(255,255,255,0.8), 0 8px 24px rgba(0,0,0,0.06)",
-            opacity: phase >= 5 ? 1 : 0,
-            transition: "all 2.5s ease",
-            cursor: "pointer",
-            pointerEvents: phase >= 5 ? "auto" : "none",
-            zIndex: 10,
-          }}
-        >
-          <img
-            src={userInfo.avatar}
-            alt="User"
-            style={{
-              width: rpx(36),
-              height: rpx(36),
-              borderRadius: "50%",
-              objectFit: "cover",
-              filter: "grayscale(100%) contrast(1.2) opacity(0.9)",
-              border: "1.5px solid rgba(255,255,255,0.9)",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-              transition: "filter 0.4s ease",
-            }}
-          />
-          <span
-            style={{
-              fontFamily: "sans-serif",
-              fontSize: rpx(15),
-              fontWeight: 600,
-              color: "#222",
-              letterSpacing: rpx(1),
-              textShadow:
-                "0px 1px 1px rgba(255,255,255,0.9), 0px -0.5px 1px rgba(0,0,0,0.05)",
-            }}
-          >
-            {userInfo.name}
-          </span>
         </div>
       )}
 
