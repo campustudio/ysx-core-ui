@@ -6,7 +6,7 @@
  */
 
 import { useState, useCallback, useEffect, useMemo } from "react";
-import { ArrowLeft, Play, CheckCircle2, Clock } from "lucide-react";
+import { Play, CheckCircle2, Clock } from "lucide-react";
 import {
   getBookById,
   getBookProgress,
@@ -17,6 +17,10 @@ import {
 } from "../config/handbook-data";
 import { FONT_SERIF, rpx } from "../config/styles";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import {
+  PageHeader,
+  PAGE_HEADER_HEIGHT,
+} from "../components/shared/PageHeader";
 
 // ─── 星空主题色（与 Handbook 保持一致） ────────────────
 
@@ -43,9 +47,7 @@ export function BookDetail({
   onSelectChapter,
 }: BookDetailProps) {
   const book = useMemo(() => getBookById(bookId), [bookId]);
-  const [progress, setProgress] = useState<Record<string, ChapterProgress>>(
-    {}
-  );
+  const [progress, setProgress] = useState<Record<string, ChapterProgress>>({});
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -96,34 +98,15 @@ export function BookDetail({
         background: `linear-gradient(180deg, ${COSMIC.bgStart} 0%, ${COSMIC.bgEnd} 100%)`,
       }}
     >
+      <PageHeader onBack={onBack} dark transparent />
+
       {/* ═══ 顶部区域 ═══ */}
       <div
         className="app-container"
         style={{
-          paddingTop: `max(${rpx(24)}, env(safe-area-inset-top))`,
+          paddingTop: PAGE_HEADER_HEIGHT,
         }}
       >
-        {/* 返回按钮 */}
-        <div style={{ padding: `${rpx(16)} ${rpx(28)}` }}>
-          <button
-            className="cursor-pointer flex items-center justify-center"
-            style={{
-              width: rpx(64),
-              height: rpx(64),
-              borderRadius: "50%",
-              background: COSMIC.card,
-              border: "none",
-            }}
-            onClick={onBack}
-          >
-            <ArrowLeft
-              size={20}
-              strokeWidth={1.5}
-              style={{ color: COSMIC.textPrimary }}
-            />
-          </button>
-        </div>
-
         {/* 书籍信息卡 */}
         <div
           className="flex"
@@ -327,9 +310,7 @@ export function BookDetail({
                     size={14}
                     strokeWidth={1.5}
                     style={{
-                      color: isInProgress
-                        ? COSMIC.amber
-                        : COSMIC.textTertiary,
+                      color: isInProgress ? COSMIC.amber : COSMIC.textTertiary,
                       marginLeft: 2,
                     }}
                   />

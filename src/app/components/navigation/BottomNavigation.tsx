@@ -41,6 +41,8 @@ interface BottomNavigationProps {
   active?: number;
   /** 切换回调 */
   onChange?: (index: number) => void;
+  /** 是否隐藏（用于滚动隐藏效果） */
+  hidden?: boolean;
 }
 
 const ICON_SIZE = {
@@ -60,11 +62,16 @@ const MIN_TAP_SIZE = {
 export function BottomNavigation({
   active = 0,
   onChange,
+  hidden = false,
 }: BottomNavigationProps) {
   return (
     <div
       className="fixed bottom-0 left-0 right-0"
-      style={{ zIndex: "var(--z-navigation)" }}
+      style={{
+        zIndex: "var(--z-navigation)",
+        transform: hidden ? "translateY(100%)" : "translateY(0)",
+        transition: "transform 0.3s ease-out",
+      }}
     >
       <div
         style={{

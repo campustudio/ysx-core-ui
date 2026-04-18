@@ -1,36 +1,43 @@
 /**
- * Handbook - 人类手册 · 知识殿堂 (version 2.2 - 极致极简版)
+ * Handbook - 人类手册 · 知识殿堂 (version 2.3 - 五卷体系版)
  *
  * 核心定位：
- * - 极致极简、无图片、零视觉噪音
- * - 纯净、透明、深刻的碑感文字排版
- * - 以字传神，字即是碑
+ * - 五卷体系：真相启示录 → 感知新文明序典 → 感知科学全书 → 问答录 → 践行录
+ * - 极致极简、纯净、透明、深刻的碑感文字排版
+ * - "不是简单的电子书，是鲜活的学习体验"
  */
 
 import { useState, useCallback, useEffect } from "react";
-import { Search, BookOpen, Headphones } from "lucide-react";
-import {
-  HANDBOOK_CATEGORIES,
-  BOOKS,
-  getBooksByCategory,
-  calcBookPercent,
-  type Book,
-} from "../config/handbook-data";
+import { Search, ChevronRight, Bookmark, X } from "lucide-react";
+import { FIVE_VOLUMES, type Volume } from "../config/handbook-data";
 import { FONT_SERIF, rpx } from "../config/styles";
 import { BottomNavigation } from "../components/navigation/BottomNavigation";
 import { Toast } from "../components/shared/Toast";
 import { useToast } from "../hooks/useToast";
+import { useNavigation } from "../hooks/useNavigation";
+import {
+  useReadingProgress,
+  formatLastReadTime,
+} from "../hooks/useReadingProgress";
 
 interface HandbookProps {
   onSelectBook?: (bookId: string) => void;
+  onSelectVolume?: (volumeId: string) => void;
   onNavChange?: (index: number) => void;
+  onNavigateToChapter?: (volumeId: string, chapterId: string) => void;
 }
 
-export function Handbook({ onSelectBook, onNavChange }: HandbookProps) {
-  const [activeCategory, setActiveCategory] = useState("recommend");
-  const [books, setBooks] = useState<Book[]>(BOOKS);
+export function Handbook({
+  onSelectVolume,
+  onNavChange,
+  onNavigateToChapter,
+}: HandbookProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const toast = useToast();
+  const { isHidden } = useNavigation("handbook");
+  const { lastProgress, hasProgress, bookmarks, removeBookmark } =
+    useReadingProgress();
+  const [showBookmarks, setShowBookmarks] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -38,21 +45,27 @@ export function Handbook({ onSelectBook, onNavChange }: HandbookProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleCategoryChange = useCallback((catId: string) => {
-    setActiveCategory(catId);
-    setBooks(getBooksByCategory(catId));
-  }, []);
-
   const handleNavChange = useCallback(
     (index: number) => {
-      if (index === 1) return; // 当前页
+      if (index === 1) return;
       if (index === 3) {
         toast.show("「明镜」正在精心筹备中，敬请期待");
         return;
       }
       onNavChange?.(index);
     },
-    [onNavChange, toast]
+    [onNavChange, toast],
+  );
+
+  const handleVolumeClick = useCallback(
+    (volume: Volume) => {
+      if (onSelectVolume) {
+        onSelectVolume(volume.id);
+      } else {
+        toast.show(`《${volume.title}》详情页筹备中`);
+      }
+    },
+    [onSelectVolume, toast],
   );
 
   return (
@@ -60,7 +73,7 @@ export function Handbook({ onSelectBook, onNavChange }: HandbookProps) {
       style={{
         width: "100%",
         minHeight: "100vh",
-        background: "#F2F2F5", // 维持与首页一致的极简浅灰白底色
+        background: "#F2F2F5",
         position: "relative",
         overflow: "hidden",
         display: "flex",
@@ -69,7 +82,7 @@ export function Handbook({ onSelectBook, onNavChange }: HandbookProps) {
         transition: "opacity 1.2s ease",
       }}
     >
-      {/* 极简顶部区域 */}
+      {/* 顶部标题区 */}
       <div
         style={{
           padding: `calc(env(safe-area-inset-top) + ${rpx(60)}) ${rpx(40)} ${rpx(40)}`,
@@ -82,7 +95,7 @@ export function Handbook({ onSelectBook, onNavChange }: HandbookProps) {
           <h1
             style={{
               fontFamily: FONT_SERIF,
-              fontSize: rpx(64), // 放大标题，形成重量感
+              fontSize: rpx(64),
               fontWeight: 600,
               color: "#18181A",
               letterSpacing: rpx(10),
@@ -90,7 +103,7 @@ export function Handbook({ onSelectBook, onNavChange }: HandbookProps) {
               textShadow: "0 1px 1px rgba(255,255,255,1)",
             }}
           >
-            人类手册
+            文明母本
           </h1>
           <p
             style={{
@@ -121,191 +134,324 @@ export function Handbook({ onSelectBook, onNavChange }: HandbookProps) {
         </button>
       </div>
 
-      {/* 极简分类导航 (纯文字) */}
+      {/* 核心金句 */}
       <div
         style={{
-          display: "flex",
-          gap: rpx(40),
-          padding: `0 ${rpx(40)} ${rpx(20)}`,
-          overflowX: "auto",
+          padding: `0 ${rpx(40)} ${rpx(40)}`,
           borderBottom: "1px solid rgba(0,0,0,0.05)",
         }}
       >
-        {HANDBOOK_CATEGORIES.map((cat) => {
-          const isActive = activeCategory === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => handleCategoryChange(cat.id)}
-              style={{
-                background: "transparent",
-                border: "none",
-                padding: `${rpx(10)} 0`,
-                position: "relative",
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                fontFamily: FONT_SERIF,
-                fontSize: rpx(28),
-                fontWeight: isActive ? 600 : 400,
-                color: isActive ? "#111" : "#A1A1A1",
-                letterSpacing: rpx(4),
-                transition: "color 0.3s ease",
-              }}
-            >
-              {cat.name}
-              {isActive && (
-                <div
-                  style={{
-                    position: "absolute",
-                    bottom: rpx(-20),
-                    left: 0,
-                    width: "100%",
-                    height: "1px",
-                    background: "#111",
-                  }}
-                />
-              )}
-            </button>
-          );
-        })}
+        <p
+          style={{
+            fontFamily: FONT_SERIF,
+            fontSize: rpx(24),
+            color: "#666",
+            letterSpacing: rpx(4),
+            lineHeight: 1.8,
+            margin: 0,
+            fontStyle: "italic",
+          }}
+        >
+          "感知是宇宙诞生的源头，维度不是地方，维度是你的频率。"
+        </p>
       </div>
 
-      {/* 纯文字书籍列表 (去图片化，回归本质) */}
+      {/* 继续阅读 */}
+      {hasProgress && lastProgress && (
+        <div
+          onClick={() => {
+            if (onNavigateToChapter) {
+              onNavigateToChapter(
+                lastProgress.volumeId,
+                lastProgress.chapterId,
+              );
+            }
+          }}
+          style={{
+            margin: `0 ${rpx(40)} ${rpx(20)}`,
+            padding: `${rpx(20)} ${rpx(24)}`,
+            background:
+              "linear-gradient(135deg, rgba(139,115,85,0.08) 0%, rgba(139,115,85,0.04) 100%)",
+            borderRadius: rpx(16),
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <p style={{ fontSize: rpx(18), color: "#999", margin: 0 }}>
+              继续阅读 · {formatLastReadTime(lastProgress.lastReadAt)}
+            </p>
+            <p
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(24),
+                fontWeight: 500,
+                color: "#333",
+                margin: `${rpx(6)} 0 0`,
+              }}
+            >
+              {lastProgress.title || "上次阅读位置"}
+            </p>
+          </div>
+          <ChevronRight size={20} color="#8B7355" strokeWidth={1.5} />
+        </div>
+      )}
+
+      {/* 书签列表 */}
+      {bookmarks.length > 0 && (
+        <div style={{ margin: `0 ${rpx(40)} ${rpx(20)}` }}>
+          <div
+            onClick={() => setShowBookmarks(!showBookmarks)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: `${rpx(16)} 0`,
+              cursor: "pointer",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: rpx(8) }}>
+              <Bookmark size={18} color="#8B7355" strokeWidth={1.5} />
+              <span style={{ fontSize: rpx(20), color: "#666" }}>
+                我的书签 ({bookmarks.length})
+              </span>
+            </div>
+            <ChevronRight
+              size={18}
+              color="#999"
+              strokeWidth={1.5}
+              style={{
+                transform: showBookmarks ? "rotate(90deg)" : "rotate(0deg)",
+                transition: "transform 0.2s ease",
+              }}
+            />
+          </div>
+
+          <div
+            style={{
+              background: "rgba(0,0,0,0.02)",
+              borderRadius: rpx(12),
+              overflow: "hidden",
+              maxHeight: showBookmarks ? rpx(500) : 0,
+              opacity: showBookmarks ? 1 : 0,
+              transition: "max-height 0.5s ease, opacity 0.4s ease",
+            }}
+          >
+            {bookmarks.map((bookmark) => (
+              <div
+                key={bookmark.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: `${rpx(16)} ${rpx(20)}`,
+                  borderBottom: "1px solid rgba(0,0,0,0.04)",
+                }}
+              >
+                <div
+                  onClick={() => {
+                    if (onNavigateToChapter) {
+                      onNavigateToChapter(
+                        bookmark.volumeId,
+                        bookmark.chapterId,
+                      );
+                    }
+                  }}
+                  style={{ flex: 1, cursor: "pointer" }}
+                >
+                  <p
+                    style={{
+                      fontFamily: FONT_SERIF,
+                      fontSize: rpx(22),
+                      color: "#333",
+                      margin: 0,
+                    }}
+                  >
+                    {bookmark.title}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: rpx(16),
+                      color: "#999",
+                      margin: `${rpx(4)} 0 0`,
+                    }}
+                  >
+                    {formatLastReadTime(bookmark.createdAt)}
+                  </p>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeBookmark(bookmark.id);
+                    toast.show("已删除书签");
+                  }}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    padding: rpx(8),
+                    cursor: "pointer",
+                  }}
+                >
+                  <X size={16} color="#999" strokeWidth={1.5} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 五卷体系列表 */}
       <div
         style={{
           flex: 1,
-          padding: `${rpx(40)} ${rpx(40)} ${rpx(160)}`, // 底部留出导航栏空间
+          padding: `${rpx(20)} ${rpx(40)} ${rpx(160)}`,
           overflowY: "auto",
         }}
       >
-        {books.map((book, index) => {
-          const percent = calcBookPercent(book);
-          return (
-            <div
-              key={book.id}
-              onClick={() => onSelectBook?.(book.id)}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                padding: `${rpx(40)} 0`,
-                borderBottom: "1px solid rgba(0,0,0,0.04)",
-                cursor: "pointer",
-                position: "relative",
-              }}
-            >
-              {/* 背景修饰：超大序列号，代替封面图 */}
-              <div
-                style={{
-                  position: "absolute",
-                  top: rpx(20),
-                  right: rpx(0),
-                  fontFamily: FONT_SERIF,
-                  fontSize: rpx(100),
-                  fontWeight: 300,
-                  color: "rgba(0,0,0,0.02)",
-                  pointerEvents: "none",
-                  letterSpacing: rpx(-4),
-                }}
-              >
-                {String(index + 1).padStart(2, "0")}
-              </div>
-
-              {/* 书名与作者 */}
-              <div style={{ marginBottom: rpx(16), zIndex: 1 }}>
-                <h3
-                  style={{
-                    fontFamily: FONT_SERIF,
-                    fontSize: rpx(40), // 放大书名
-                    fontWeight: 600,
-                    color: "#222",
-                    margin: 0,
-                    lineHeight: 1.4,
-                    letterSpacing: rpx(4),
-                  }}
-                >
-                  {book.title}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: FONT_SERIF,
-                    fontSize: rpx(20),
-                    color: "#999",
-                    margin: `${rpx(12)} 0 0`,
-                    letterSpacing: rpx(2),
-                  }}
-                >
-                  {book.author}
-                </p>
-              </div>
-
-              {/* 简介 */}
-              <p
-                style={{
-                  fontSize: rpx(26),
-                  color: "#666",
-                  margin: `${rpx(10)} 0 ${rpx(24)}`,
-                  lineHeight: 1.8,
-                  fontWeight: 300,
-                  zIndex: 1,
-                  maxWidth: "90%",
-                }}
-              >
-                {book.description}
-              </p>
-
-              {/* 阅读进度 */}
-              <div style={{ display: "flex", alignItems: "center", gap: rpx(24), zIndex: 1 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: rpx(16) }}>
-                  <BookOpen size={16} color="#A1A1A1" strokeWidth={1.5} />
-                  <Headphones size={16} color="#A1A1A1" strokeWidth={1.5} />
-                </div>
-                
-                {/* 极简进度条 */}
-                <div style={{ flex: 1, height: "1px", background: "rgba(0,0,0,0.05)", position: "relative" }}>
-                  <div
-                    style={{
-                      position: "absolute",
-                      left: 0,
-                      top: 0,
-                      height: "100%",
-                      width: `${percent}%`,
-                      background: "#222",
-                    }}
-                  />
-                </div>
-                
-                <span
-                  style={{
-                    fontFamily: FONT_SERIF,
-                    fontSize: rpx(20),
-                    color: percent > 0 ? "#222" : "#A1A1A1",
-                    letterSpacing: rpx(2),
-                  }}
-                >
-                  {percent > 0 ? `已感知 ${percent}%` : "未翻阅"}
-                </span>
-              </div>
-            </div>
-          );
-        })}
-
-        {books.length === 0 && (
+        {FIVE_VOLUMES.map((volume) => (
           <div
+            key={volume.id}
+            onClick={() => handleVolumeClick(volume)}
             style={{
-              padding: `${rpx(160)} 0`,
-              textAlign: "center",
-              color: "#A1A1A1",
-              fontSize: rpx(24),
-              letterSpacing: rpx(4),
-              fontFamily: FONT_SERIF,
+              display: "flex",
+              flexDirection: "column",
+              padding: `${rpx(40)} 0`,
+              borderBottom: "1px solid rgba(0,0,0,0.04)",
+              cursor: "pointer",
+              position: "relative",
             }}
           >
-            无形之书，尚未落笔。
+            {/* 背景卷序号 */}
+            <div
+              style={{
+                position: "absolute",
+                top: rpx(30),
+                right: rpx(0),
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(120),
+                fontWeight: 200,
+                color: "rgba(0,0,0,0.03)",
+                pointerEvents: "none",
+                lineHeight: 1,
+              }}
+            >
+              {volume.volumeNumber}
+            </div>
+
+            {/* 卷标题 */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: rpx(16),
+                marginBottom: rpx(12),
+                zIndex: 1,
+              }}
+            >
+              <span
+                style={{
+                  fontFamily: FONT_SERIF,
+                  fontSize: rpx(20),
+                  color: "#999",
+                  letterSpacing: rpx(2),
+                }}
+              >
+                第{["一", "二", "三", "四", "五"][volume.volumeNumber - 1]}卷
+              </span>
+              <span
+                style={{
+                  fontSize: rpx(16),
+                  color: "#AAA",
+                  background: "rgba(0,0,0,0.03)",
+                  padding: `${rpx(4)} ${rpx(12)}`,
+                  borderRadius: rpx(20),
+                }}
+              >
+                {volume.coreTheme}
+              </span>
+            </div>
+
+            <h3
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(44),
+                fontWeight: 600,
+                color: "#222",
+                margin: 0,
+                lineHeight: 1.3,
+                letterSpacing: rpx(6),
+                zIndex: 1,
+              }}
+            >
+              {volume.title}
+            </h3>
+
+            <p
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(22),
+                color: "#888",
+                margin: `${rpx(12)} 0 0`,
+                letterSpacing: rpx(4),
+                zIndex: 1,
+              }}
+            >
+              {volume.subtitle}
+            </p>
+
+            {/* 简介 */}
+            <p
+              style={{
+                fontSize: rpx(24),
+                color: "#666",
+                margin: `${rpx(20)} 0 ${rpx(20)}`,
+                lineHeight: 1.8,
+                fontWeight: 300,
+                zIndex: 1,
+                maxWidth: "90%",
+              }}
+            >
+              {volume.description}
+            </p>
+
+            {/* 底部信息 */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                zIndex: 1,
+              }}
+            >
+              <div style={{ display: "flex", gap: rpx(12), flexWrap: "wrap" }}>
+                {volume.keywords.slice(0, 3).map((kw) => (
+                  <span
+                    key={kw}
+                    style={{
+                      fontSize: rpx(18),
+                      color: "#999",
+                      background: "rgba(0,0,0,0.02)",
+                      padding: `${rpx(6)} ${rpx(14)}`,
+                      borderRadius: rpx(16),
+                    }}
+                  >
+                    {kw}
+                  </span>
+                ))}
+              </div>
+              <ChevronRight size={20} color="#CCC" strokeWidth={1.5} />
+            </div>
           </div>
-        )}
+        ))}
       </div>
 
-      <BottomNavigation active={1} onChange={handleNavChange} />
+      <BottomNavigation
+        active={1}
+        onChange={handleNavChange}
+        hidden={isHidden}
+      />
 
       <Toast
         message={toast.message}

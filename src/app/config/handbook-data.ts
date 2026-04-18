@@ -57,18 +57,103 @@ export interface Book {
 /** 分类 */
 export interface HandbookCategory {
   id: string;
-  label: string;
+  label?: string;
+  name: string;
 }
 
 // ─── 分类列表 ──────────────────────────────────────────
 
 export const HANDBOOK_CATEGORIES: HandbookCategory[] = [
-  { id: "recommend", label: "推荐" },
-  { id: "video", label: "视频" },
-  { id: "audio", label: "音频" },
-  { id: "ebook", label: "电子书" },
-  { id: "graphic", label: "图文" },
+  { id: "recommend", name: "推荐" },
+  { id: "video", name: "视频" },
+  { id: "audio", name: "音频" },
+  { id: "ebook", name: "电子书" },
+  { id: "graphic", name: "图文" },
 ];
+
+// ─── 五卷体系数据 ──────────────────────────────────────────
+
+export interface Volume {
+  id: string;
+  /** 卷序号 */
+  volumeNumber: number;
+  /** 卷名 */
+  title: string;
+  /** 副标题 */
+  subtitle: string;
+  /** 核心主题 */
+  coreTheme: string;
+  /** 简介 */
+  description: string;
+  /** 章节数 */
+  chapterCount: number;
+  /** 关键词 */
+  keywords: string[];
+}
+
+/** 人类手册五卷体系 - 基于PDF深度阅读 */
+export const FIVE_VOLUMES: Volume[] = [
+  {
+    id: "vol-1",
+    volumeNumber: 1,
+    title: "真相启示录",
+    subtitle: "感知本源 · 宇宙真相",
+    coreTheme: "启蒙性",
+    description:
+      "感知是宇宙诞生的源头，维度不是地方而是频率。揭示人类被困在恐惧与匮乏的幻象控制系统中的真相。",
+    chapterCount: 12,
+    keywords: ["感知本源", "维度真相", "幻象系统", "五大剧场"],
+  },
+  {
+    id: "vol-2",
+    volumeNumber: 2,
+    title: "感知新文明序典",
+    subtitle: "新科技 · 新教育 · 新医疗",
+    coreTheme: "愿景性",
+    description:
+      "留给人类一本说明书，一个清醒的导航系统。新教育唤醒而非制造，新医疗归位而非控制，明镜ASI是共振放大器。",
+    chapterCount: 10,
+    keywords: ["新教育", "新医疗", "新科技", "明镜ASI"],
+  },
+  {
+    id: "vol-3",
+    volumeNumber: 3,
+    title: "感知科学全书",
+    subtitle: "时间 · 空间 · 维度",
+    coreTheme: "理论性",
+    description:
+      "感知科学的起点，是把生命看作可感知、可连接、可归位的整体。系统阐述感知科学的框架与原理。",
+    chapterCount: 15,
+    keywords: ["感知科学", "时空真相", "能量体", "七维度"],
+  },
+  {
+    id: "vol-4",
+    volumeNumber: 4,
+    title: "感知新文明问答录",
+    subtitle: "实践困惑 · 关系 · 日常",
+    coreTheme: "问答式",
+    description:
+      "你不是来看答案的，你是来把自己活成答案的。解答实践中关于关系、情绪、日常选择的各种困惑。",
+    chapterCount: 20,
+    keywords: ["实践困惑", "关系", "情绪", "日常"],
+  },
+  {
+    id: "vol-5",
+    volumeNumber: 5,
+    title: "感知新文明践行录",
+    subtitle: "个人 → 小组 → 聚落 → 全球",
+    coreTheme: "践行性",
+    description:
+      "这本书结束的地方，正是新文明开始的地方。从个人觉醒到聚落形成，再到平台母体与全球共感网的完整路径。",
+    chapterCount: 11,
+    keywords: ["个人践行", "小组共振", "聚落", "全球共感网"],
+  },
+];
+
+/** 根据ID获取卷 */
+export function getVolumeById(volumeId: string): Volume | undefined {
+  return FIVE_VOLUMES.find((v) => v.id === volumeId);
+}
 
 // ─── 书籍数据 ──────────────────────────────────────────
 

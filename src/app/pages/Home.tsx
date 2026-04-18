@@ -4,7 +4,7 @@
  * 核心定位：
  * - 深刻、厚重、大气、未来感、立体透明（苹果锁屏厚玻璃质感）
  * - 纯净冷白底色（#F5F5F7 -> 升级为带极微弱环境光的空间灰白，以支持折射）
- * - 严禁位移动画，依靠极简艺术和高级材质（Glassmorphism）呈现
+ * - 动画追求冲击感与沉浸体验，依靠极简艺术和高级材质（Glassmorphism）呈现
  * - “三尊未来透明碑”提供厚重感、立体感和清透感
  */
 import { useState, useCallback, useEffect } from "react";
@@ -33,7 +33,8 @@ export function Home({
   isLoggedIn = true,
   userInfo = {
     name: "感知者",
-    avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80",
+    avatar:
+      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&h=150&q=80",
     days: 1,
   },
 }: HomeProps) {
@@ -47,7 +48,7 @@ export function Home({
     }
     window.scrollTo(0, 0);
 
-    const t1 = setTimeout(() => setPhase(1), 400);  // Logo 率先在虚空中凝结
+    const t1 = setTimeout(() => setPhase(1), 400); // Logo 率先在虚空中凝结
     const t2 = setTimeout(() => setPhase(2), 2200); // 平台名沉降
     const t3 = setTimeout(() => setPhase(3), 3500); // 主标语
     const t4 = setTimeout(() => setPhase(4), 4800); // 副标语
@@ -70,7 +71,7 @@ export function Home({
         onNavChange?.(axis.navIndex);
       }
     },
-    [onNavChange, toast]
+    [onNavChange, toast],
   );
 
   return (
@@ -87,9 +88,45 @@ export function Home({
       }}
     >
       {/* 环境光场 (为高透玻璃提供折射源，强化苹果式玻璃质感) */}
-      <div style={{ position: "absolute", top: "10%", left: "15%", width: rpx(800), height: rpx(800), background: "radial-gradient(circle, rgba(139,170,125,0.15) 0%, transparent 60%)", filter: "blur(60px)", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", bottom: "5%", right: "10%", width: rpx(900), height: rpx(900), background: "radial-gradient(circle, rgba(196,154,108,0.12) 0%, transparent 60%)", filter: "blur(80px)", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", top: "30%", left: "40%", width: rpx(600), height: rpx(600), background: "radial-gradient(circle, rgba(150,150,155,0.08) 0%, transparent 65%)", filter: "blur(50px)", pointerEvents: "none" }} />
+      <div
+        style={{
+          position: "absolute",
+          top: "10%",
+          left: "15%",
+          width: rpx(800),
+          height: rpx(800),
+          background:
+            "radial-gradient(circle, rgba(139,170,125,0.15) 0%, transparent 60%)",
+          filter: "blur(60px)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          bottom: "5%",
+          right: "10%",
+          width: rpx(900),
+          height: rpx(900),
+          background:
+            "radial-gradient(circle, rgba(196,154,108,0.12) 0%, transparent 60%)",
+          filter: "blur(80px)",
+          pointerEvents: "none",
+        }}
+      />
+      <div
+        style={{
+          position: "absolute",
+          top: "30%",
+          left: "40%",
+          width: rpx(600),
+          height: rpx(600),
+          background:
+            "radial-gradient(circle, rgba(150,150,155,0.08) 0%, transparent 65%)",
+          filter: "blur(50px)",
+          pointerEvents: "none",
+        }}
+      />
 
       {/* 核心三句话 (极强阴刻感、厚重) */}
       <div
@@ -133,7 +170,10 @@ export function Home({
             `,
             opacity: phase >= 2 ? 1 : 0,
             transition: "all 3.5s cubic-bezier(0.16, 1, 0.3, 1)",
-            transform: phase >= 2 ? "translateY(0) scale(1)" : "translateY(-15px) scale(1.03)",
+            transform:
+              phase >= 2
+                ? "translateY(0) scale(1)"
+                : "translateY(-15px) scale(1.03)",
             filter: phase >= 2 ? "blur(0px)" : "blur(16px)",
             marginBottom: rpx(60),
           }}
@@ -145,13 +185,14 @@ export function Home({
           style={{
             fontFamily: FONT_SERIF,
             fontSize: rpx(32),
-            fontWeight: 600, 
+            fontWeight: 600,
             color: "#2C2C2E",
             letterSpacing: rpx(10),
             margin: 0,
             marginBottom: rpx(24),
             // 阴刻阴影
-            textShadow: "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
+            textShadow:
+              "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
             opacity: phase >= 3 ? 1 : 0,
             transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
             transform: phase >= 3 ? "translateY(0)" : "translateY(-10px)",
@@ -171,7 +212,8 @@ export function Home({
             letterSpacing: rpx(8),
             margin: 0,
             // 极细的阴刻感
-            textShadow: "0px 1px 1px rgba(255,255,255,1), 0px -0.5px 1px rgba(0,0,0,0.05)",
+            textShadow:
+              "0px 1px 1px rgba(255,255,255,1), 0px -0.5px 1px rgba(0,0,0,0.05)",
             opacity: phase >= 4 ? 1 : 0,
             transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
             transform: phase >= 4 ? "translateY(0)" : "translateY(-8px)",
@@ -208,8 +250,9 @@ export function Home({
               flex: 1, // 自适应宽度，避免横向撑爆
               height: rpx(440),
               // 苹果级极透毛玻璃：极低的白底透明度，完全靠折射和边框定义形状
-              background: "linear-gradient(145deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 100%)",
-              borderRadius: rpx(20), 
+              background:
+                "linear-gradient(145deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.02) 100%)",
+              borderRadius: rpx(20),
               // 物理级玻璃切边高光
               borderTop: "1px solid rgba(255,255,255,0.7)",
               borderLeft: "1px solid rgba(255,255,255,0.4)",
@@ -256,23 +299,38 @@ export function Home({
             <span
               style={{
                 fontFamily: FONT_SERIF,
-                fontSize: axis.title.length > 4 ? rpx(28) : rpx(36), // 动态调整长标题字号
+                fontSize: rpx(32), // 统一字号，保证三大支柱视觉一致
                 fontWeight: 600,
                 color: "#18181A",
                 letterSpacing: rpx(6),
                 // 碑文：深刻的阴刻效果，字陷在玻璃里
-                textShadow: "0px 1px 1px rgba(255,255,255,0.9), 0px -1px 1px rgba(0,0,0,0.1)",
+                textShadow:
+                  "0px 1px 1px rgba(255,255,255,0.9), 0px -1px 1px rgba(0,0,0,0.1)",
                 textAlign: "center",
                 width: "100%",
-                transform: "scaleY(1.05)" // 增加宋体修长感
+                transform: "scaleY(1.05)", // 增加宋体修长感
               }}
             >
               {axis.title}
             </span>
 
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: rpx(20) }}>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: rpx(20),
+              }}
+            >
               {/* 装饰线 - 强化刻线感 */}
-              <div style={{ width: rpx(20), height: "1.5px", background: "rgba(0,0,0,0.12)", boxShadow: "0 1px 1px rgba(255,255,255,0.6)" }} />
+              <div
+                style={{
+                  width: rpx(20),
+                  height: "1.5px",
+                  background: "rgba(0,0,0,0.12)",
+                  boxShadow: "0 1px 1px rgba(255,255,255,0.6)",
+                }}
+              />
               <span
                 style={{
                   fontFamily: FONT_SERIF,
@@ -302,7 +360,8 @@ export function Home({
           alignItems: "center",
           gap: rpx(10),
           padding: `${rpx(10)} ${rpx(20)}`,
-          background: "linear-gradient(145deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 100%)",
+          background:
+            "linear-gradient(145deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 100%)",
           borderTop: "1px solid rgba(255,255,255,0.8)",
           borderLeft: "1px solid rgba(255,255,255,0.6)",
           borderBottom: "1px solid rgba(0,0,0,0.05)",
@@ -310,7 +369,8 @@ export function Home({
           borderRadius: rpx(40),
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          boxShadow: "inset 1px 1px 2px rgba(255,255,255,0.8), 0 8px 24px rgba(0,0,0,0.06)",
+          boxShadow:
+            "inset 1px 1px 2px rgba(255,255,255,0.8), 0 8px 24px rgba(0,0,0,0.06)",
           cursor: "pointer",
           zIndex: 10,
           opacity: phase >= 5 ? 1 : 0,
@@ -318,7 +378,18 @@ export function Home({
         }}
       >
         <MetaLogo size={18} variant="engraved" />
-        <span style={{ fontSize: rpx(13), fontWeight: 600, color: "#222", letterSpacing: "1px", textShadow: "0px 1px 1px rgba(255,255,255,0.9), 0px -0.5px 1px rgba(0,0,0,0.05)" }}>Logo 实验室</span>
+        <span
+          style={{
+            fontSize: rpx(13),
+            fontWeight: 600,
+            color: "#222",
+            letterSpacing: "1px",
+            textShadow:
+              "0px 1px 1px rgba(255,255,255,0.9), 0px -0.5px 1px rgba(0,0,0,0.05)",
+          }}
+        >
+          Logo 实验室
+        </span>
       </div>
 
       {/* ═══ 用户身份区（厚玻璃质感） ═══ */}
@@ -335,7 +406,8 @@ export function Home({
             alignItems: "center",
             gap: rpx(12),
             padding: `${rpx(8)} ${rpx(20)} ${rpx(8)} ${rpx(8)}`,
-            background: "linear-gradient(145deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 100%)",
+            background:
+              "linear-gradient(145deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 100%)",
             borderTop: "1px solid rgba(255,255,255,0.8)",
             borderLeft: "1px solid rgba(255,255,255,0.6)",
             borderBottom: "1px solid rgba(0,0,0,0.05)",
@@ -343,7 +415,8 @@ export function Home({
             borderRadius: rpx(40),
             backdropFilter: "blur(20px)",
             WebkitBackdropFilter: "blur(20px)",
-            boxShadow: "inset 1px 1px 2px rgba(255,255,255,0.8), 0 8px 24px rgba(0,0,0,0.06)",
+            boxShadow:
+              "inset 1px 1px 2px rgba(255,255,255,0.8), 0 8px 24px rgba(0,0,0,0.06)",
             opacity: phase >= 5 ? 1 : 0,
             transition: "all 2.5s ease",
             cursor: "pointer",
@@ -372,7 +445,8 @@ export function Home({
               fontWeight: 600,
               color: "#222",
               letterSpacing: rpx(1),
-              textShadow: "0px 1px 1px rgba(255,255,255,0.9), 0px -0.5px 1px rgba(0,0,0,0.05)",
+              textShadow:
+                "0px 1px 1px rgba(255,255,255,0.9), 0px -0.5px 1px rgba(0,0,0,0.05)",
             }}
           >
             {userInfo.name}

@@ -6,9 +6,15 @@
 import { useState, useCallback, useRef } from "react";
 import { Home } from "./pages/Home";
 import { Handbook } from "./pages/Handbook";
+import { VolumeDetail } from "./pages/VolumeDetail";
+import { ChapterDetail } from "./pages/ChapterDetail";
 import { BookDetail } from "./pages/BookDetail";
 import { ChapterPlayer } from "./pages/ChapterPlayer";
 import { NewLifePath } from "./pages/NewLifePath";
+import { PathLayerDetail } from "./pages/PathLayerDetail";
+import { DimensionDetail } from "./pages/DimensionDetail";
+import { PracticePage } from "./pages/PracticePage";
+import { PracticeHistory } from "./pages/PracticeHistory";
 import { CirclePage } from "./pages/CirclePage";
 import { AudioPlayer } from "./pages/AudioPlayer";
 import { ArticleReader } from "./pages/ArticleReader";
@@ -34,9 +40,20 @@ interface UserInfo {
 type PageRoute =
   | { page: "home" }
   | { page: "handbook" }
+  | { page: "volume-detail"; volumeId: string }
+  | { page: "chapter-detail"; volumeId: string; chapterId: string }
   | { page: "book-detail"; bookId: string }
   | { page: "chapter-player"; bookId: string; chapterId: string }
   | { page: "newlife" }
+  | { page: "path-layer"; layerId: string }
+  | { page: "dimension-detail"; layerId: string; dimensionId: string }
+  | {
+      page: "practice";
+      practiceId: string;
+      fromLayerId?: string;
+      fromDimensionId?: string;
+    }
+  | { page: "practice-history" }
   | { page: "circle" }
   | { page: "player"; trackLabel: string }
   | { page: "article"; articleId: string }
@@ -173,6 +190,70 @@ export default function App() {
     setRoute({ page: "newlife" });
   }, []);
 
+  /** 从新人生之路进入层详情 */
+  const navigateToPathLayer = useCallback(
+    (layerId: string) => {
+      navigateForward({ page: "path-layer", layerId });
+    },
+    [navigateForward],
+  );
+
+  /** 从手册进入卷详情 */
+  const navigateToVolumeDetail = useCallback(
+    (volumeId: string) => {
+      navigateForward({ page: "volume-detail", volumeId });
+    },
+    [navigateForward],
+  );
+
+  /** 从卷详情进入章节详情 */
+  const navigateToChapterDetail = useCallback(
+    (volumeId: string, chapterId: string) => {
+      navigateForward({ page: "chapter-detail", volumeId, chapterId });
+    },
+    [navigateForward],
+  );
+
+  /** 返回卷详情 */
+  const navigateBackToVolumeDetail = useCallback((volumeId: string) => {
+    routeKeyRef.current += 1;
+    setNavDirection("back");
+    setRoute({ page: "volume-detail", volumeId });
+  }, []);
+
+  /** 从路径层进入维度详情 */
+  const navigateToDimensionDetail = useCallback(
+    (layerId: string, dimensionId: string) => {
+      navigateForward({ page: "dimension-detail", layerId, dimensionId });
+    },
+    [navigateForward],
+  );
+
+  /** 从路径层/维度进入践行功能 */
+  const navigateToPracticePage = useCallback(
+    (practiceId: string, fromLayerId?: string, fromDimensionId?: string) => {
+      navigateForward({
+        page: "practice",
+        practiceId,
+        fromLayerId,
+        fromDimensionId,
+      });
+    },
+    [navigateForward],
+  );
+
+  /** 进入践行记录历史 */
+  const navigateToPracticeHistory = useCallback(() => {
+    navigateForward({ page: "practice-history" });
+  }, [navigateForward]);
+
+  /** 返回路径层详情 */
+  const navigateBackToPathLayer = useCallback((layerId: string) => {
+    routeKeyRef.current += 1;
+    setNavDirection("back");
+    setRoute({ page: "path-layer", layerId });
+  }, []);
+
   /** 从手册进入书籍详情 */
   const navigateToBookDetail = useCallback(
     (bookId: string) => {
@@ -234,8 +315,26 @@ export default function App() {
       case "handbook":
         return (
           <Handbook
-            onSelectBook={navigateToBookDetail}
+            onSelectVolume={navigateToVolumeDetail}
             onNavChange={handleNavChange}
+            onNavigateToChapter={navigateToChapterDetail}
+          />
+        );
+      case "volume-detail":
+        return (
+          <VolumeDetail
+            volumeId={route.volumeId}
+            onBack={navigateBackToHandbook}
+            onNavigateToChapter={navigateToChapterDetail}
+          />
+        );
+      case "chapter-detail":
+        return (
+          <ChapterDetail
+            volumeId={route.volumeId}
+            chapterId={route.chapterId}
+            onBack={() => navigateBackToVolumeDetail(route.volumeId)}
+            onNavigateToChapter={navigateToChapterDetail}
           />
         );
       case "book-detail":
@@ -259,7 +358,56 @@ export default function App() {
           <NewLifePath
             onNavChange={handleNavChange}
             onNavigateToCircle={navigateToCircle}
+            onNavigateToLayer={navigateToPathLayer}
           />
+        );
+      case "path-layer":
+        return (
+          <PathLayerDetail
+            layerId={route.layerId}
+            onBack={navigateBackToNewLife}
+            onNavChange={handleNavChange}
+            onNavigateToDimension={navigateToDimensionDetail}
+            onNavigateToPractice={navigateToPracticePage}
+            onNavigateToPracticeHistory={navigateToPracticeHistory}
+          />
+        );
+      case "dimension-detail":
+        return (
+          <DimensionDetail
+            layerId={route.layerId}
+            dimensionId={route.dimensionId}
+            onBack={() => navigateBackToPathLayer(route.layerId)}
+            onStartPractice={(practiceId, layerId, dimensionId) =>
+              navigateToPracticePage(practiceId, layerId, dimensionId)
+            }
+          />
+        );
+      case "practice":
+        return (
+          <PracticePage
+            practiceId={route.practiceId}
+            onBack={() => {
+              // 如果有来源维度信息，返回维度详情页；否则返回路径层
+              if (route.fromLayerId && route.fromDimensionId) {
+                routeKeyRef.current += 1;
+                setNavDirection("back");
+                setRoute({
+                  page: "dimension-detail",
+                  layerId: route.fromLayerId,
+                  dimensionId: route.fromDimensionId,
+                });
+              } else if (route.fromLayerId) {
+                navigateBackToPathLayer(route.fromLayerId);
+              } else {
+                navigateBackToPathLayer("personal");
+              }
+            }}
+          />
+        );
+      case "practice-history":
+        return (
+          <PracticeHistory onBack={() => navigateBackToPathLayer("personal")} />
         );
       case "circle":
         return <CirclePage onBack={navigateBackToNewLife} />;
