@@ -2,55 +2,36 @@ import { useState, useEffect } from "react";
 import { FONT_SERIF } from "../config/styles";
 import { useToast } from "../hooks/useToast";
 import { Toast } from "../components/shared/Toast";
-import { Book, Compass, Orbit, Grid, ImageIcon } from "lucide-react";
-import { HomeImageVersion } from "./HomeImageVersion";
+import { Code } from "lucide-react";
+import bgLayer1 from "@/assets/images/home/1-menqian.webp";
+import bgLayer2 from "@/assets/images/home/2-dingqi.webp";
+import bgLayer3 from "@/assets/images/home/3-zhongting.webp";
+import iconBook from "@/assets/images/home/icon-book.webp";
+import iconPath from "@/assets/images/home/icon-path.webp";
+import iconMirror from "@/assets/images/home/icon-mirror.webp";
+import iconGrid from "@/assets/images/home/icon-grid.webp";
 
-interface HomeProps {
+interface HomeImageVersionProps {
   onNavChange?: (index: number) => void;
-  onNavigateToLogoPreview?: () => void;
-  isLoggedIn?: boolean;
-  userInfo?: { name: string; avatar: string; days: number };
+  onToggleMode?: () => void;
 }
 
-export function Home({ onNavChange }: HomeProps) {
-  const [showImageVersion, setShowImageVersion] = useState(false);
-
-  if (showImageVersion) {
-    return (
-      <HomeImageVersion
-        onNavChange={onNavChange}
-        onToggleMode={() => setShowImageVersion(false)}
-      />
-    );
-  }
-
-  return (
-    <HomeCodeVersion
-      onNavChange={onNavChange}
-      onToggleMode={() => setShowImageVersion(true)}
-    />
-  );
-}
-
-function HomeCodeVersion({
+export function HomeImageVersion({
   onNavChange,
   onToggleMode,
-}: {
-  onNavChange?: (index: number) => void;
-  onToggleMode: () => void;
-}) {
+}: HomeImageVersionProps) {
   const toast = useToast();
-  // 1 = 门前, 2 = 穿门, 3 = 内殿
-  const [layer, setLayer] = useState<1 | 2 | 3>(1);
-  const [phase1, setPhase1] = useState(0); // Layer 1 animations
-  const [phase2, setPhase2] = useState(0); // Layer 2 animations
-  const [phase3, setPhase3] = useState(0); // Layer 3 animations
 
-  // Layer 1 Init
+  // ================= 视图层逻辑 =================
+  const [layer, setLayer] = useState<1 | 2 | 3>(1);
+  const [phase1, setPhase1] = useState(0);
+  const [phase2, setPhase2] = useState(0);
+  const [phase3, setPhase3] = useState(0);
+
   useEffect(() => {
     if (layer === 1) {
-      const t1 = setTimeout(() => setPhase1(1), 800); // 浮现主文字
-      const t2 = setTimeout(() => setPhase1(2), 2500); // 浮现"进入"
+      const t1 = setTimeout(() => setPhase1(1), 800);
+      const t2 = setTimeout(() => setPhase1(2), 2500);
       return () => {
         clearTimeout(t1);
         clearTimeout(t2);
@@ -58,11 +39,10 @@ function HomeCodeVersion({
     }
   }, [layer]);
 
-  // Layer 2 Init
   useEffect(() => {
     if (layer === 2) {
-      const t1 = setTimeout(() => setPhase2(1), 1000); // 浮现中心句
-      const t2 = setTimeout(() => setPhase2(2), 3500); // 2.5s后浮现"继续"
+      const t1 = setTimeout(() => setPhase2(1), 1000);
+      const t2 = setTimeout(() => setPhase2(2), 3500);
       return () => {
         clearTimeout(t1);
         clearTimeout(t2);
@@ -70,26 +50,21 @@ function HomeCodeVersion({
     }
   }, [layer]);
 
-  // Layer 3 Init
   useEffect(() => {
     if (layer === 3) {
-      const t1 = setTimeout(() => setPhase3(1), 1000); // 浮现四个入口
+      const t1 = setTimeout(() => setPhase3(1), 1000);
       return () => clearTimeout(t1);
     }
   }, [layer]);
 
   const handleEnterLayer2 = () => {
-    setPhase1(0); // Fade out Layer 1
-    setTimeout(() => {
-      setLayer(2);
-    }, 1200);
+    setPhase1(0);
+    setTimeout(() => setLayer(2), 1200);
   };
 
   const handleEnterLayer3 = () => {
-    setPhase2(0); // Fade out Layer 2
-    setTimeout(() => {
-      setLayer(3);
-    }, 1500);
+    setPhase2(0);
+    setTimeout(() => setLayer(3), 1500);
   };
 
   const handleNavClick = (navIndex: number, title: string) => {
@@ -106,54 +81,88 @@ function HomeCodeVersion({
         height: "100vh",
         position: "relative",
         overflow: "hidden",
-        backgroundColor: "#EFEFF2", // 统一极简冷白底色，主要依靠全局背景图片定调
+        backgroundColor: "#EFEFF2",
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
-      {/* 切换到图片版按钮 */}
+      {/* 返回代码版按钮 */}
       <button
         onClick={onToggleMode}
-        className="absolute top-5 left-5 z-50 flex items-center justify-center p-2 rounded-full bg-black/10 backdrop-blur-md border border-white/30 text-gray-500 hover:bg-black/20 transition-all cursor-pointer active:scale-95"
+        className="absolute top-5 left-5 z-50 flex items-center justify-center p-2 rounded-full bg-black/10 backdrop-blur-md border border-white/30 text-white/90 hover:bg-black/20 transition-all cursor-pointer active:scale-95"
         style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
-        title="切换到图片版"
+        title="返回纯代码版"
       >
-        <ImageIcon size={20} strokeWidth={1.5} />
+        <Code size={20} strokeWidth={1.5} />
       </button>
 
-      {/* 贯穿全剧的高级通透光场图片 (满足你对 1、2 层也要有通透立体感的要求) */}
-      <div
-        className="absolute inset-0 transition-all duration-[3000ms] ease-out pointer-events-none"
+      {/* 三层背景图 */}
+      <img
+        src={bgLayer1}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover transition-all duration-[3000ms] ease-out pointer-events-none"
         style={{
-          opacity: 1, // 全局显示！
-          backgroundImage: `url('https://images.unsplash.com/photo-1760891847887-57578cee649d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxldGhlcmVhbCUyMGdvbGRlbiUyMGdsb3dpbmclMjBsaWdodCUyMGFic3RyYWN0JTIwZGFya3xlbnwxfHx8fDE3NzY1MTcwNzR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          // 随着层级递进，画面从"极度朦胧深邃"逐渐变清晰，产生穿梭感
+          opacity: layer === 1 ? 1 : 0,
           filter:
-            layer === 1
-              ? "blur(60px) saturate(0.8)"
-              : layer === 2
-                ? "blur(40px) saturate(1)"
-                : "blur(20px) saturate(1.2)",
+            layer === 1 ? "blur(0px) saturate(1.1)" : "blur(12px) saturate(1)",
+          transform: layer === 1 ? "scale(1)" : "scale(1.05)",
+        }}
+      />
+      <img
+        src={bgLayer2}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover transition-all duration-[3000ms] ease-out pointer-events-none"
+        style={{
+          opacity: layer === 2 ? 1 : 0,
+          filter:
+            layer === 2
+              ? "blur(0px) saturate(1.1)"
+              : layer === 1
+                ? "blur(12px) saturate(1)"
+                : "blur(10px) saturate(1.1)",
           transform:
-            layer === 1
-              ? "scale(1.2)"
-              : layer === 2
-                ? "scale(1.1)"
-                : "scale(1)",
+            layer === 2
+              ? "scale(1)"
+              : layer === 1
+                ? "scale(0.95)"
+                : "scale(1.05)",
+        }}
+      />
+      <img
+        src={bgLayer3}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover transition-all duration-[3000ms] ease-out pointer-events-none"
+        style={{
+          opacity: layer === 3 ? 1 : 0,
+          filter:
+            layer === 3 ? "blur(0px) saturate(1.1)" : "blur(12px) saturate(1)",
+          transform: layer === 3 ? "scale(1)" : "scale(0.95)",
         }}
       />
 
-      {/* 极简冷白/古纸的渐变遮罩 - 动态压暗底图，防止五颜六色 */}
+      {/* 极微弱渐变遮罩 */}
       <div
         className="absolute inset-0 transition-all duration-[3000ms] pointer-events-none"
         style={{
           background:
             layer === 1
-              ? "linear-gradient(to bottom, rgba(250,250,247,0.95) 0%, rgba(240,228,206,0.85) 100%)" // 门前：极简干净，隐约透出背景
+              ? "linear-gradient(to bottom, rgba(250,250,247,0.05) 0%, rgba(240,228,206,0.15) 100%)"
               : layer === 2
-                ? "linear-gradient(to bottom, rgba(235,235,232,0.9) 0%, rgba(225,213,191,0.8) 100%)" // 穿门：稍暗，凸显文字
-                : "linear-gradient(to bottom, rgba(250,250,247,0.85) 0%, rgba(240,228,206,0.4) 100%)", // 内殿：最高透
+                ? "linear-gradient(to bottom, rgba(235,235,232,0.1) 0%, rgba(225,213,191,0.2) 100%)"
+                : "linear-gradient(to bottom, rgba(250,250,247,0.15) 0%, rgba(240,228,206,0.1) 100%)",
+        }}
+      />
+
+      {/* 径向渐变遮罩：中心高透，四周沉寂，营造未来空间深度 */}
+      <div
+        className="absolute inset-0 transition-all duration-[3000ms] pointer-events-none"
+        style={{
+          background:
+            layer === 1
+              ? "radial-gradient(circle at 50% 45%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 30%, rgba(200,180,150,0.1) 100%)"
+              : layer === 2
+                ? "radial-gradient(circle at 50% 50%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 30%, rgba(200,180,150,0.15) 100%)"
+                : "radial-gradient(circle at 50% 50%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 30%, rgba(180,190,180,0.08) 100%)",
+          mixBlendMode: "overlay",
         }}
       />
 
@@ -189,13 +198,13 @@ function HomeCodeVersion({
                 color: "#18181A",
                 letterSpacing: "0.2em",
                 margin: 0,
-                marginBottom: "4rem", // 门与路的距离感
+                marginBottom: "4rem",
                 opacity: phase1 >= 1 ? 1 : 0,
                 filter: phase1 >= 1 ? "blur(0px)" : "blur(12px)",
                 transform: phase1 >= 1 ? "scale(1)" : "scale(1.02)",
                 transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
                 textShadow:
-                  "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
+                  "0px 1.5px 2px rgba(255,255,255,1), 0px -1px 2px rgba(0,0,0,0.15)",
               }}
             >
               元感知
@@ -212,7 +221,7 @@ function HomeCodeVersion({
                 filter: phase1 >= 1 ? "blur(0px)" : "blur(8px)",
                 transition: "all 3.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s",
                 textShadow:
-                  "0px 1px 1px rgba(255,255,255,1), 0px -0.5px 1px rgba(0,0,0,0.05)",
+                  "0px 1px 1.5px rgba(255,255,255,1), 0px -1px 1.5px rgba(0,0,0,0.1)",
                 textAlign: "center",
                 padding: "0 1rem",
               }}
@@ -233,8 +242,9 @@ function HomeCodeVersion({
               style={{
                 fontFamily: "system-ui",
                 fontSize: "1.1rem",
-                color: "#999",
+                color: "#444",
                 letterSpacing: "0.4em",
+                textShadow: "0 1px 1px rgba(255,255,255,0.8)",
                 cursor: "pointer",
                 opacity: phase1 >= 2 ? 1 : 0,
                 transition: "opacity 2s ease",
@@ -279,10 +289,10 @@ function HomeCodeVersion({
                 lineHeight: 2,
                 opacity: phase2 >= 1 ? 1 : 0,
                 transform: phase2 >= 1 ? "scale(1)" : "scale(0.98)",
-                filter: phase2 >= 1 ? "blur(0px)" : "blur(12px)", // 增强失焦沉降
+                filter: phase2 >= 1 ? "blur(0px)" : "blur(12px)",
                 transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
                 textShadow:
-                  "0px 1px 1px rgba(255,255,255,0.8), 0px -1px 1px rgba(0,0,0,0.05), 0 0 40px rgba(255,255,255,0.5)", // 让这句话自己带着光场
+                  "0px 1.5px 1px rgba(255,255,255,0.9), 0px -1px 2px rgba(0,0,0,0.3), 0 0 30px rgba(255,255,255,0.6)",
               }}
             >
               在这里，
@@ -319,8 +329,9 @@ function HomeCodeVersion({
               style={{
                 fontFamily: "system-ui",
                 fontSize: "1.1rem",
-                color: "#999",
+                color: "#444",
                 letterSpacing: "0.4em",
+                textShadow: "0 1px 1px rgba(255,255,255,0.8)",
                 cursor: "pointer",
                 opacity: phase2 >= 2 ? 1 : 0,
                 transition: "opacity 2s ease",
@@ -348,9 +359,22 @@ function HomeCodeVersion({
         >
           <div style={{ height: "5vh" }} />
 
-          <div className="flex-1 w-full max-w-4xl flex items-center justify-center pb-[5vh]">
+          <div className="flex-1 w-full max-w-4xl flex items-center justify-center pb-[5vh] relative">
+            {/* 光斑层：模拟代码版的光场通透效果 */}
             <div
-              className="grid grid-cols-2 gap-3 sm:gap-6 md:gap-10 w-full"
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background: [
+                  "radial-gradient(ellipse 60% 50% at 30% 35%, rgba(218,195,145,0.3) 0%, transparent 70%)",
+                  "radial-gradient(ellipse 50% 60% at 75% 55%, rgba(200,185,155,0.25) 0%, transparent 70%)",
+                  "radial-gradient(ellipse 80% 40% at 50% 80%, rgba(230,215,180,0.2) 0%, transparent 70%)",
+                  "radial-gradient(ellipse 70% 50% at 50% 45%, rgba(240,230,210,0.2) 0%, transparent 60%)",
+                ].join(", "),
+                filter: "blur(25px)",
+              }}
+            />
+            <div
+              className="grid grid-cols-2 gap-3 sm:gap-6 md:gap-10 w-full relative z-10"
               style={{
                 opacity: phase3 >= 1 ? 1 : 0,
                 transform:
@@ -366,28 +390,28 @@ function HomeCodeVersion({
                   id: 1,
                   title: "人类手册馆",
                   subtitle: "看见真相，回到生命本身。",
-                  icon: <Book size={36} strokeWidth={1.5} color="#A27D51" />,
+                  iconSrc: iconBook,
                   navIndex: 1,
                 },
                 {
                   id: 2,
                   title: "新人生之路",
                   subtitle: "把感知，真正活进现实人生。",
-                  icon: <Compass size={36} strokeWidth={1.5} color="#68815F" />,
+                  iconSrc: iconPath,
                   navIndex: 2,
                 },
                 {
                   id: 3,
                   title: "明镜源频AI",
                   subtitle: "与你共振，照见更真实的自己。",
-                  icon: <Orbit size={36} strokeWidth={1.5} color="#556F88" />,
+                  iconSrc: iconMirror,
                   navIndex: 3,
                 },
                 {
                   id: 4,
                   title: "平台其他板块",
                   subtitle: "更多入口，持续通往共感文明。",
-                  icon: <Grid size={36} strokeWidth={1.5} color="#948074" />,
+                  iconSrc: iconGrid,
                   navIndex: 4,
                 },
               ].map((box) => (
@@ -397,37 +421,54 @@ function HomeCodeVersion({
                   className="flex flex-col items-center justify-center p-4 sm:p-6 md:p-10 aspect-square sm:aspect-auto sm:min-h-[260px] relative overflow-hidden active:scale-[0.97] transition-all duration-300"
                   style={{
                     cursor: "pointer",
-                    // 【颠覆性的移动端优雅降级方案：纯渐变透明玻璃】
-                    // 我们不再用死板的纯白色打底！而是用透明度极低的白色渐变。
-                    // 即使老安卓机不支持 blur，它看到的依然是一块带着高光切边、极高通透度的"透明亚克力板"，仍然非常立体且晶莹剔透！
-                    background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 100%)",
-                    backdropFilter: "blur(20px) saturate(1.2)",
-                    WebkitBackdropFilter: "blur(20px) saturate(1.2)",
+                    background: [
+                      "linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.08) 100%)",
+                    ].join(", "),
+                    backdropFilter: "blur(18px) saturate(1.2)",
+                    WebkitBackdropFilter: "blur(18px) saturate(1.2)",
                     borderRadius: "24px",
-                    borderTop: "1.5px solid rgba(255, 255, 255, 0.9)",
-                    borderLeft: "1px solid rgba(255, 255, 255, 0.6)",
-                    borderRight: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-                    boxShadow:
-                      "inset 0 0 30px rgba(255,255,255,0.4), 0 10px 30px -10px rgba(0,0,0,0.05)",
+                    borderTop: "2px solid rgba(255, 255, 255, 0.95)",
+                    borderLeft: "1.5px solid rgba(255, 255, 255, 0.6)",
+                    borderRight: "1px solid rgba(255, 255, 255, 0.15)",
+                    borderBottom: "2px solid rgba(200, 195, 185, 0.3)",
+                    boxShadow: [
+                      "inset 0 1px 0 rgba(255,255,255,0.6)",
+                      "inset 0 -12px 28px -8px rgba(0,0,0,0.1)",
+                      "inset 0 0 40px rgba(255,255,255,0.15)",
+                      "0 20px 60px -12px rgba(0,0,0,0.2)",
+                      "0 4px 10px rgba(0,0,0,0.08)",
+                      "0 1px 3px rgba(0,0,0,0.12)",
+                    ].join(", "),
                     transform: "translateZ(0)",
                   }}
                 >
-                  {/* 触摸反馈光效 (专为移动端打造，代替 PC 的 hover) */}
-                  <div className="absolute inset-0 bg-white/20 opacity-0 active:opacity-100 transition-opacity duration-200 pointer-events-none" />
-
-                  {/* 极简图标 */}
                   <div
-                    className="relative z-10 mb-3 md:mb-5"
+                    className="absolute inset-x-0 top-0 h-[40%] pointer-events-none"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 100%)",
+                      borderRadius: "24px 24px 0 0",
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-white/10 opacity-0 active:opacity-100 transition-opacity duration-200 pointer-events-none" />
+                  <div
+                    className="relative z-10 mb-1 md:mb-3"
                     style={{
                       filter:
-                        "drop-shadow(0px 1.5px 1px rgba(255,255,255,0.9)) drop-shadow(0px -1px 1px rgba(0,0,0,0.1))",
+                        "drop-shadow(0px 2px 4px rgba(0,0,0,0.3)) drop-shadow(0px -1px 2px rgba(255,255,255,1)) drop-shadow(0px 5px 10px rgba(0,0,0,0.15))",
                     }}
                   >
-                    {box.icon}
+                    <div
+                      style={{ width: 68, height: 68 }}
+                      className="flex-shrink-0 overflow-hidden"
+                    >
+                      <img
+                        src={box.iconSrc}
+                        alt={box.title}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
                   </div>
-
                   <h3
                     className="relative z-10 text-center"
                     style={{
@@ -437,14 +478,13 @@ function HomeCodeVersion({
                       color: "#18181A",
                       letterSpacing: "0.15em",
                       margin: 0,
-                      marginBottom: "0.75rem",
+                      marginBottom: "0.25rem",
                       textShadow:
-                        "0px 1.5px 1px rgba(255,255,255,0.9), 0px -1px 2px rgba(0,0,0,0.08)",
+                        "0px 0px 8px rgba(255,255,255,1), 0px 0px 16px rgba(255,255,255,0.8), 0px 1.5px 2px rgba(255,255,255,1), 0px -1px 3px rgba(0,0,0,0.3)",
                     }}
                   >
                     {box.title}
                   </h3>
-
                   <p
                     className="relative z-10 text-center"
                     style={{
@@ -454,9 +494,9 @@ function HomeCodeVersion({
                       color: "#4A4A4C",
                       letterSpacing: "0.1em",
                       margin: 0,
-                      marginBottom: "1.5rem",
+                      marginBottom: 0,
                       textShadow:
-                        "0px 1px 1px rgba(255,255,255,0.9), 0px -0.5px 1px rgba(0,0,0,0.02)",
+                        "0px 0px 6px rgba(255,255,255,1), 0px 0px 12px rgba(255,255,255,0.7), 0px 1px 1.5px rgba(255,255,255,1), 0px -1px 2px rgba(0,0,0,0.2)",
                     }}
                   >
                     {box.subtitle}

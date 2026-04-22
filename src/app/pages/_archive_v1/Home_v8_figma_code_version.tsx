@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { FONT_SERIF } from "../config/styles";
 import { useToast } from "../hooks/useToast";
 import { Toast } from "../components/shared/Toast";
-import { Book, Compass, Orbit, Grid, ImageIcon } from "lucide-react";
-import { HomeImageVersion } from "./HomeImageVersion";
+import { Book, Compass, Orbit, Grid } from "lucide-react";
 
 interface HomeProps {
   onNavChange?: (index: number) => void;
@@ -13,32 +12,6 @@ interface HomeProps {
 }
 
 export function Home({ onNavChange }: HomeProps) {
-  const [showImageVersion, setShowImageVersion] = useState(false);
-
-  if (showImageVersion) {
-    return (
-      <HomeImageVersion
-        onNavChange={onNavChange}
-        onToggleMode={() => setShowImageVersion(false)}
-      />
-    );
-  }
-
-  return (
-    <HomeCodeVersion
-      onNavChange={onNavChange}
-      onToggleMode={() => setShowImageVersion(true)}
-    />
-  );
-}
-
-function HomeCodeVersion({
-  onNavChange,
-  onToggleMode,
-}: {
-  onNavChange?: (index: number) => void;
-  onToggleMode: () => void;
-}) {
   const toast = useToast();
   // 1 = 门前, 2 = 穿门, 3 = 内殿
   const [layer, setLayer] = useState<1 | 2 | 3>(1);
@@ -110,16 +83,6 @@ function HomeCodeVersion({
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
-      {/* 切换到图片版按钮 */}
-      <button
-        onClick={onToggleMode}
-        className="absolute top-5 left-5 z-50 flex items-center justify-center p-2 rounded-full bg-black/10 backdrop-blur-md border border-white/30 text-gray-500 hover:bg-black/20 transition-all cursor-pointer active:scale-95"
-        style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
-        title="切换到图片版"
-      >
-        <ImageIcon size={20} strokeWidth={1.5} />
-      </button>
-
       {/* 贯穿全剧的高级通透光场图片 (满足你对 1、2 层也要有通透立体感的要求) */}
       <div
         className="absolute inset-0 transition-all duration-[3000ms] ease-out pointer-events-none"
@@ -184,7 +147,7 @@ function HomeCodeVersion({
             <h1
               style={{
                 fontFamily: FONT_SERIF,
-                fontSize: "clamp(3.5rem, 12vw, 5rem)",
+                fontSize: "clamp(3rem, 10vw, 4.5rem)",
                 fontWeight: 500,
                 color: "#18181A",
                 letterSpacing: "0.2em",
@@ -203,8 +166,8 @@ function HomeCodeVersion({
             <p
               style={{
                 fontFamily: FONT_SERIF,
-                fontSize: "clamp(1.2rem, 3.5vw, 1.6rem)",
-                fontWeight: 500,
+                fontSize: "clamp(1.125rem, 3vw, 1.5rem)",
+                fontWeight: 400,
                 color: "#3A3A3C",
                 letterSpacing: "0.3em",
                 margin: 0,
@@ -232,7 +195,7 @@ function HomeCodeVersion({
               onClick={handleEnterLayer2}
               style={{
                 fontFamily: "system-ui",
-                fontSize: "1.1rem",
+                fontSize: "0.875rem",
                 color: "#999",
                 letterSpacing: "0.4em",
                 cursor: "pointer",
@@ -270,7 +233,7 @@ function HomeCodeVersion({
             <h2
               style={{
                 fontFamily: FONT_SERIF,
-                fontSize: "clamp(1.8rem, 6vw, 2.8rem)",
+                fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
                 fontWeight: 500,
                 color: "#1C1C1E",
                 letterSpacing: "0.2em",
@@ -287,23 +250,7 @@ function HomeCodeVersion({
             >
               在这里，
               <br className="md:hidden" />
-              <span
-                style={{
-                  fontWeight: 900,
-                  color: "#18181A",
-                  fontSize: "1.15em",
-                  letterSpacing: "0.25em",
-                  marginRight: "-0.1em",
-                  textShadow:
-                    "0px 2px 2px rgba(255,255,255,1), 0px -2px 3px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.8)",
-                  display: "inline-block",
-                  transform: "scale(1.05)",
-                  position: "relative",
-                }}
-              >
-                真实
-              </span>
-              高于一切。
+              真实高于一切。
             </h2>
           </div>
           <div
@@ -318,7 +265,7 @@ function HomeCodeVersion({
               onClick={handleEnterLayer3}
               style={{
                 fontFamily: "system-ui",
-                fontSize: "1.1rem",
+                fontSize: "0.875rem",
                 color: "#999",
                 letterSpacing: "0.4em",
                 cursor: "pointer",
@@ -346,7 +293,30 @@ function HomeCodeVersion({
             padding: "1rem",
           }}
         >
-          <div style={{ height: "5vh" }} />
+          {/* 第三层顶部极轻保留的元感知小字 */}
+          <div
+            style={{
+              height: "10vh",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "flex-end",
+              paddingBottom: "1.5rem",
+              opacity: phase3 >= 1 ? 1 : 0,
+              transition: "opacity 3s ease 1s",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: "0.875rem",
+                color: "#999",
+                letterSpacing: "0.3em",
+                textShadow: "0 1px 1px white",
+              }}
+            >
+              元感知
+            </span>
+          </div>
 
           <div className="flex-1 w-full max-w-4xl flex items-center justify-center pb-[5vh]">
             <div
@@ -405,10 +375,12 @@ function HomeCodeVersion({
                     backdropFilter: "blur(20px) saturate(1.2)",
                     WebkitBackdropFilter: "blur(20px) saturate(1.2)",
                     borderRadius: "24px",
+                    // 强烈的高光边缘定义物理体积感（最核心的立体感来源）
                     borderTop: "1.5px solid rgba(255, 255, 255, 0.9)",
                     borderLeft: "1px solid rgba(255, 255, 255, 0.6)",
                     borderRight: "1px solid rgba(255, 255, 255, 0.1)",
                     borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+                    // 内发光与外投影，强化物理材质
                     boxShadow:
                       "inset 0 0 30px rgba(255,255,255,0.4), 0 10px 30px -10px rgba(0,0,0,0.05)",
                     transform: "translateZ(0)",
@@ -432,8 +404,8 @@ function HomeCodeVersion({
                     className="relative z-10 text-center"
                     style={{
                       fontFamily: FONT_SERIF,
-                      fontSize: "clamp(1.1rem, 3vw, 1.4rem)",
-                      fontWeight: 700,
+                      fontSize: "clamp(0.95rem, 2.5vw, 1.75rem)",
+                      fontWeight: 600,
                       color: "#18181A",
                       letterSpacing: "0.15em",
                       margin: 0,
@@ -449,9 +421,8 @@ function HomeCodeVersion({
                     className="relative z-10 text-center"
                     style={{
                       fontFamily: "system-ui",
-                      fontSize: "clamp(0.85rem, 2vw, 1rem)",
-                      fontWeight: 500,
-                      color: "#4A4A4C",
+                      fontSize: "clamp(0.7rem, 1.5vw, 0.95rem)",
+                      color: "#555",
                       letterSpacing: "0.1em",
                       margin: 0,
                       marginBottom: "1.5rem",
