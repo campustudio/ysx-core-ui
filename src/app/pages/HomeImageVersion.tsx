@@ -5,7 +5,7 @@ import { Toast } from "../components/shared/Toast";
 import { Code } from "lucide-react";
 import bgLayer1 from "@/assets/images/home/1-menqian.webp";
 import bgLayer2 from "@/assets/images/home/2-dingqi.webp";
-import bgLayer3 from "@/assets/images/home/3-zhongting.webp";
+import bgLayer3 from "@/assets/images/home/3-neidan.webp";
 import iconBook from "@/assets/images/home/icon-book.webp";
 import iconPath from "@/assets/images/home/icon-path.webp";
 import iconMirror from "@/assets/images/home/icon-mirror.webp";
@@ -421,24 +421,17 @@ export function HomeImageVersion({
                   className="flex flex-col items-center justify-center p-4 sm:p-6 md:p-10 aspect-square sm:aspect-auto sm:min-h-[260px] relative overflow-hidden active:scale-[0.97] transition-all duration-300"
                   style={{
                     cursor: "pointer",
-                    background: [
-                      "linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.08) 100%)",
-                    ].join(", "),
-                    backdropFilter: "blur(18px) saturate(1.2)",
-                    WebkitBackdropFilter: "blur(18px) saturate(1.2)",
+                    background:
+                      "linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0.02) 100%)",
+                    backdropFilter: "blur(32px)",
+                    WebkitBackdropFilter: "blur(32px)",
                     borderRadius: "24px",
-                    borderTop: "2px solid rgba(255, 255, 255, 0.95)",
-                    borderLeft: "1.5px solid rgba(255, 255, 255, 0.6)",
-                    borderRight: "1px solid rgba(255, 255, 255, 0.15)",
-                    borderBottom: "2px solid rgba(200, 195, 185, 0.3)",
-                    boxShadow: [
-                      "inset 0 1px 0 rgba(255,255,255,0.6)",
-                      "inset 0 -12px 28px -8px rgba(0,0,0,0.1)",
-                      "inset 0 0 40px rgba(255,255,255,0.15)",
-                      "0 20px 60px -12px rgba(0,0,0,0.2)",
-                      "0 4px 10px rgba(0,0,0,0.08)",
-                      "0 1px 3px rgba(0,0,0,0.12)",
-                    ].join(", "),
+                    borderTop: "1px solid rgba(255, 255, 255, 0.8)",
+                    borderLeft: "1px solid rgba(255, 255, 255, 0.5)",
+                    borderRight: "1px solid rgba(255, 255, 255, 0.2)",
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
+                    boxShadow:
+                      "inset 2px 2px 4px rgba(255,255,255,0.9), inset -3px -3px 6px rgba(0,0,0,0.06), inset 0 0 20px rgba(255,255,255,0.15), 0 15px 35px rgba(0,0,0,0.06), 0 3px 10px rgba(0,0,0,0.05)",
                     transform: "translateZ(0)",
                   }}
                 >
@@ -454,8 +447,9 @@ export function HomeImageVersion({
                   <div
                     className="relative z-10 mb-1 md:mb-3"
                     style={{
+                      opacity: 0.85,
                       filter:
-                        "drop-shadow(0px 2px 4px rgba(0,0,0,0.3)) drop-shadow(0px -1px 2px rgba(255,255,255,1)) drop-shadow(0px 5px 10px rgba(0,0,0,0.15))",
+                        "drop-shadow(0px 1px 0px rgba(255,255,255,1)) drop-shadow(0px -1px 0px rgba(0,0,0,0.3))",
                     }}
                   >
                     <div
@@ -475,12 +469,12 @@ export function HomeImageVersion({
                       fontFamily: FONT_SERIF,
                       fontSize: "clamp(1.1rem, 3vw, 1.4rem)",
                       fontWeight: 700,
-                      color: "#18181A",
+                      color: "rgba(30, 30, 34, 0.75)",
                       letterSpacing: "0.15em",
                       margin: 0,
-                      marginBottom: "0.25rem",
+                      marginBottom: "0.5rem",
                       textShadow:
-                        "0px 0px 8px rgba(255,255,255,1), 0px 0px 16px rgba(255,255,255,0.8), 0px 1.5px 2px rgba(255,255,255,1), 0px -1px 3px rgba(0,0,0,0.3)",
+                        "0px 1px 0px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.4)",
                     }}
                   >
                     {box.title}
@@ -490,13 +484,12 @@ export function HomeImageVersion({
                     style={{
                       fontFamily: "system-ui",
                       fontSize: "clamp(0.85rem, 2vw, 1rem)",
+                      color: "rgba(60, 60, 65, 0.75)",
                       fontWeight: 500,
-                      color: "#4A4A4C",
                       letterSpacing: "0.1em",
                       margin: 0,
-                      marginBottom: 0,
-                      textShadow:
-                        "0px 0px 6px rgba(255,255,255,1), 0px 0px 12px rgba(255,255,255,0.7), 0px 1px 1.5px rgba(255,255,255,1), 0px -1px 2px rgba(0,0,0,0.2)",
+                      marginBottom: "1.5rem",
+                      textShadow: "0px 1px 0px rgba(255,255,255,1)",
                     }}
                   >
                     {box.subtitle}
