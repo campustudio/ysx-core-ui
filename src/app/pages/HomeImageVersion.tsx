@@ -115,7 +115,7 @@ export function HomeImageVersion({
           opacity: layer === 2 ? 1 : 0,
           filter:
             layer === 2
-              ? "blur(0px) saturate(1.1)"
+              ? "blur(0px) saturate(1.1) brightness(1.1)"
               : layer === 1
                 ? "blur(12px) saturate(1)"
                 : "blur(10px) saturate(1.1)",
@@ -127,42 +127,42 @@ export function HomeImageVersion({
                 : "scale(1.05)",
         }}
       />
-      <img
-        src={bgLayer3}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover transition-all duration-[3000ms] ease-out pointer-events-none"
+      {/* Layer 3：模糊光源图（与纯代码版完全一致） */}
+      <div
+        className="absolute inset-0 pointer-events-none"
         style={{
           opacity: layer === 3 ? 1 : 0,
-          filter:
-            layer === 3 ? "blur(0px) saturate(1.1)" : "blur(12px) saturate(1)",
-          transform: layer === 3 ? "scale(1)" : "scale(0.95)",
+          backgroundImage: `url('https://images.unsplash.com/photo-1760891847887-57578cee649d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxldGhlcmVhbCUyMGdvbGRlbiUyMGdsb3dpbmclMjBsaWdodCUyMGFic3RyYWN0JTIwZGFya3xlbnwxfHx8fDE3NzY1MTcwNzR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          filter: "blur(14px) saturate(1.3) brightness(1.3)",
+          transition: "opacity 3000ms ease-out",
+          transitionDelay: layer === 3 ? "1s" : "0s",
         }}
       />
-
-      {/* 极微弱渐变遮罩 */}
+      {/* Layer 3：渐变遮罩（与纯代码版完全一致） */}
       <div
         className="absolute inset-0 transition-all duration-[3000ms] pointer-events-none"
         style={{
-          background:
-            layer === 1
-              ? "linear-gradient(to bottom, rgba(250,250,247,0.05) 0%, rgba(240,228,206,0.15) 100%)"
-              : layer === 2
-                ? "linear-gradient(to bottom, rgba(235,235,232,0.1) 0%, rgba(225,213,191,0.2) 100%)"
-                : "linear-gradient(to bottom, rgba(250,250,247,0.15) 0%, rgba(240,228,206,0.1) 100%)",
+          opacity: layer === 3 ? 1 : 0,
+          background: `
+            radial-gradient(ellipse 85% 70% at 50% 45%, rgba(255,255,253,0.25) 0%, rgba(245,242,235,0.6) 60%, rgba(240,235,225,0.8) 100%),
+            linear-gradient(to bottom, rgba(250,250,247,0.8) 0%, rgba(248,245,238,0.35) 50%, rgba(242,235,220,0.55) 100%)
+          `,
         }}
       />
-
-      {/* 径向渐变遮罩：中心高透，四周沉寂，营造未来空间深度 */}
+      {/* Layer 3：自然色点缀 + 水银镜面光（极淡） */}
       <div
         className="absolute inset-0 transition-all duration-[3000ms] pointer-events-none"
         style={{
-          background:
-            layer === 1
-              ? "radial-gradient(circle at 50% 45%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 30%, rgba(200,180,150,0.1) 100%)"
-              : layer === 2
-                ? "radial-gradient(circle at 50% 50%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 30%, rgba(200,180,150,0.15) 100%)"
-                : "radial-gradient(circle at 50% 50%, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 30%, rgba(180,190,180,0.08) 100%)",
-          mixBlendMode: "overlay",
+          opacity: layer === 3 ? 1 : 0,
+          background: `
+            radial-gradient(circle at 8% 72%, rgba(110,160,105,0.4) 0%, rgba(120,165,110,0.15) 15%, transparent 28%),
+            radial-gradient(circle at 92% 65%, rgba(105,155,100,0.3) 0%, rgba(115,160,105,0.1) 12%, transparent 25%),
+            radial-gradient(circle at 82% 88%, rgba(120,155,200,0.35) 0%, rgba(130,160,200,0.12) 14%, transparent 25%),
+            radial-gradient(circle at 12% 22%, rgba(130,165,210,0.28) 0%, rgba(140,170,210,0.1) 12%, transparent 22%),
+            radial-gradient(ellipse 30% 8% at 75% 15%, rgba(255,255,255,0.55) 0%, transparent 80%)
+          `,
         }}
       />
 
@@ -178,6 +178,18 @@ export function HomeImageVersion({
             transition: "opacity 1.2s ease",
           }}
         >
+          {/* 环境光：拱门光源辐射（暖白色调） */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "radial-gradient(ellipse 80% 70% at 50% 40%, rgba(255,248,235,0.35) 0%, rgba(255,255,255,0) 70%)",
+              mixBlendMode: "screen",
+              pointerEvents: "none",
+            }}
+          />
+
           <div style={{ height: "30vh" }} />
           <div
             style={{
@@ -190,12 +202,27 @@ export function HomeImageVersion({
               top: "-2vh",
             }}
           >
+            {/* 文字背光：椭圆柔和白光净化背景 */}
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -55%)",
+                width: "60vw",
+                height: "30vh",
+                background:
+                  "radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%)",
+                filter: "blur(12px)",
+                pointerEvents: "none",
+              }}
+            />
             <h1
               style={{
                 fontFamily: FONT_SERIF,
                 fontSize: "clamp(3.5rem, 12vw, 5rem)",
                 fontWeight: 500,
-                color: "#18181A",
+                color: "#1A1A1A",
                 letterSpacing: "0.2em",
                 margin: 0,
                 marginBottom: "4rem",
@@ -204,7 +231,7 @@ export function HomeImageVersion({
                 transform: phase1 >= 1 ? "scale(1)" : "scale(1.02)",
                 transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
                 textShadow:
-                  "0px 1.5px 2px rgba(255,255,255,1), 0px -1px 2px rgba(0,0,0,0.15)",
+                  "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
               }}
             >
               元感知
@@ -214,14 +241,14 @@ export function HomeImageVersion({
                 fontFamily: FONT_SERIF,
                 fontSize: "clamp(1.2rem, 3.5vw, 1.6rem)",
                 fontWeight: 500,
-                color: "#3A3A3C",
+                color: "#1A1A1A",
                 letterSpacing: "0.3em",
                 margin: 0,
                 opacity: phase1 >= 1 ? 1 : 0,
                 filter: phase1 >= 1 ? "blur(0px)" : "blur(8px)",
                 transition: "all 3.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s",
                 textShadow:
-                  "0px 1px 1.5px rgba(255,255,255,1), 0px -1px 1.5px rgba(0,0,0,0.1)",
+                  "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
                 textAlign: "center",
                 padding: "0 1rem",
               }}
@@ -268,6 +295,16 @@ export function HomeImageVersion({
             transition: "opacity 1.5s ease",
           }}
         >
+          {/* 高频澄澈吸入光斑：绝对弃用黑色！用强光辐射营造极简吸入感 */}
+          <div
+            className="absolute inset-0 z-10 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.7) 0%, rgba(255, 235, 190, 0.15) 35%, rgba(255, 255, 255, 0.02) 100%)",
+              mixBlendMode: "screen",
+            }}
+          />
+
           <div
             style={{
               height: "70vh",
@@ -275,14 +312,30 @@ export function HomeImageVersion({
               justifyContent: "center",
               alignItems: "center",
               padding: "0 2rem",
+              position: "relative",
             }}
           >
+            {/* 文字背光：琥珀金色高斯模糊 */}
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "50vw",
+                height: "25vh",
+                background:
+                  "radial-gradient(ellipse at center, rgba(212,175,55,0.2) 0%, rgba(255,255,255,0) 70%)",
+                filter: "blur(16px)",
+                pointerEvents: "none",
+              }}
+            />
             <h2
               style={{
                 fontFamily: FONT_SERIF,
                 fontSize: "clamp(1.8rem, 6vw, 2.8rem)",
                 fontWeight: 500,
-                color: "#1C1C1E",
+                color: "#1A1A1A",
                 letterSpacing: "0.2em",
                 margin: 0,
                 textAlign: "center",
@@ -292,7 +345,7 @@ export function HomeImageVersion({
                 filter: phase2 >= 1 ? "blur(0px)" : "blur(12px)",
                 transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
                 textShadow:
-                  "0px 1.5px 1px rgba(255,255,255,0.9), 0px -1px 2px rgba(0,0,0,0.3), 0 0 30px rgba(255,255,255,0.6)",
+                  "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1), 0 0 30px rgba(255,255,255,0.6)",
               }}
             >
               在这里，
@@ -300,12 +353,12 @@ export function HomeImageVersion({
               <span
                 style={{
                   fontWeight: 900,
-                  color: "#18181A",
+                  color: "#1A1A1A",
                   fontSize: "1.15em",
                   letterSpacing: "0.25em",
                   marginRight: "-0.1em",
                   textShadow:
-                    "0px 2px 2px rgba(255,255,255,1), 0px -2px 3px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.8)",
+                    "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1), 0 0 40px rgba(212,175,55,0.8)",
                   display: "inline-block",
                   transform: "scale(1.05)",
                   position: "relative",
@@ -422,9 +475,9 @@ export function HomeImageVersion({
                   style={{
                     cursor: "pointer",
                     background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.08) 40%, rgba(255,255,255,0.02) 100%)",
-                    backdropFilter: "blur(32px)",
-                    WebkitBackdropFilter: "blur(32px)",
+                      "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.01) 100%)",
+                    backdropFilter: "blur(18px) saturate(1.15)",
+                    WebkitBackdropFilter: "blur(18px) saturate(1.15)",
                     borderRadius: "24px",
                     borderTop: "1px solid rgba(255, 255, 255, 0.8)",
                     borderLeft: "1px solid rgba(255, 255, 255, 0.5)",
