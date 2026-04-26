@@ -157,8 +157,8 @@ export function HomeImageVersion({
         style={{
           opacity: layer === 3 ? 1 : 0,
           background: `
-            radial-gradient(circle at 8% 72%, rgba(110,160,105,0.4) 0%, rgba(120,165,110,0.15) 15%, transparent 28%),
-            radial-gradient(circle at 92% 65%, rgba(105,155,100,0.3) 0%, rgba(115,160,105,0.1) 12%, transparent 25%),
+            radial-gradient(circle at 8% 72%, rgba(110,160,105,0.25) 0%, rgba(120,165,110,0.09) 15%, transparent 28%),
+            radial-gradient(circle at 92% 65%, rgba(105,155,100,0.18) 0%, rgba(115,160,105,0.06) 12%, transparent 25%),
             radial-gradient(circle at 82% 88%, rgba(120,155,200,0.35) 0%, rgba(130,160,200,0.12) 14%, transparent 25%),
             radial-gradient(circle at 12% 22%, rgba(130,165,210,0.28) 0%, rgba(140,170,210,0.1) 12%, transparent 22%),
             radial-gradient(ellipse 30% 8% at 75% 15%, rgba(255,255,255,0.55) 0%, transparent 80%)
@@ -444,6 +444,9 @@ export function HomeImageVersion({
                   title: "人类手册馆",
                   subtitle: "看见真相，回到生命本身。",
                   iconSrc: iconBook,
+                  iconScaleX: 1.0,
+                  iconScaleY: 1.1,
+                  iconOffsetY: 5,
                   navIndex: 1,
                 },
                 {
@@ -451,6 +454,9 @@ export function HomeImageVersion({
                   title: "新人生之路",
                   subtitle: "把感知，真正活进现实人生。",
                   iconSrc: iconPath,
+                  iconScaleX: 1.0,
+                  iconScaleY: 0.9,
+                  iconOffsetY: 0,
                   navIndex: 2,
                 },
                 {
@@ -458,6 +464,9 @@ export function HomeImageVersion({
                   title: "明镜源频AI",
                   subtitle: "与你共振，照见更真实的自己。",
                   iconSrc: iconMirror,
+                  iconScaleX: 1.0,
+                  iconScaleY: 1.0,
+                  iconOffsetY: 0,
                   navIndex: 3,
                 },
                 {
@@ -465,13 +474,16 @@ export function HomeImageVersion({
                   title: "平台其他板块",
                   subtitle: "更多入口，持续通往共感文明。",
                   iconSrc: iconGrid,
+                  iconScaleX: 0.9,
+                  iconScaleY: 0.9,
+                  iconOffsetY: 0,
                   navIndex: 4,
                 },
               ].map((box) => (
                 <div
                   key={box.id}
                   onClick={() => handleNavClick(box.navIndex, box.title)}
-                  className="flex flex-col items-center justify-center p-4 sm:p-6 md:p-10 aspect-square sm:aspect-auto sm:min-h-[260px] relative overflow-hidden active:scale-[0.97] transition-all duration-300"
+                  className="flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 aspect-square sm:aspect-auto sm:min-h-[260px] relative overflow-hidden active:scale-[0.97] transition-all duration-300"
                   style={{
                     cursor: "pointer",
                     background:
@@ -497,25 +509,21 @@ export function HomeImageVersion({
                     }}
                   />
                   <div className="absolute inset-0 bg-white/10 opacity-0 active:opacity-100 transition-opacity duration-200 pointer-events-none" />
-                  <div
-                    className="relative z-10 mb-1 md:mb-3"
+                  {/* 图标作为卡片背景镶嵌 */}
+                  <img
+                    src={box.iconSrc}
+                    alt=""
+                    className="absolute pointer-events-none"
                     style={{
-                      opacity: 0.85,
-                      filter:
-                        "drop-shadow(0px 1px 0px rgba(255,255,255,1)) drop-shadow(0px -1px 0px rgba(0,0,0,0.3))",
+                      width: "92%",
+                      height: "92%",
+                      top: "4%",
+                      left: "4%",
+                      objectFit: "contain",
+                      opacity: 0.4,
+                      transform: `scaleX(${box.iconScaleX}) scaleY(${box.iconScaleY}) translateY(${box.iconOffsetY}%)`,
                     }}
-                  >
-                    <div
-                      style={{ width: 68, height: 68 }}
-                      className="flex-shrink-0 overflow-hidden"
-                    >
-                      <img
-                        src={box.iconSrc}
-                        alt={box.title}
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                  </div>
+                  />
                   <h3
                     className="relative z-10 text-center"
                     style={{
@@ -541,7 +549,7 @@ export function HomeImageVersion({
                       fontWeight: 500,
                       letterSpacing: "0.1em",
                       margin: 0,
-                      marginBottom: "1.5rem",
+                      marginBottom: "0.25rem",
                       textShadow: "0px 1px 0px rgba(255,255,255,1)",
                     }}
                   >
