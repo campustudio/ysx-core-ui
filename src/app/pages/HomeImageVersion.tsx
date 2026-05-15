@@ -174,8 +174,6 @@ export function HomeImageVersion({
             inset: 0,
             display: "flex",
             flexDirection: "column",
-            opacity: phase1 === 0 ? 0 : 1,
-            transition: "opacity 1.2s ease",
           }}
         >
           {/* 环境光：拱门光源辐射（暖白色调） */}
@@ -291,8 +289,6 @@ export function HomeImageVersion({
             inset: 0,
             display: "flex",
             flexDirection: "column",
-            opacity: phase2 === 0 ? 0 : 1,
-            transition: "opacity 1.5s ease",
           }}
         >
           {/* 高频澄澈吸入光斑：绝对弃用黑色！用强光辐射营造极简吸入感 */}
