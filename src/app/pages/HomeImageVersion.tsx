@@ -135,7 +135,7 @@ export function HomeImageVersion({
           backgroundImage: `url('https://images.unsplash.com/photo-1760891847887-57578cee649d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxldGhlcmVhbCUyMGdvbGRlbiUyMGdsb3dpbmclMjBsaWdodCUyMGFic3RyYWN0JTIwZGFya3xlbnwxfHx8fDE3NzY1MTcwNzR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          filter: "blur(9px) saturate(1.3) brightness(0.7)",
+          filter: "blur(20px) saturate(1.2) brightness(0.8)",
           transition: "opacity 3000ms ease-out",
           transitionDelay: layer === 3 ? "1s" : "0s",
         }}
@@ -146,8 +146,9 @@ export function HomeImageVersion({
         style={{
           opacity: layer === 3 ? 1 : 0,
           background: `
-            radial-gradient(ellipse 85% 70% at 50% 45%, rgba(255,255,253,0.25) 0%, rgba(245,242,235,0.6) 60%, rgba(240,235,225,0.8) 100%),
-            linear-gradient(to bottom, rgba(250,250,247,0.8) 0%, rgba(248,245,238,0.35) 50%, rgba(242,235,220,0.55) 100%)
+            radial-gradient(ellipse 70% 50% at 50% 38%, rgba(255,255,253,0.5) 0%, rgba(248,245,240,0.25) 60%, transparent 100%),
+            linear-gradient(to bottom, rgba(250,250,247,0.88) 0%, rgba(248,245,238,0.2) 50%, rgba(242,235,220,0.08) 100%),
+            linear-gradient(to top, rgba(245,242,235,0.7) 0%, rgba(248,245,240,0.25) 25%, transparent 50%)
           `,
         }}
       />
@@ -161,7 +162,7 @@ export function HomeImageVersion({
             radial-gradient(circle at 92% 65%, rgba(105,155,100,0.18) 0%, rgba(115,160,105,0.06) 12%, transparent 25%),
             radial-gradient(circle at 82% 88%, rgba(120,155,200,0.35) 0%, rgba(130,160,200,0.12) 14%, transparent 25%),
             radial-gradient(circle at 12% 22%, rgba(130,165,210,0.28) 0%, rgba(140,170,210,0.1) 12%, transparent 22%),
-            radial-gradient(ellipse 30% 8% at 75% 15%, rgba(255,255,255,0.55) 0%, transparent 80%)
+            radial-gradient(ellipse 30% 8% at 75% 15%, rgba(255,255,255,0.2) 0%, transparent 80%)
           `,
         }}
       />
@@ -444,6 +445,7 @@ export function HomeImageVersion({
                   iconScaleY: 1.1,
                   iconOffsetY: 5,
                   navIndex: 1,
+                  whiteAlpha: 0.5,
                 },
                 {
                   id: 2,
@@ -454,6 +456,7 @@ export function HomeImageVersion({
                   iconScaleY: 0.9,
                   iconOffsetY: 0,
                   navIndex: 2,
+                  whiteAlpha: 0.5,
                 },
                 {
                   id: 3,
@@ -464,6 +467,7 @@ export function HomeImageVersion({
                   iconScaleY: 1.0,
                   iconOffsetY: 0,
                   navIndex: 3,
+                  whiteAlpha: 0.3,
                 },
                 {
                   id: 4,
@@ -474,6 +478,7 @@ export function HomeImageVersion({
                   iconScaleY: 0.9,
                   iconOffsetY: 0,
                   navIndex: 4,
+                  whiteAlpha: 0.3,
                 },
               ].map((box) => (
                 <div
@@ -543,8 +548,7 @@ export function HomeImageVersion({
                       letterSpacing: "0.15em",
                       margin: 0,
                       marginBottom: "0.5rem",
-                      textShadow:
-                        "0px 1.5px 1px rgba(255,255,255,0.9), 0px -1px 2px rgba(0,0,0,0.08)",
+                      textShadow: `0px 1.5px 1px rgba(255,255,255,${box.whiteAlpha}), 0px -1px 2px rgba(0,0,0,0.08)`,
                     }}
                   >
                     {box.title}
@@ -559,8 +563,7 @@ export function HomeImageVersion({
                       letterSpacing: "0.1em",
                       margin: 0,
                       marginBottom: "0.25rem",
-                      textShadow:
-                        "0px 1px 1px rgba(255,255,255,0.9), 0px -0.5px 1px rgba(0,0,0,0.02)",
+                      textShadow: `0px 1px 1px rgba(255,255,255,${box.whiteAlpha}), 0px -0.5px 1px rgba(0,0,0,0.02)`,
                     }}
                   >
                     {box.subtitle}
