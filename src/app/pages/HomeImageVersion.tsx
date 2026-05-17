@@ -484,7 +484,8 @@ export function HomeImageVersion({
                     cursor: "pointer",
                     background:
                       "linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.01) 100%)",
-
+                    backdropFilter: "blur(18px) saturate(1.15)",
+                    WebkitBackdropFilter: "blur(18px) saturate(1.15)",
                     borderRadius: "24px",
                     borderTop: "1px solid rgba(255, 255, 255, 0.8)",
                     borderLeft: "1px solid rgba(255, 255, 255, 0.5)",
@@ -525,12 +526,12 @@ export function HomeImageVersion({
                       fontFamily: FONT_SERIF,
                       fontSize: "clamp(1.1rem, 3vw, 1.4rem)",
                       fontWeight: 700,
-                      color: "rgba(30, 30, 34, 0.75)",
+                      color: "#18181A",
                       letterSpacing: "0.15em",
                       margin: 0,
                       marginBottom: "0.5rem",
                       textShadow:
-                        "0px 1px 0px rgba(255,255,255,0.5), 0px -1px 1px rgba(0,0,0,0.4)",
+                        "0px 1.5px 1px rgba(255,255,255,0.9), 0px -1px 2px rgba(0,0,0,0.08)",
                     }}
                   >
                     {box.title}
@@ -540,12 +541,13 @@ export function HomeImageVersion({
                     style={{
                       fontFamily: "system-ui",
                       fontSize: "clamp(0.85rem, 2vw, 1rem)",
-                      color: "rgba(60, 60, 65, 0.75)",
+                      color: "#4A4A4C",
                       fontWeight: 500,
                       letterSpacing: "0.1em",
                       margin: 0,
                       marginBottom: "0.25rem",
-                      textShadow: "0px 1px 0px rgba(255,255,255,0.5)",
+                      textShadow:
+                        "0px 1px 1px rgba(255,255,255,0.9), 0px -0.5px 1px rgba(0,0,0,0.02)",
                     }}
                   >
                     {box.subtitle}
