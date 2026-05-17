@@ -531,8 +531,8 @@ export function HomeImageVersion({
                     alt=""
                     className="relative z-10"
                     style={{
-                      width: "48px",
-                      height: "48px",
+                      width: "36px",
+                      height: "36px",
                       objectFit: "contain",
                       marginBottom: "0.5rem",
                       opacity: 0.3,
