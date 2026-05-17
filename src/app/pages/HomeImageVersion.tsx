@@ -135,7 +135,7 @@ export function HomeImageVersion({
           backgroundImage: `url('https://images.unsplash.com/photo-1760891847887-57578cee649d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxldGhlcmVhbCUyMGdvbGRlbiUyMGdsb3dpbmclMjBsaWdodCUyMGFic3RyYWN0JTIwZGFya3xlbnwxfHx8fDE3NzY1MTcwNzR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          filter: "blur(9px) saturate(1.3) brightness(1.0)",
+          filter: "blur(9px) saturate(1.3) brightness(0.7)",
           transition: "opacity 3000ms ease-out",
           transitionDelay: layer === 3 ? "1s" : "0s",
         }}
@@ -505,7 +505,7 @@ export function HomeImageVersion({
                     }}
                   /> */}
                   <div className="absolute inset-0 bg-white/10 opacity-0 active:opacity-100 transition-opacity duration-200 pointer-events-none" />
-                  {/* 图标作为卡片背景镶嵌 */}
+                  {/* 图标作为卡片背景镶嵌（已注释）
                   <img
                     src={box.iconSrc}
                     alt=""
@@ -516,9 +516,21 @@ export function HomeImageVersion({
                       top: "4%",
                       left: "4%",
                       objectFit: "contain",
-                      // opacity: 0.4,
-                      opacity: 0,
+                      opacity: 0.4,
                       transform: `scaleX(${box.iconScaleX}) scaleY(${box.iconScaleY}) translateY(${box.iconOffsetY}%)`,
+                    }}
+                  /> */}
+                  {/* 图标放在卡片表面，标题上方居中 */}
+                  <img
+                    src={box.iconSrc}
+                    alt=""
+                    className="relative z-10"
+                    style={{
+                      width: "48px",
+                      height: "48px",
+                      objectFit: "contain",
+                      marginBottom: "0.5rem",
+                      opacity: 0.3,
                     }}
                   />
                   <h3
