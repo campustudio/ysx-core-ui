@@ -516,6 +516,7 @@ export function HomeImageVersion({
                       top: "4%",
                       left: "4%",
                       objectFit: "contain",
+                      // opacity: 0.4,
                       opacity: 0,
                       transform: `scaleX(${box.iconScaleX}) scaleY(${box.iconScaleY}) translateY(${box.iconOffsetY}%)`,
                     }}
