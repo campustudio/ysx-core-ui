@@ -135,7 +135,7 @@ export function HomeImageVersion({
           backgroundImage: `url('https://images.unsplash.com/photo-1760891847887-57578cee649d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxldGhlcmVhbCUyMGdvbGRlbiUyMGdsb3dpbmclMjBsaWdodCUyMGFic3RyYWN0JTIwZGFya3xlbnwxfHx8fDE3NzY1MTcwNzR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          filter: "blur(3px) saturate(1.2) brightness(0.8)",
+          filter: "blur(9px) saturate(1.2) brightness(0.8)",
           transition: "opacity 3000ms ease-out",
           transitionDelay: layer === 3 ? "1s" : "0s",
         }}
