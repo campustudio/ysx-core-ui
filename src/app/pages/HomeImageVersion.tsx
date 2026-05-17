@@ -412,15 +412,15 @@ export function HomeImageVersion({
             {/* 光斑层：模拟代码版的光场通透效果 */}
             <div
               className="absolute inset-0 pointer-events-none"
-              style={{
-                background: [
-                  "radial-gradient(ellipse 60% 50% at 30% 35%, rgba(218,195,145,0.3) 0%, transparent 70%)",
-                  "radial-gradient(ellipse 50% 60% at 75% 55%, rgba(200,185,155,0.25) 0%, transparent 70%)",
-                  "radial-gradient(ellipse 80% 40% at 50% 80%, rgba(230,215,180,0.2) 0%, transparent 70%)",
-                  "radial-gradient(ellipse 70% 50% at 50% 45%, rgba(240,230,210,0.2) 0%, transparent 60%)",
-                ].join(", "),
-                filter: "blur(25px)",
-              }}
+              // style={{
+              //   background: [
+              //     "radial-gradient(ellipse 60% 50% at 30% 35%, rgba(218,195,145,0.3) 0%, transparent 70%)",
+              //     "radial-gradient(ellipse 50% 60% at 75% 55%, rgba(200,185,155,0.25) 0%, transparent 70%)",
+              //     "radial-gradient(ellipse 80% 40% at 50% 80%, rgba(230,215,180,0.2) 0%, transparent 70%)",
+              //     "radial-gradient(ellipse 70% 50% at 50% 45%, rgba(240,230,210,0.2) 0%, transparent 60%)",
+              //   ].join(", "),
+              //   filter: "blur(25px)",
+              // }}
             />
             <div
               className="grid grid-cols-2 gap-3 sm:gap-6 md:gap-10 w-full relative z-10"
@@ -483,27 +483,26 @@ export function HomeImageVersion({
                   style={{
                     cursor: "pointer",
                     background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.01) 100%)",
-                    backdropFilter: "blur(18px) saturate(1.15)",
-                    WebkitBackdropFilter: "blur(18px) saturate(1.15)",
+                      "linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.01) 100%)",
+
                     borderRadius: "24px",
                     borderTop: "1px solid rgba(255, 255, 255, 0.8)",
                     borderLeft: "1px solid rgba(255, 255, 255, 0.5)",
                     borderRight: "1px solid rgba(255, 255, 255, 0.2)",
                     borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
                     boxShadow:
-                      "inset 2px 2px 4px rgba(255,255,255,0.9), inset -3px -3px 6px rgba(0,0,0,0.06), inset 0 0 20px rgba(255,255,255,0.15), 0 15px 35px rgba(0,0,0,0.06), 0 3px 10px rgba(0,0,0,0.05)",
+                      "inset 2px 2px 4px rgba(255,255,255,0.4), inset -3px -3px 6px rgba(0,0,0,0.06), inset 0 0 20px rgba(255,255,255,0.15), 0 15px 35px rgba(0,0,0,0.06), 0 3px 10px rgba(0,0,0,0.05)",
                     transform: "translateZ(0)",
                   }}
                 >
-                  <div
+                  {/* <div
                     className="absolute inset-x-0 top-0 h-[40%] pointer-events-none"
                     style={{
                       background:
                         "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 100%)",
                       borderRadius: "24px 24px 0 0",
                     }}
-                  />
+                  /> */}
                   <div className="absolute inset-0 bg-white/10 opacity-0 active:opacity-100 transition-opacity duration-200 pointer-events-none" />
                   {/* 图标作为卡片背景镶嵌 */}
                   <img
@@ -516,7 +515,7 @@ export function HomeImageVersion({
                       top: "4%",
                       left: "4%",
                       objectFit: "contain",
-                      opacity: 0.4,
+                      opacity: 0,
                       transform: `scaleX(${box.iconScaleX}) scaleY(${box.iconScaleY}) translateY(${box.iconOffsetY}%)`,
                     }}
                   />
@@ -531,7 +530,7 @@ export function HomeImageVersion({
                       margin: 0,
                       marginBottom: "0.5rem",
                       textShadow:
-                        "0px 1px 0px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.4)",
+                        "0px 1px 0px rgba(255,255,255,0.5), 0px -1px 1px rgba(0,0,0,0.4)",
                     }}
                   >
                     {box.title}
@@ -546,7 +545,7 @@ export function HomeImageVersion({
                       letterSpacing: "0.1em",
                       margin: 0,
                       marginBottom: "0.25rem",
-                      textShadow: "0px 1px 0px rgba(255,255,255,1)",
+                      textShadow: "0px 1px 0px rgba(255,255,255,0.5)",
                     }}
                   >
                     {box.subtitle}
