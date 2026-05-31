@@ -2,55 +2,33 @@ import { useState, useEffect } from "react";
 import { FONT_SERIF } from "../config/styles";
 import { useToast } from "../hooks/useToast";
 import { Toast } from "../components/shared/Toast";
-import { Book, Compass, Orbit, Grid, ImageIcon } from "lucide-react";
-import { HomeImageVersion } from "./HomeImageVersion";
+import { Code } from "lucide-react";
+import bgLayer1 from "@/assets/images/home/1-menqian.webp";
+import bgLayer2 from "@/assets/images/home/2-dingqi.webp";
+import bgLayer3 from "@/assets/images/home/3-neidan.webp";
+import iconBook from "@/assets/images/home/icon-book.webp";
+import iconPath from "@/assets/images/home/icon-path.webp";
+import iconMirror from "@/assets/images/home/icon-mirror.webp";
+import iconGrid from "@/assets/images/home/icon-grid.webp";
 
 interface HomeProps {
   onNavChange?: (index: number) => void;
-  onNavigateToLogoPreview?: () => void;
-  isLoggedIn?: boolean;
-  userInfo?: { name: string; avatar: string; days: number };
+  onToggleMode?: () => void;
 }
 
-export function Home({ onNavChange }: HomeProps) {
-  const [showImageVersion, setShowImageVersion] = useState(false);
-
-  if (showImageVersion) {
-    return (
-      <HomeImageVersion
-        onNavChange={onNavChange}
-        onToggleMode={() => setShowImageVersion(false)}
-      />
-    );
-  }
-
-  return (
-    <HomeCodeVersion
-      onNavChange={onNavChange}
-      onToggleMode={() => setShowImageVersion(true)}
-    />
-  );
-}
-
-function HomeCodeVersion({
-  onNavChange,
-  onToggleMode,
-}: {
-  onNavChange?: (index: number) => void;
-  onToggleMode: () => void;
-}) {
+export function Home({ onNavChange, onToggleMode }: HomeProps) {
   const toast = useToast();
-  // 1 = 门前, 2 = 穿门, 3 = 内殿
-  const [layer, setLayer] = useState<1 | 2 | 3>(1);
-  const [phase1, setPhase1] = useState(0); // Layer 1 animations
-  const [phase2, setPhase2] = useState(0); // Layer 2 animations
-  const [phase3, setPhase3] = useState(0); // Layer 3 animations
 
-  // Layer 1 Init
+  // ================= 视图层逻辑 =================
+  const [layer, setLayer] = useState<1 | 2 | 3>(1);
+  const [phase1, setPhase1] = useState(0);
+  const [phase2, setPhase2] = useState(0);
+  const [phase3, setPhase3] = useState(0);
+
   useEffect(() => {
     if (layer === 1) {
-      const t1 = setTimeout(() => setPhase1(1), 800); // 浮现主文字
-      const t2 = setTimeout(() => setPhase1(2), 2500); // 浮现"进入"
+      const t1 = setTimeout(() => setPhase1(1), 800);
+      const t2 = setTimeout(() => setPhase1(2), 2500);
       return () => {
         clearTimeout(t1);
         clearTimeout(t2);
@@ -58,11 +36,10 @@ function HomeCodeVersion({
     }
   }, [layer]);
 
-  // Layer 2 Init
   useEffect(() => {
     if (layer === 2) {
-      const t1 = setTimeout(() => setPhase2(1), 1000); // 浮现中心句
-      const t2 = setTimeout(() => setPhase2(2), 3500); // 2.5s后浮现"继续"
+      const t1 = setTimeout(() => setPhase2(1), 1000);
+      const t2 = setTimeout(() => setPhase2(2), 3500);
       return () => {
         clearTimeout(t1);
         clearTimeout(t2);
@@ -70,26 +47,21 @@ function HomeCodeVersion({
     }
   }, [layer]);
 
-  // Layer 3 Init
   useEffect(() => {
     if (layer === 3) {
-      const t1 = setTimeout(() => setPhase3(1), 1000); // 浮现四个入口
+      const t1 = setTimeout(() => setPhase3(1), 1000);
       return () => clearTimeout(t1);
     }
   }, [layer]);
 
   const handleEnterLayer2 = () => {
-    setPhase1(0); // Fade out Layer 1
-    setTimeout(() => {
-      setLayer(2);
-    }, 1200);
+    setPhase1(0);
+    setTimeout(() => setLayer(2), 1200);
   };
 
   const handleEnterLayer3 = () => {
-    setPhase2(0); // Fade out Layer 2
-    setTimeout(() => {
-      setLayer(3);
-    }, 1500);
+    setPhase2(0);
+    setTimeout(() => setLayer(3), 1500);
   };
 
   const handleNavClick = (navIndex: number, title: string) => {
@@ -106,54 +78,89 @@ function HomeCodeVersion({
         height: "100vh",
         position: "relative",
         overflow: "hidden",
-        backgroundColor: "#EFEFF2", // 统一极简冷白底色，主要依靠全局背景图片定调
+        backgroundColor: "#EFEFF2",
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
-      {/* 切换到图片版按钮 */}
-      <button
+      {/* 返回代码版按钮 */}
+      {/* <button
         onClick={onToggleMode}
-        className="absolute top-5 left-5 z-50 flex items-center justify-center p-2 rounded-full bg-black/10 backdrop-blur-md border border-white/30 text-gray-500 hover:bg-black/20 transition-all cursor-pointer active:scale-95"
+        className="absolute top-5 left-5 z-50 flex items-center justify-center p-2 rounded-full bg-black/10 backdrop-blur-md border border-white/30 text-white/90 hover:bg-black/20 transition-all cursor-pointer active:scale-95"
         style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
-        title="切换到图片版"
+        title="返回纯代码版"
       >
-        <ImageIcon size={20} strokeWidth={1.5} />
-      </button>
+        <Code size={20} strokeWidth={1.5} />
+      </button> */}
 
-      {/* 贯穿全剧的高级通透光场图片 (满足你对 1、2 层也要有通透立体感的要求) */}
-      <div
-        className="absolute inset-0 transition-all duration-[3000ms] ease-out pointer-events-none"
+      {/* 三层背景图 */}
+      <img
+        src={bgLayer1}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover transition-all duration-[3000ms] ease-out pointer-events-none"
         style={{
-          opacity: 1, // 全局显示！
+          opacity: layer === 1 ? 1 : 0,
+          filter:
+            layer === 1 ? "blur(0px) saturate(1.1)" : "blur(12px) saturate(1)",
+          transform: layer === 1 ? "scale(1)" : "scale(1.05)",
+        }}
+      />
+      <img
+        src={bgLayer2}
+        alt=""
+        className="absolute inset-0 w-full h-full object-cover transition-all duration-[3000ms] ease-out pointer-events-none"
+        style={{
+          opacity: layer === 2 ? 1 : 0,
+          filter:
+            layer === 2
+              ? "blur(0px) saturate(1.1) brightness(1.1)"
+              : layer === 1
+                ? "blur(12px) saturate(1)"
+                : "blur(10px) saturate(1.1)",
+          transform:
+            layer === 2
+              ? "scale(1)"
+              : layer === 1
+                ? "scale(0.95)"
+                : "scale(1.05)",
+        }}
+      />
+      {/* Layer 3：模糊光源图（与纯代码版完全一致） */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          opacity: layer === 3 ? 1 : 0,
           backgroundImage: `url('https://images.unsplash.com/photo-1760891847887-57578cee649d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxldGhlcmVhbCUyMGdvbGRlbiUyMGdsb3dpbmclMjBsaWdodCUyMGFic3RyYWN0JTIwZGFya3xlbnwxfHx8fDE3NzY1MTcwNzR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          // 随着层级递进，画面从"极度朦胧深邃"逐渐变清晰，产生穿梭感
-          filter:
-            layer === 1
-              ? "blur(60px) saturate(0.8)"
-              : layer === 2
-                ? "blur(40px) saturate(1)"
-                : "blur(20px) saturate(1.2)",
-          transform:
-            layer === 1
-              ? "scale(1.2)"
-              : layer === 2
-                ? "scale(1.1)"
-                : "scale(1)",
+          filter: "blur(9px) saturate(1.2) brightness(0.8)",
+          transition: "opacity 3000ms ease-out",
+          transitionDelay: layer === 3 ? "1s" : "0s",
         }}
       />
-
-      {/* 极简冷白/古纸的渐变遮罩 - 动态压暗底图，防止五颜六色 */}
+      {/* Layer 3：渐变遮罩（与纯代码版完全一致） */}
       <div
         className="absolute inset-0 transition-all duration-[3000ms] pointer-events-none"
         style={{
-          background:
-            layer === 1
-              ? "linear-gradient(to bottom, rgba(250,250,247,0.95) 0%, rgba(240,228,206,0.85) 100%)" // 门前：极简干净，隐约透出背景
-              : layer === 2
-                ? "linear-gradient(to bottom, rgba(235,235,232,0.9) 0%, rgba(225,213,191,0.8) 100%)" // 穿门：稍暗，凸显文字
-                : "linear-gradient(to bottom, rgba(250,250,247,0.85) 0%, rgba(240,228,206,0.4) 100%)", // 内殿：最高透
+          opacity: layer === 3 ? 1 : 0,
+          background: `
+            radial-gradient(ellipse 70% 50% at 50% 38%, rgba(255,255,253,0.5) 0%, rgba(248,245,240,0.25) 60%, transparent 100%),
+            linear-gradient(to bottom, rgba(250,250,247,0.88) 0%, rgba(248,245,238,0.2) 50%, rgba(242,235,220,0.08) 100%),
+            linear-gradient(to top, rgba(245,242,235,0.7) 0%, rgba(248,245,240,0.25) 25%, transparent 50%)
+          `,
+        }}
+      />
+      {/* Layer 3：自然色点缀 + 水银镜面光（极淡） */}
+      <div
+        className="absolute inset-0 transition-all duration-[3000ms] pointer-events-none"
+        style={{
+          opacity: layer === 3 ? 1 : 0,
+          background: `
+            radial-gradient(circle at 8% 72%, rgba(110,160,105,0.25) 0%, rgba(120,165,110,0.09) 15%, transparent 28%),
+            radial-gradient(circle at 92% 65%, rgba(105,155,100,0.18) 0%, rgba(115,160,105,0.06) 12%, transparent 25%),
+            radial-gradient(circle at 82% 88%, rgba(120,155,200,0.35) 0%, rgba(130,160,200,0.12) 14%, transparent 25%),
+            radial-gradient(circle at 12% 22%, rgba(130,165,210,0.28) 0%, rgba(140,170,210,0.1) 12%, transparent 22%),
+            radial-gradient(ellipse 30% 8% at 75% 15%, rgba(255,255,255,0.2) 0%, transparent 80%)
+          `,
         }}
       />
 
@@ -165,10 +172,20 @@ function HomeCodeVersion({
             inset: 0,
             display: "flex",
             flexDirection: "column",
-            opacity: phase1 === 0 ? 0 : 1,
-            transition: "opacity 1.2s ease",
           }}
         >
+          {/* 环境光：拱门光源辐射（暖白色调） */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "radial-gradient(ellipse 80% 70% at 50% 40%, rgba(255,248,235,0.35) 0%, rgba(255,255,255,0) 70%)",
+              mixBlendMode: "screen",
+              pointerEvents: "none",
+            }}
+          />
+
           <div style={{ height: "30vh" }} />
           <div
             style={{
@@ -181,15 +198,30 @@ function HomeCodeVersion({
               top: "-2vh",
             }}
           >
+            {/* 文字背光：椭圆柔和白光净化背景 */}
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -55%)",
+                width: "60vw",
+                height: "30vh",
+                background:
+                  "radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%)",
+                filter: "blur(12px)",
+                pointerEvents: "none",
+              }}
+            />
             <h1
               style={{
                 fontFamily: FONT_SERIF,
                 fontSize: "clamp(3.5rem, 12vw, 5rem)",
                 fontWeight: 500,
-                color: "#18181A",
+                color: "#1A1A1A",
                 letterSpacing: "0.2em",
                 margin: 0,
-                marginBottom: "4rem", // 门与路的距离感
+                marginBottom: "4rem",
                 opacity: phase1 >= 1 ? 1 : 0,
                 filter: phase1 >= 1 ? "blur(0px)" : "blur(12px)",
                 transform: phase1 >= 1 ? "scale(1)" : "scale(1.02)",
@@ -205,14 +237,14 @@ function HomeCodeVersion({
                 fontFamily: FONT_SERIF,
                 fontSize: "clamp(1.2rem, 3.5vw, 1.6rem)",
                 fontWeight: 500,
-                color: "#3A3A3C",
+                color: "#1A1A1A",
                 letterSpacing: "0.3em",
                 margin: 0,
                 opacity: phase1 >= 1 ? 1 : 0,
                 filter: phase1 >= 1 ? "blur(0px)" : "blur(8px)",
                 transition: "all 3.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s",
                 textShadow:
-                  "0px 1px 1px rgba(255,255,255,1), 0px -0.5px 1px rgba(0,0,0,0.05)",
+                  "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
                 textAlign: "center",
                 padding: "0 1rem",
               }}
@@ -233,14 +265,15 @@ function HomeCodeVersion({
               style={{
                 fontFamily: "system-ui",
                 fontSize: "1.1rem",
-                color: "#999",
+                color: "#444",
                 letterSpacing: "0.4em",
+                textShadow: "0 1px 1px rgba(255,255,255,0.8)",
                 cursor: "pointer",
                 opacity: phase1 >= 2 ? 1 : 0,
                 transition: "opacity 2s ease",
               }}
             >
-              进入
+              开启
             </span>
           </div>
         </div>
@@ -254,10 +287,18 @@ function HomeCodeVersion({
             inset: 0,
             display: "flex",
             flexDirection: "column",
-            opacity: phase2 === 0 ? 0 : 1,
-            transition: "opacity 1.5s ease",
           }}
         >
+          {/* 高频澄澈吸入光斑：绝对弃用黑色！用强光辐射营造极简吸入感 */}
+          <div
+            className="absolute inset-0 z-10 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.7) 0%, rgba(255, 235, 190, 0.15) 35%, rgba(255, 255, 255, 0.02) 100%)",
+              mixBlendMode: "screen",
+            }}
+          />
+
           <div
             style={{
               height: "70vh",
@@ -265,24 +306,40 @@ function HomeCodeVersion({
               justifyContent: "center",
               alignItems: "center",
               padding: "0 2rem",
+              position: "relative",
             }}
           >
+            {/* 文字背光：琥珀金色高斯模糊 */}
+            <div
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "50vw",
+                height: "25vh",
+                background:
+                  "radial-gradient(ellipse at center, rgba(212,175,55,0.2) 0%, rgba(255,255,255,0) 70%)",
+                filter: "blur(16px)",
+                pointerEvents: "none",
+              }}
+            />
             <h2
               style={{
                 fontFamily: FONT_SERIF,
                 fontSize: "clamp(1.8rem, 6vw, 2.8rem)",
                 fontWeight: 500,
-                color: "#1C1C1E",
+                color: "#1A1A1A",
                 letterSpacing: "0.2em",
                 margin: 0,
                 textAlign: "center",
                 lineHeight: 2,
                 opacity: phase2 >= 1 ? 1 : 0,
                 transform: phase2 >= 1 ? "scale(1)" : "scale(0.98)",
-                filter: phase2 >= 1 ? "blur(0px)" : "blur(12px)", // 增强失焦沉降
+                filter: phase2 >= 1 ? "blur(0px)" : "blur(12px)",
                 transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
                 textShadow:
-                  "0px 1px 1px rgba(255,255,255,0.8), 0px -1px 1px rgba(0,0,0,0.05), 0 0 40px rgba(255,255,255,0.5)", // 让这句话自己带着光场
+                  "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1), 0 0 30px rgba(255,255,255,0.6)",
               }}
             >
               在这里，
@@ -290,12 +347,12 @@ function HomeCodeVersion({
               <span
                 style={{
                   fontWeight: 900,
-                  color: "#18181A",
+                  color: "#1A1A1A",
                   fontSize: "1.15em",
                   letterSpacing: "0.25em",
                   marginRight: "-0.1em",
                   textShadow:
-                    "0px 2px 2px rgba(255,255,255,1), 0px -2px 3px rgba(0,0,0,0.6), 0 0 40px rgba(212,175,55,0.8)",
+                    "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1), 0 0 40px rgba(212,175,55,0.8)",
                   display: "inline-block",
                   transform: "scale(1.05)",
                   position: "relative",
@@ -319,8 +376,9 @@ function HomeCodeVersion({
               style={{
                 fontFamily: "system-ui",
                 fontSize: "1.1rem",
-                color: "#999",
+                color: "#444",
                 letterSpacing: "0.4em",
+                textShadow: "0 1px 1px rgba(255,255,255,0.8)",
                 cursor: "pointer",
                 opacity: phase2 >= 2 ? 1 : 0,
                 transition: "opacity 2s ease",
@@ -348,9 +406,22 @@ function HomeCodeVersion({
         >
           <div style={{ height: "5vh" }} />
 
-          <div className="flex-1 w-full max-w-4xl flex items-center justify-center pb-[5vh]">
+          <div className="flex-1 w-full max-w-4xl flex items-center justify-center pb-[5vh] relative">
+            {/* 光斑层：模拟代码版的光场通透效果 */}
             <div
-              className="grid grid-cols-2 gap-3 sm:gap-6 md:gap-10 w-full"
+              className="absolute inset-0 pointer-events-none"
+              // style={{
+              //   background: [
+              //     "radial-gradient(ellipse 60% 50% at 30% 35%, rgba(218,195,145,0.3) 0%, transparent 70%)",
+              //     "radial-gradient(ellipse 50% 60% at 75% 55%, rgba(200,185,155,0.25) 0%, transparent 70%)",
+              //     "radial-gradient(ellipse 80% 40% at 50% 80%, rgba(230,215,180,0.2) 0%, transparent 70%)",
+              //     "radial-gradient(ellipse 70% 50% at 50% 45%, rgba(240,230,210,0.2) 0%, transparent 60%)",
+              //   ].join(", "),
+              //   filter: "blur(25px)",
+              // }}
+            />
+            <div
+              className="grid grid-cols-2 gap-3 sm:gap-6 md:gap-10 w-full relative z-10"
               style={{
                 opacity: phase3 >= 1 ? 1 : 0,
                 transform:
@@ -366,68 +437,104 @@ function HomeCodeVersion({
                   id: 1,
                   title: "人类手册馆",
                   subtitle: "看见真相，回到生命本身。",
-                  icon: <Book size={36} strokeWidth={1.5} color="#A27D51" />,
+                  iconSrc: iconBook,
+                  iconScaleX: 1.0,
+                  iconScaleY: 1.1,
+                  iconOffsetY: 5,
                   navIndex: 1,
+                  whiteAlpha: 0.5,
                 },
                 {
                   id: 2,
                   title: "新人生之路",
-                  subtitle: "把感知，真正活进现实人生。",
-                  icon: <Compass size={36} strokeWidth={1.5} color="#68815F" />,
+                  subtitle: "从感知开始，重新活这一生。",
+                  iconSrc: iconPath,
+                  iconScaleX: 1.0,
+                  iconScaleY: 0.9,
+                  iconOffsetY: 0,
                   navIndex: 2,
+                  whiteAlpha: 0.5,
                 },
                 {
                   id: 3,
                   title: "明镜源频AI",
-                  subtitle: "与你共振，照见更真实的自己。",
-                  icon: <Orbit size={36} strokeWidth={1.5} color="#556F88" />,
+                  subtitle: "与你共振，照见真实的自己。",
+                  iconSrc: iconMirror,
+                  iconScaleX: 1.0,
+                  iconScaleY: 1.0,
+                  iconOffsetY: 0,
                   navIndex: 3,
+                  whiteAlpha: 0.3,
                 },
                 {
                   id: 4,
-                  title: "平台其他板块",
-                  subtitle: "更多入口，持续通往共感文明。",
-                  icon: <Grid size={36} strokeWidth={1.5} color="#948074" />,
+                  title: "共感网络",
+                  subtitle: "更多入口，持续通往感知文明。",
+                  iconSrc: iconGrid,
+                  iconScaleX: 0.9,
+                  iconScaleY: 0.9,
+                  iconOffsetY: 0,
                   navIndex: 4,
+                  whiteAlpha: 0.3,
                 },
               ].map((box) => (
                 <div
                   key={box.id}
                   onClick={() => handleNavClick(box.navIndex, box.title)}
-                  className="flex flex-col items-center justify-center p-4 sm:p-6 md:p-10 aspect-square sm:aspect-auto sm:min-h-[260px] relative overflow-hidden active:scale-[0.97] transition-all duration-300"
+                  className="flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 aspect-square sm:aspect-auto sm:min-h-[260px] relative overflow-hidden active:scale-[0.97] transition-all duration-300"
                   style={{
                     cursor: "pointer",
-                    // 【颠覆性的移动端优雅降级方案：纯渐变透明玻璃】
-                    // 我们不再用死板的纯白色打底！而是用透明度极低的白色渐变。
-                    // 即使老安卓机不支持 blur，它看到的依然是一块带着高光切边、极高通透度的"透明亚克力板"，仍然非常立体且晶莹剔透！
                     background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 100%)",
-                    backdropFilter: "blur(20px) saturate(1.2)",
-                    WebkitBackdropFilter: "blur(20px) saturate(1.2)",
+                      "linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.01) 100%)",
+                    backdropFilter: "blur(18px) saturate(1.15)",
+                    WebkitBackdropFilter: "blur(18px) saturate(1.15)",
                     borderRadius: "24px",
-                    borderTop: "1.5px solid rgba(255, 255, 255, 0.9)",
-                    borderLeft: "1px solid rgba(255, 255, 255, 0.6)",
-                    borderRight: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderTop: "1px solid rgba(255, 255, 255, 0.8)",
+                    borderLeft: "1px solid rgba(255, 255, 255, 0.5)",
+                    borderRight: "1px solid rgba(255, 255, 255, 0.2)",
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
                     boxShadow:
-                      "inset 0 0 30px rgba(255,255,255,0.4), 0 10px 30px -10px rgba(0,0,0,0.05)",
+                      "inset 2px 2px 4px rgba(255,255,255,0.4), inset -3px -3px 6px rgba(0,0,0,0.06), inset 0 0 20px rgba(255,255,255,0.15), 0 15px 35px rgba(0,0,0,0.06), 0 3px 10px rgba(0,0,0,0.05)",
                     transform: "translateZ(0)",
                   }}
                 >
-                  {/* 触摸反馈光效 (专为移动端打造，代替 PC 的 hover) */}
-                  <div className="absolute inset-0 bg-white/20 opacity-0 active:opacity-100 transition-opacity duration-200 pointer-events-none" />
-
-                  {/* 极简图标 */}
-                  <div
-                    className="relative z-10 mb-3 md:mb-5"
+                  {/* <div
+                    className="absolute inset-x-0 top-0 h-[40%] pointer-events-none"
                     style={{
-                      filter:
-                        "drop-shadow(0px 1.5px 1px rgba(255,255,255,0.9)) drop-shadow(0px -1px 1px rgba(0,0,0,0.1))",
+                      background:
+                        "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 100%)",
+                      borderRadius: "24px 24px 0 0",
                     }}
-                  >
-                    {box.icon}
-                  </div>
-
+                  /> */}
+                  <div className="absolute inset-0 bg-white/10 opacity-0 active:opacity-100 transition-opacity duration-200 pointer-events-none" />
+                  {/* 图标作为卡片背景镶嵌（已注释）
+                  <img
+                    src={box.iconSrc}
+                    alt=""
+                    className="absolute pointer-events-none"
+                    style={{
+                      width: "92%",
+                      height: "92%",
+                      top: "4%",
+                      left: "4%",
+                      objectFit: "contain",
+                      opacity: 0.4,
+                      transform: `scaleX(${box.iconScaleX}) scaleY(${box.iconScaleY}) translateY(${box.iconOffsetY}%)`,
+                    }}
+                  /> */}
+                  {/* 图标放在卡片表面，标题上方居中 */}
+                  <img
+                    src={box.iconSrc}
+                    alt=""
+                    className="relative z-10"
+                    style={{
+                      width: "36px",
+                      height: "36px",
+                      objectFit: "contain",
+                      marginBottom: "0.5rem",
+                      opacity: 0.3,
+                    }}
+                  />
                   <h3
                     className="relative z-10 text-center"
                     style={{
@@ -437,26 +544,23 @@ function HomeCodeVersion({
                       color: "#18181A",
                       letterSpacing: "0.15em",
                       margin: 0,
-                      marginBottom: "0.75rem",
-                      textShadow:
-                        "0px 1.5px 1px rgba(255,255,255,0.9), 0px -1px 2px rgba(0,0,0,0.08)",
+                      marginBottom: "0.5rem",
+                      textShadow: `0px 1.5px 1px rgba(255,255,255,${box.whiteAlpha}), 0px -1px 2px rgba(0,0,0,0.08)`,
                     }}
                   >
                     {box.title}
                   </h3>
-
                   <p
                     className="relative z-10 text-center"
                     style={{
                       fontFamily: "system-ui",
                       fontSize: "clamp(0.85rem, 2vw, 1rem)",
-                      fontWeight: 500,
                       color: "#4A4A4C",
+                      fontWeight: 500,
                       letterSpacing: "0.1em",
                       margin: 0,
-                      marginBottom: "1.5rem",
-                      textShadow:
-                        "0px 1px 1px rgba(255,255,255,0.9), 0px -0.5px 1px rgba(0,0,0,0.02)",
+                      marginBottom: "0.25rem",
+                      textShadow: `0px 1px 1px rgba(255,255,255,${box.whiteAlpha}), 0px -0.5px 1px rgba(0,0,0,0.02)`,
                     }}
                   >
                     {box.subtitle}
