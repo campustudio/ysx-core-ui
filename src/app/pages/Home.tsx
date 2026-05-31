@@ -112,7 +112,7 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
           opacity: layer === 2 ? 1 : 0,
           filter:
             layer === 2
-              ? "blur(0px) saturate(1.1) brightness(1.1)"
+              ? "blur(0px) saturate(1.1) brightness(1.0)"
               : layer === 1
                 ? "blur(12px) saturate(1)"
                 : "blur(10px) saturate(1.1)",
@@ -290,14 +290,14 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
           }}
         >
           {/* 高频澄澈吸入光斑：绝对弃用黑色！用强光辐射营造极简吸入感 */}
-          <div
+          {/* <div
             className="absolute inset-0 z-10 pointer-events-none"
             style={{
               background:
                 "radial-gradient(circle at 50% 50%, rgba(255, 250, 240, 0.7) 0%, rgba(255, 235, 190, 0.15) 35%, rgba(255, 255, 255, 0.02) 100%)",
               mixBlendMode: "screen",
             }}
-          />
+          /> */}
 
           <div
             style={{
@@ -310,7 +310,7 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
             }}
           >
             {/* 文字背光：琥珀金色高斯模糊 */}
-            <div
+            {/* <div
               style={{
                 position: "absolute",
                 top: "50%",
@@ -323,7 +323,7 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
                 filter: "blur(16px)",
                 pointerEvents: "none",
               }}
-            />
+            /> */}
             <h2
               style={{
                 fontFamily: FONT_SERIF,
