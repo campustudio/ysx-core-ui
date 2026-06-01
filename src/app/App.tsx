@@ -10,6 +10,14 @@ import { VolumeDetail } from "./pages/VolumeDetail";
 import { ChapterDetail } from "./pages/ChapterDetail";
 import { BookDetail } from "./pages/BookDetail";
 import { ChapterPlayer } from "./pages/ChapterPlayer";
+import { HandbookHome } from "./pages/HandbookHome";
+import { HandbookShelf } from "./pages/HandbookShelf";
+import { HandbookReadingEntry } from "./pages/HandbookReadingEntry";
+import { HandbookRecommend } from "./pages/HandbookRecommend";
+import { HandbookVolume } from "./pages/HandbookVolume";
+import { HandbookReader } from "./pages/HandbookReader";
+import { HandbookPractice } from "./pages/HandbookPractice";
+import { HandbookDaily } from "./pages/HandbookDaily";
 import { NewLifePath } from "./pages/NewLifePath";
 import { PathLayerDetail } from "./pages/PathLayerDetail";
 import { DimensionDetail } from "./pages/DimensionDetail";
@@ -40,6 +48,14 @@ interface UserInfo {
 type PageRoute =
   | { page: "home" }
   | { page: "handbook" }
+  | { page: "handbook-home" }
+  | { page: "hb-shelf" }
+  | { page: "hb-entry" }
+  | { page: "hb-recommend"; optionId: string }
+  | { page: "hb-volume"; volumeId: string }
+  | { page: "hb-reader"; volumeId: string; chapterId: string }
+  | { page: "hb-practice"; volumeId: string; chapterId: string }
+  | { page: "hb-daily" }
   | { page: "volume-detail"; volumeId: string }
   | { page: "chapter-detail"; volumeId: string; chapterId: string }
   | { page: "book-detail"; bookId: string }
@@ -70,7 +86,9 @@ type NavDirection = "forward" | "back";
 
 export default function App() {
   const toast = useToast();
-  const [route, setRoute] = useState<PageRoute>({ page: "home" });
+  /** 路由历史栈：栈顶为当前页面，返回即出栈到真正的上一页 */
+  const [history, setHistory] = useState<PageRoute[]>([{ page: "home" }]);
+  const route = history[history.length - 1];
   /** 导航方向，驱动 PageTransition 选择动画 */
   const [navDirection, setNavDirection] = useState<NavDirection>("forward");
   /** 用户登录状态（模拟） */
@@ -100,7 +118,25 @@ export default function App() {
       saveHomeScroll();
       routeKeyRef.current += 1;
       setNavDirection("forward");
-      setRoute(newRoute);
+      setHistory((h) => [...h, newRoute]);
+    },
+    [saveHomeScroll],
+  );
+
+  /** 原地替换栈顶（如阅读器内切章，不加深历史） */
+  const replaceTop = useCallback((newRoute: PageRoute) => {
+    routeKeyRef.current += 1;
+    setNavDirection("forward");
+    setHistory((h) => [...h.slice(0, -1), newRoute]);
+  }, []);
+
+  /** 重置为某个 Tab 根页面（底部导航切换，清空历史栈） */
+  const resetTo = useCallback(
+    (newRoute: PageRoute) => {
+      saveHomeScroll();
+      routeKeyRef.current += 1;
+      setNavDirection("back");
+      setHistory([newRoute]);
     },
     [saveHomeScroll],
   );
@@ -162,33 +198,27 @@ export default function App() {
     navigateForward({ page: "logo-preview" });
   }, [navigateForward]);
 
-  /** 进入人类手册 */
+  /** 进入人类手册（新版手册馆首页） */
   const navigateToHandbook = useCallback(() => {
+    resetTo({ page: "handbook-home" });
+  }, [resetTo]);
+
+  /** 返回上一页：出栈到真正的上一个页面 */
+  const goBack = useCallback(() => {
     routeKeyRef.current += 1;
-    setNavDirection("back"); // Tab 切换用淡入
-    setRoute({ page: "handbook" });
+    setNavDirection("back");
+    setHistory((h) => (h.length > 1 ? h.slice(0, -1) : h));
   }, []);
 
   /** 进入新人生之路 */
   const navigateToNewLife = useCallback(() => {
-    routeKeyRef.current += 1;
-    setNavDirection("back");
-    setRoute({ page: "newlife" });
-  }, []);
+    resetTo({ page: "newlife" });
+  }, [resetTo]);
 
   /** 进入圈子社区 */
   const navigateToCircle = useCallback(() => {
-    routeKeyRef.current += 1;
-    setNavDirection("forward");
-    setRoute({ page: "circle" });
-  }, []);
-
-  /** 从圈子返回新人生之路 */
-  const navigateBackToNewLife = useCallback(() => {
-    routeKeyRef.current += 1;
-    setNavDirection("back");
-    setRoute({ page: "newlife" });
-  }, []);
+    navigateForward({ page: "circle" });
+  }, [navigateForward]);
 
   /** 从新人生之路进入层详情 */
   const navigateToPathLayer = useCallback(
@@ -213,13 +243,6 @@ export default function App() {
     },
     [navigateForward],
   );
-
-  /** 返回卷详情 */
-  const navigateBackToVolumeDetail = useCallback((volumeId: string) => {
-    routeKeyRef.current += 1;
-    setNavDirection("back");
-    setRoute({ page: "volume-detail", volumeId });
-  }, []);
 
   /** 从路径层进入维度详情 */
   const navigateToDimensionDetail = useCallback(
@@ -247,13 +270,6 @@ export default function App() {
     navigateForward({ page: "practice-history" });
   }, [navigateForward]);
 
-  /** 返回路径层详情 */
-  const navigateBackToPathLayer = useCallback((layerId: string) => {
-    routeKeyRef.current += 1;
-    setNavDirection("back");
-    setRoute({ page: "path-layer", layerId });
-  }, []);
-
   /** 从手册进入书籍详情 */
   const navigateToBookDetail = useCallback(
     (bookId: string) => {
@@ -270,27 +286,11 @@ export default function App() {
     [navigateForward],
   );
 
-  /** 返回手册主页（从书籍详情/播放器） */
-  const navigateBackToHandbook = useCallback(() => {
-    routeKeyRef.current += 1;
-    setNavDirection("back");
-    setRoute({ page: "handbook" });
-  }, []);
-
-  /** 返回书籍详情（从播放器） */
-  const navigateBackToBookDetail = useCallback((bookId: string) => {
-    routeKeyRef.current += 1;
-    setNavDirection("back");
-    setRoute({ page: "book-detail", bookId });
-  }, []);
-
   /** 底部导航统一处理（从任意页面切换 Tab） */
   const handleNavChange = useCallback(
     (index: number) => {
       if (index === 0) {
-        routeKeyRef.current += 1;
-        setNavDirection("back");
-        setRoute({ page: "home" });
+        resetTo({ page: "home" });
       } else if (index === 1) {
         navigateToHandbook();
       } else if (index === 2) {
@@ -299,15 +299,13 @@ export default function App() {
         toast.show("「明镜」正在精心筹备中，敬请期待");
       }
     },
-    [navigateToHandbook, navigateToNewLife, toast],
+    [resetTo, navigateToHandbook, navigateToNewLife, toast],
   );
 
-  /** 返回首页 */
+  /** 返回首页（Tab 根） */
   const navigateToHome = useCallback(() => {
-    routeKeyRef.current += 1;
-    setNavDirection("back");
-    setRoute({ page: "home" });
-  }, []);
+    resetTo({ page: "home" });
+  }, [resetTo]);
 
   /** 渲染当前页面内容 */
   const renderPage = () => {
@@ -324,7 +322,7 @@ export default function App() {
         return (
           <VolumeDetail
             volumeId={route.volumeId}
-            onBack={navigateBackToHandbook}
+            onBack={goBack}
             onNavigateToChapter={navigateToChapterDetail}
           />
         );
@@ -333,7 +331,7 @@ export default function App() {
           <ChapterDetail
             volumeId={route.volumeId}
             chapterId={route.chapterId}
-            onBack={() => navigateBackToVolumeDetail(route.volumeId)}
+            onBack={goBack}
             onNavigateToChapter={navigateToChapterDetail}
           />
         );
@@ -341,7 +339,7 @@ export default function App() {
         return (
           <BookDetail
             bookId={route.bookId}
-            onBack={navigateBackToHandbook}
+            onBack={goBack}
             onSelectChapter={navigateToChapterPlayer}
           />
         );
@@ -350,7 +348,7 @@ export default function App() {
           <ChapterPlayer
             bookId={route.bookId}
             chapterId={route.chapterId}
-            onBack={() => navigateBackToBookDetail(route.bookId)}
+            onBack={goBack}
           />
         );
       case "newlife":
@@ -365,7 +363,7 @@ export default function App() {
         return (
           <PathLayerDetail
             layerId={route.layerId}
-            onBack={navigateBackToNewLife}
+            onBack={goBack}
             onNavChange={handleNavChange}
             onNavigateToDimension={navigateToDimensionDetail}
             onNavigateToPractice={navigateToPracticePage}
@@ -377,69 +375,36 @@ export default function App() {
           <DimensionDetail
             layerId={route.layerId}
             dimensionId={route.dimensionId}
-            onBack={() => navigateBackToPathLayer(route.layerId)}
+            onBack={goBack}
             onStartPractice={(practiceId, layerId, dimensionId) =>
               navigateToPracticePage(practiceId, layerId, dimensionId)
             }
           />
         );
       case "practice":
-        return (
-          <PracticePage
-            practiceId={route.practiceId}
-            onBack={() => {
-              // 如果有来源维度信息，返回维度详情页；否则返回路径层
-              if (route.fromLayerId && route.fromDimensionId) {
-                routeKeyRef.current += 1;
-                setNavDirection("back");
-                setRoute({
-                  page: "dimension-detail",
-                  layerId: route.fromLayerId,
-                  dimensionId: route.fromDimensionId,
-                });
-              } else if (route.fromLayerId) {
-                navigateBackToPathLayer(route.fromLayerId);
-              } else {
-                navigateBackToPathLayer("personal");
-              }
-            }}
-          />
-        );
+        return <PracticePage practiceId={route.practiceId} onBack={goBack} />;
       case "practice-history":
-        return (
-          <PracticeHistory onBack={() => navigateBackToPathLayer("personal")} />
-        );
+        return <PracticeHistory onBack={goBack} />;
       case "circle":
-        return <CirclePage onBack={navigateBackToNewLife} />;
+        return <CirclePage onBack={goBack} />;
       case "player":
-        return (
-          <AudioPlayer trackLabel={route.trackLabel} onBack={navigateToHome} />
-        );
+        return <AudioPlayer trackLabel={route.trackLabel} onBack={goBack} />;
       case "article":
-        return (
-          <ArticleReader articleId={route.articleId} onBack={navigateToHome} />
-        );
+        return <ArticleReader articleId={route.articleId} onBack={goBack} />;
       case "podcast":
-        return (
-          <PodcastDetail podcastId={route.podcastId} onBack={navigateToHome} />
-        );
+        return <PodcastDetail podcastId={route.podcastId} onBack={goBack} />;
       case "activity":
-        return (
-          <ActivityDetail
-            activityId={route.activityId}
-            onBack={navigateToHome}
-          />
-        );
+        return <ActivityDetail activityId={route.activityId} onBack={goBack} />;
       case "guide":
-        return <OnboardingGuide onBack={navigateToHome} />;
+        return <OnboardingGuide onBack={goBack} />;
       case "solar":
-        return <OnboardingSolar onBack={navigateToHome} />;
+        return <OnboardingSolar onBack={goBack} />;
       case "breathing":
-        return <BreathingSession onBack={navigateToHome} />;
+        return <BreathingSession onBack={goBack} />;
       case "login":
         return (
           <LoginPage
-            onBack={navigateToHome}
+            onBack={goBack}
             onLoginSuccess={(info) => {
               setUserInfo(info);
               navigateToHome();
@@ -447,7 +412,105 @@ export default function App() {
           />
         );
       case "logo-preview":
-        return <LogoPreviewPage onBack={navigateToHome} />;
+        return <LogoPreviewPage onBack={goBack} />;
+      case "handbook-home":
+        return (
+          <HandbookHome
+            onNavChange={handleNavChange}
+            onOpenShelf={() => navigateForward({ page: "hb-shelf" })}
+            onOpenReadingEntry={() => navigateForward({ page: "hb-entry" })}
+            onOpenDaily={() => navigateForward({ page: "hb-daily" })}
+            onOpenVolume={(volumeId) =>
+              navigateForward({ page: "hb-volume", volumeId })
+            }
+            onOpenPractice={(volumeId, chapterId) =>
+              navigateForward({ page: "hb-practice", volumeId, chapterId })
+            }
+            onContinueReading={(volumeId, chapterId) =>
+              navigateForward({ page: "hb-reader", volumeId, chapterId })
+            }
+          />
+        );
+      case "hb-shelf":
+        return (
+          <HandbookShelf
+            onBack={goBack}
+            onOpenVolume={(volumeId) =>
+              navigateForward({ page: "hb-volume", volumeId })
+            }
+          />
+        );
+      case "hb-entry":
+        return (
+          <HandbookReadingEntry
+            onBack={goBack}
+            onGenerate={(optionId) =>
+              navigateForward({ page: "hb-recommend", optionId })
+            }
+          />
+        );
+      case "hb-recommend":
+        return (
+          <HandbookRecommend
+            optionId={route.optionId}
+            onBack={goBack}
+            onStartReading={(volumeId, chapterId) =>
+              chapterId
+                ? navigateForward({ page: "hb-reader", volumeId, chapterId })
+                : navigateForward({ page: "hb-volume", volumeId })
+            }
+            onOpenVolume={(volumeId) =>
+              navigateForward({ page: "hb-volume", volumeId })
+            }
+          />
+        );
+      case "hb-volume":
+        return (
+          <HandbookVolume
+            volumeId={route.volumeId}
+            onBack={goBack}
+            onSelectChapter={(volumeId, chapterId) =>
+              navigateForward({ page: "hb-reader", volumeId, chapterId })
+            }
+          />
+        );
+      case "hb-reader":
+        return (
+          <HandbookReader
+            volumeId={route.volumeId}
+            chapterId={route.chapterId}
+            onBack={goBack}
+            onSelectChapter={(volumeId, chapterId) =>
+              replaceTop({ page: "hb-reader", volumeId, chapterId })
+            }
+            onFinish={(volumeId, chapterId) =>
+              navigateForward({ page: "hb-practice", volumeId, chapterId })
+            }
+          />
+        );
+      case "hb-practice":
+        return (
+          <HandbookPractice
+            volumeId={route.volumeId}
+            chapterId={route.chapterId}
+            onBack={goBack}
+            onNextChapter={(volumeId, chapterId) =>
+              navigateForward({ page: "hb-reader", volumeId, chapterId })
+            }
+            onFinishVolume={(volumeId) =>
+              navigateForward({ page: "hb-volume", volumeId })
+            }
+          />
+        );
+      case "hb-daily":
+        return (
+          <HandbookDaily
+            onBack={goBack}
+            onReadChapter={(volumeId, chapterId) =>
+              navigateForward({ page: "hb-reader", volumeId, chapterId })
+            }
+          />
+        );
       case "home":
       default:
         return (

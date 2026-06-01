@@ -46,8 +46,30 @@ export const BG_CONTENT_GRADIENT = `linear-gradient(to bottom, ${BG_PARCHMENT}, 
 // ─── 玻璃卡片渐变 ─────────────────────────────────────
 export const GLASS_GRADIENTS = {
   sage: "linear-gradient(135deg, rgba(139,170,125,0.28), rgba(168,192,157,0.12))",
-  amber: "linear-gradient(135deg, rgba(196,154,108,0.25), rgba(212,176,138,0.1))",
-  lavender: "linear-gradient(135deg, rgba(180,160,200,0.22), rgba(200,185,215,0.1))",
+  amber:
+    "linear-gradient(135deg, rgba(196,154,108,0.25), rgba(212,176,138,0.1))",
+  lavender:
+    "linear-gradient(135deg, rgba(180,160,200,0.22), rgba(200,185,215,0.1))",
+} as const;
+
+// ─── 液态玻璃卡片（与首页第三层一致，供人类手册馆复用） ───
+/**
+ * Apple 液态玻璃质感：依赖 backdrop-filter 毛玻璃。
+ * 用法：<div style={{ ...LIQUID_GLASS, borderRadius: rpx(40) }} />
+ * ⚠️ 兼容性：iOS Safari 9+ / Android Chrome 76+；老式国产安卓 WebView 可能不渲染模糊，
+ *   届时需用 @supports 检测降级为半透明实底（如 rgba(247,245,240,0.85)）兜底可读性。
+ */
+export const LIQUID_GLASS = {
+  background:
+    "linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.01) 100%)",
+  backdropFilter: "blur(18px) saturate(1.15)",
+  WebkitBackdropFilter: "blur(18px) saturate(1.15)",
+  borderTop: "1px solid rgba(255, 255, 255, 0.8)",
+  borderLeft: "1px solid rgba(255, 255, 255, 0.5)",
+  borderRight: "1px solid rgba(255, 255, 255, 0.2)",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
+  boxShadow:
+    "inset 2px 2px 4px rgba(255,255,255,0.4), inset -3px -3px 6px rgba(0,0,0,0.06), inset 0 0 20px rgba(255,255,255,0.15), 0 15px 35px rgba(0,0,0,0.06), 0 3px 10px rgba(0,0,0,0.05)",
 } as const;
 
 // ─── 宋体字族 ─────────────────────────────────────────
