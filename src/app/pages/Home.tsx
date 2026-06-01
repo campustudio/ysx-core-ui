@@ -454,6 +454,7 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
                   iconOffsetY: 0,
                   navIndex: 2,
                   whiteAlpha: 0.5,
+                  glow: "radial-gradient(ellipse 82% 68% at 50% 60%, rgba(223,209,152,0.9) 0%, rgba(221,206,148,0.3) 42%, rgba(220,205,150,0.1) 65%, transparent 82%)",
                 },
                 {
                   id: 3,
@@ -486,6 +487,14 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
                     cursor: "pointer",
                     background:
                       "linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.01) 100%)",
+                    // ⚠️ 兼容性风险记录（backdrop-filter 毛玻璃效果）
+                    // 风险点：卡片的液态玻璃质感依赖 backdrop-filter / -webkit-backdrop-filter。
+                    // 支持情况：iOS Safari 9+（-webkit- 前缀，已加）✓；Android Chrome/WebView 需 76+。
+                    // 具体风险：老式国产安卓（自带旧 WebView 或魔改浏览器内核）很可能完全不渲染 backdrop-filter，
+                    //          导致卡片失去毛玻璃模糊，降级为接近全透明（仅剩淡 linear-gradient + 边框）。
+                    //          后果是背后黄光斑直接穿透、文字压在杂乱光斑上、可读性下降（不会白屏/报错，仅降级显示）。
+                    // 解决方案（待实现）：用 @supports not (backdrop-filter: blur(1px)) 检测，
+                    //          不支持时给卡片一个半透明实底背景（如 rgba(245,243,238,0.85)）兜底，保证文字可读。
                     backdropFilter: "blur(18px) saturate(1.15)",
                     WebkitBackdropFilter: "blur(18px) saturate(1.15)",
                     borderRadius: "24px",
@@ -506,6 +515,15 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
                       borderRadius: "24px 24px 0 0",
                     }}
                   /> */}
+                  {(box as { glow?: string }).glow && (
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background: (box as { glow?: string }).glow,
+                        borderRadius: "24px",
+                      }}
+                    />
+                  )}
                   <div className="absolute inset-0 bg-white/10 opacity-0 active:opacity-100 transition-opacity duration-200 pointer-events-none" />
                   {/* 图标作为卡片背景镶嵌（已注释）
                   <img
