@@ -25,6 +25,7 @@ import {
 import { FONT_SERIF, rpx, LIQUID_GLASS } from "../config/styles";
 import { BottomNavigation } from "../components/navigation/BottomNavigation";
 import { Toast } from "../components/shared/Toast";
+import { PrimaryButton } from "../components/shared/PrimaryButton";
 import { useToast } from "../hooks/useToast";
 import { useNavigation } from "../hooks/useNavigation";
 import { useReadingProgress } from "../hooks/useReadingProgress";
@@ -825,53 +826,12 @@ export function HandbookHome({
         )}
 
         {/* 进入完整书架（紧凑·图标左 + 文案右） */}
-        <button
+        <PrimaryButton
+          icon={Library}
+          title="进入完整书架"
+          subtitle="浏览全部书籍与资料"
           onClick={onOpenShelf}
-          style={{
-            width: "100%",
-            padding: `${rpx(16)} ${rpx(32)}`,
-            border: "none",
-            borderRadius: rpx(28),
-            background: "linear-gradient(135deg, #D8C089, #C2A661)",
-            boxShadow: "0 8px 22px rgba(184,151,90,0.28)",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: rpx(18),
-          }}
-        >
-          <Library size={26} color="#4A3D22" strokeWidth={1.6} />
-          <span
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: FONT_SERIF,
-                fontSize: rpx(28),
-                fontWeight: 600,
-                color: "#4A3D22",
-                letterSpacing: rpx(2),
-                lineHeight: 1.2,
-              }}
-            >
-              进入完整书架
-            </span>
-            <span
-              style={{
-                fontSize: rpx(18),
-                color: "rgba(74,61,34,0.7)",
-                lineHeight: 1.2,
-              }}
-            >
-              浏览全部书籍与资料
-            </span>
-          </span>
-        </button>
+        />
       </div>
 
       <BottomNavigation
