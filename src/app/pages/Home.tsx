@@ -267,7 +267,8 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
                 fontSize: "1.1rem",
                 color: "#444",
                 letterSpacing: "0.4em",
-                textShadow: "0 1px 1px rgba(255,255,255,0.8)",
+                textShadow:
+                  "0 1px 1px rgba(255,255,255,1), 0 -1px 1px rgba(0,0,0,0.15)",
                 cursor: "pointer",
                 opacity: phase1 >= 2 ? 1 : 0,
                 transition: "opacity 2s ease",
@@ -378,7 +379,8 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
                 fontSize: "1.1rem",
                 color: "#444",
                 letterSpacing: "0.4em",
-                textShadow: "0 1px 1px rgba(255,255,255,0.8)",
+                textShadow:
+                  "0 1px 1px rgba(255,255,255,1), 0 -1px 1px rgba(0,0,0,0.15)",
                 cursor: "pointer",
                 opacity: phase2 >= 2 ? 1 : 0,
                 transition: "opacity 2s ease",
