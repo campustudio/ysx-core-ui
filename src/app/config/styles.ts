@@ -107,3 +107,18 @@ export const rpxVw = (v: number): string => `${v * (100 / 750)}vw`;
 
 // ─── 页面内边距（48rpx，详情页/内容区通用） ──────────
 export const PAGE_PX = rpx(48);
+
+// ─── 刻进去（活版印刷/letterpress）效果 ──────────────
+/**
+ * 统一的"刻进去"质感：浅色卡片/按钮上的文字与图标都用此组常量，
+ * 与首页第三层 + 人类手册馆液态玻璃卡片保持一致。
+ * - TEXT_ENGRAVED：标题级（更实）
+ * - TEXT_ENGRAVED_SOFT：副标题/正文级（更柔）
+ * - ICON_ENGRAVED：lucide/SVG 图标的 filter（drop-shadow 双层）
+ */
+export const TEXT_ENGRAVED =
+  "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)";
+export const TEXT_ENGRAVED_SOFT =
+  "0px 1.5px 1.5px rgba(255,255,255,0.9), 0px -1px 1.5px rgba(0,0,0,0.12)";
+export const ICON_ENGRAVED =
+  "drop-shadow(0px 1.5px 1.5px rgba(255,255,255,1)) drop-shadow(0px -1.5px 1.5px rgba(0,0,0,0.15))";

@@ -9,14 +9,21 @@
 import { useState, useEffect, useCallback } from "react";
 import { List, LayoutGrid, ChevronRight, Plus } from "lucide-react";
 import { V2_VOLUMES, VOLUME_CN } from "../config/handbook-v2-data";
-import { FONT_SERIF, rpx, LIQUID_GLASS } from "../config/styles";
+import {
+  FONT_SERIF,
+  rpx,
+  LIQUID_GLASS,
+  TEXT_ENGRAVED,
+  TEXT_ENGRAVED_SOFT,
+  ICON_ENGRAVED,
+} from "../config/styles";
 import { Toast } from "../components/shared/Toast";
 import { useToast } from "../hooks/useToast";
 import {
   HandbookHeader,
   HANDBOOK_HEADER_HEIGHT,
 } from "../components/shared/HandbookHeader";
-import bgLayer1 from "@/assets/images/home/1-menqian.webp";
+import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
 
 const GOLD = "#B8975A";
 const INK = "#1F1F1F";
@@ -267,6 +274,7 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
                     fontSize: rpx(20),
                     color: GOLD,
                     letterSpacing: rpx(1),
+                    textShadow: TEXT_ENGRAVED_SOFT,
                   }}
                 >
                   卷{VOLUME_CN[vol.volumeNumber - 1]}
@@ -280,6 +288,7 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
                     margin: `${rpx(12)} 0 0`,
                     letterSpacing: rpx(1),
                     lineHeight: 1.35,
+                    textShadow: TEXT_ENGRAVED,
                   }}
                 >
                   {vol.title}
@@ -290,42 +299,53 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
                     color: "#6F665A",
                     margin: `${rpx(12)} 0 0`,
                     lineHeight: 1.6,
+                    textShadow: TEXT_ENGRAVED_SOFT,
                   }}
                 >
                   {vol.oneLine}
                 </p>
               </div>
             ))}
-            {/* 占位卡 */}
+            {/* 占位卡（与其它卡片统一为液态玻璃 + 刻进去质感） */}
             <div
               onClick={() => toast.show("更多卷正在敬请期待")}
               style={{
+                ...LIQUID_GLASS,
                 minHeight: rpx(260),
                 borderRadius: rpx(24),
-                border: "1px dashed rgba(184,151,90,0.45)",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
                 gap: rpx(12),
-                color: "#B0AC9F",
                 cursor: "pointer",
                 padding: `0 ${rpx(16)}`,
                 textAlign: "center",
               }}
             >
-              <Plus size={24} strokeWidth={1.4} />
+              <Plus
+                size={24}
+                strokeWidth={1.6}
+                color={GOLD}
+                style={{ filter: ICON_ENGRAVED }}
+              />
               <span
                 style={{
                   fontSize: rpx(22),
                   fontFamily: FONT_SERIF,
-                  color: "#9A9384",
+                  color: "#8A8170",
+                  textShadow: TEXT_ENGRAVED,
                 }}
               >
                 持续更新中
               </span>
               <span
-                style={{ fontSize: rpx(17), color: "#B0AC9F", lineHeight: 1.5 }}
+                style={{
+                  fontSize: rpx(17),
+                  color: "#9A9282",
+                  lineHeight: 1.5,
+                  textShadow: TEXT_ENGRAVED_SOFT,
+                }}
               >
                 更多卷正在敬请期待
               </span>

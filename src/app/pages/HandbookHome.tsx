@@ -6,15 +6,7 @@
  */
 
 import { useState, useCallback, useEffect } from "react";
-import {
-  ChevronRight,
-  BookOpen,
-  Compass,
-  Sun,
-  Sparkles,
-  Lock,
-  Library,
-} from "lucide-react";
+import { ChevronRight, Sun, Lock, Library, Book, Map } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import {
   V2_VOLUMES,
@@ -22,17 +14,22 @@ import {
   getV2VolumeById,
   getV2Chapter,
 } from "../config/handbook-v2-data";
-import { FONT_SERIF, rpx, LIQUID_GLASS } from "../config/styles";
+import {
+  FONT_SERIF,
+  rpx,
+  LIQUID_GLASS,
+  TEXT_ENGRAVED,
+  TEXT_ENGRAVED_SOFT,
+  ICON_ENGRAVED,
+} from "../config/styles";
 import { BottomNavigation } from "../components/navigation/BottomNavigation";
 import { Toast } from "../components/shared/Toast";
 import { PrimaryButton } from "../components/shared/PrimaryButton";
+import { VolumeBookCover } from "../components/shared/VolumeBookCover";
 import { useToast } from "../hooks/useToast";
 import { useNavigation } from "../hooks/useNavigation";
 import { useReadingProgress } from "../hooks/useReadingProgress";
-import bgLayer1 from "@/assets/images/home/1-menqian.webp";
-import bgLayer2 from "@/assets/images/home/2-dingqi.webp";
-import bgLayer3 from "@/assets/images/home/3-neidan.webp";
-import iconBook from "@/assets/images/home/icon-book.webp";
+import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
 
 const GOLD = "#B8975A";
 const INK = "#1F1F1F";
@@ -48,7 +45,7 @@ interface HandbookHomeProps {
   onNavChange?: (index: number) => void;
 }
 
-/** 三大入口（图标：母本沿用现有 icon-book；入口/今日一段暂用 lucide 占位，待新图） */
+/** 三大入口（图标：内层页面统一使用 lucide 图标，遵循简约原则） */
 const ENTRIES: {
   id: string;
   icon: LucideIcon | null;
@@ -58,14 +55,14 @@ const ENTRIES: {
 }[] = [
   {
     id: "shelf",
-    icon: null,
-    iconImg: iconBook,
+    icon: Book,
+    iconImg: null,
     title: "开始读十卷母本",
     desc: "从根本理解生命与感知的规律",
   },
   {
     id: "entry",
-    icon: Compass,
+    icon: Map,
     iconImg: null,
     title: "找到我的阅读入口",
     desc: "从当下感受出发，找到适合的路径",
@@ -182,6 +179,7 @@ export function HandbookHome({
           backgroundImage: `url(${bgLayer1})`,
           backgroundSize: "cover",
           backgroundPosition: "center top",
+          opacity: 0.3,
           maskImage:
             "linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%)",
           WebkitMaskImage:
@@ -272,7 +270,7 @@ export function HandbookHome({
               >
                 <div
                   style={{
-                    height: rpx(56),
+                    height: rpx(40),
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -284,14 +282,24 @@ export function HandbookHome({
                       src={e.iconImg}
                       alt=""
                       style={{
-                        width: rpx(56),
-                        height: rpx(56),
+                        width: rpx(40),
+                        height: rpx(40),
                         objectFit: "contain",
                         opacity: 0.55,
                       }}
                     />
                   ) : (
-                    Icon && <Icon size={30} strokeWidth={1.4} color={GOLD} />
+                    Icon && (
+                      <Icon
+                        size={22}
+                        strokeWidth={1.4}
+                        color={GOLD}
+                        style={{
+                          filter:
+                            "drop-shadow(0px 1.5px 1.5px rgba(255,255,255,1)) drop-shadow(0px -1.5px 1.5px rgba(0,0,0,0.15))",
+                        }}
+                      />
+                    )
                   )}
                 </div>
                 <p
@@ -303,6 +311,9 @@ export function HandbookHome({
                     margin: 0,
                     letterSpacing: rpx(1),
                     lineHeight: 1.3,
+                    minHeight: rpx(68),
+                    textShadow:
+                      "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
                   }}
                 >
                   {e.title}
@@ -312,6 +323,8 @@ export function HandbookHome({
                     fontSize: rpx(18),
                     color: "#6F665A",
                     margin: `${rpx(12)} 0 0`,
+                    textShadow:
+                      "0px 1.5px 1.5px rgba(255,255,255,0.9), 0px -1px 1.5px rgba(0,0,0,0.12)",
                     lineHeight: 1.5,
                   }}
                 >
@@ -407,47 +420,11 @@ export function HandbookHome({
                   cursor: "pointer",
                 }}
               >
-                <div
-                  style={{
-                    width: "100%",
-                    height: rpx(248),
-                    borderRadius: rpx(18),
-                    overflow: "hidden",
-                    position: "relative",
-                    boxShadow: "0 6px 18px rgba(60,50,30,0.14)",
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      backgroundImage: `url(${vol.cover})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background:
-                        "linear-gradient(to bottom, rgba(31,31,31,0.1) 0%, rgba(31,31,31,0.5) 100%)",
-                    }}
-                  />
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: rpx(16),
-                      left: rpx(16),
-                      fontFamily: FONT_SERIF,
-                      fontSize: rpx(20),
-                      color: "rgba(255,255,255,0.9)",
-                      letterSpacing: rpx(2),
-                    }}
-                  >
-                    第{VOLUME_CN[vol.volumeNumber - 1]}卷
-                  </span>
-                </div>
+                <VolumeBookCover
+                  volumeNumber={vol.volumeNumber}
+                  volumeCn={VOLUME_CN[vol.volumeNumber - 1]}
+                  subtitle={vol.subtitle}
+                />
                 <p
                   style={{
                     fontSize: rpx(18),
@@ -494,146 +471,118 @@ export function HandbookHome({
             >
               在阅读路上，陪你走得更稳更远
             </p>
-            <div style={{ display: "flex", gap: rpx(24), marginTop: rpx(28) }}>
-              {/* 手册导读（即将开放·置灰，背景图占位） */}
+            <div style={{ display: "flex", gap: rpx(20), marginTop: rpx(28) }}>
+              {/* 手册导读（即将开放·液态玻璃·偏冷银灰） */}
               <div
                 onClick={() => toast.show("「手册导读」即将开放，敬请期待")}
                 style={{
                   flex: 1,
-                  height: rpx(260),
-                  borderRadius: rpx(32),
-                  overflow: "hidden",
+                  height: rpx(176),
+                  borderRadius: rpx(28),
+                  ...LIQUID_GLASS,
+                  background:
+                    "linear-gradient(135deg, rgba(199,205,211,0.55), rgba(216,212,203,0.32))",
                   position: "relative",
+                  overflow: "hidden",
                   cursor: "pointer",
-                  border: "1px solid rgba(0,0,0,0.05)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: rpx(12),
+                  padding: `${rpx(26)} ${rpx(26)}`,
                 }}
               >
-                <div
+                <span
                   style={{
                     position: "absolute",
-                    inset: 0,
-                    backgroundImage: `url(${bgLayer3})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    opacity: 0.25,
-                  }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    background: "rgba(247,245,240,0.78)",
-                  }}
-                />
-                <div
-                  style={{
-                    position: "relative",
-                    padding: `${rpx(32)} ${rpx(28)}`,
+                    top: rpx(14),
+                    right: rpx(14),
+                    fontSize: rpx(15),
+                    color: "#6E6A62",
+                    background: "rgba(255,255,255,0.5)",
+                    padding: `${rpx(3)} ${rpx(10)}`,
+                    borderRadius: rpx(16),
+                    display: "flex",
+                    alignItems: "center",
+                    gap: rpx(4),
                   }}
                 >
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: rpx(20),
-                      right: rpx(20),
-                      fontSize: rpx(16),
-                      color: GOLD,
-                      background: "rgba(184,151,90,0.14)",
-                      padding: `${rpx(4)} ${rpx(12)}`,
-                      borderRadius: rpx(16),
-                      display: "flex",
-                      alignItems: "center",
-                      gap: rpx(4),
-                    }}
-                  >
-                    <Lock size={11} strokeWidth={2} /> 即将开放
-                  </span>
-                  <Sparkles size={24} strokeWidth={1.5} color="#B8B4AA" />
+                  <Lock size={11} strokeWidth={2} /> 即将开放
+                </span>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <p
                     style={{
                       fontFamily: FONT_SERIF,
                       fontSize: rpx(30),
                       fontWeight: 600,
-                      color: "#9A968C",
-                      margin: `${rpx(20)} 0 ${rpx(8)}`,
+                      color: "#56616B",
+                      margin: `0 0 ${rpx(10)}`,
+                      textShadow: TEXT_ENGRAVED,
                     }}
                   >
                     手册导读
                   </p>
                   <p
                     style={{
-                      fontSize: rpx(20),
-                      color: "#AEAAA0",
+                      fontSize: rpx(18),
+                      color: "#828791",
                       margin: 0,
                       lineHeight: 1.5,
+                      textShadow: TEXT_ENGRAVED_SOFT,
                     }}
                   >
                     专业卷导读内容，帮助你更好地理解与运用
                   </p>
                 </div>
+                <GuideIcon />
               </div>
 
-              {/* 读后练习（背景图占位） */}
+              {/* 读后练习（液态玻璃·偏暖） */}
               <div
                 onClick={handlePractice}
                 style={{
                   flex: 1,
-                  height: rpx(260),
-                  borderRadius: rpx(32),
-                  overflow: "hidden",
+                  height: rpx(176),
+                  borderRadius: rpx(28),
+                  ...LIQUID_GLASS,
+                  background:
+                    "linear-gradient(135deg, rgba(232,216,189,0.5), rgba(215,197,161,0.3))",
                   position: "relative",
+                  overflow: "hidden",
                   cursor: "pointer",
-                  border: "1px solid rgba(184,151,90,0.18)",
-                  boxShadow: "0 8px 24px rgba(60,50,30,0.06)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: rpx(12),
+                  padding: `${rpx(26)} ${rpx(26)}`,
                 }}
               >
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    backgroundImage: `url(${bgLayer2})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    opacity: 0.32,
-                  }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.85), rgba(255,251,242,0.78))",
-                  }}
-                />
-                <div
-                  style={{
-                    position: "relative",
-                    padding: `${rpx(32)} ${rpx(28)}`,
-                  }}
-                >
-                  <BookOpen size={24} strokeWidth={1.5} color={GOLD} />
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <p
                     style={{
                       fontFamily: FONT_SERIF,
                       fontSize: rpx(30),
                       fontWeight: 600,
-                      color: INK,
-                      margin: `${rpx(20)} 0 ${rpx(8)}`,
+                      color: "#5A4F3C",
+                      margin: `0 0 ${rpx(10)}`,
+                      textShadow: TEXT_ENGRAVED,
                     }}
                   >
                     读后练习
                   </p>
                   <p
                     style={{
-                      fontSize: rpx(20),
-                      color: SUB,
+                      fontSize: rpx(18),
+                      color: "#8C7F66",
                       margin: 0,
                       lineHeight: 1.5,
+                      textShadow: TEXT_ENGRAVED_SOFT,
                     }}
                   >
-                    每段都配套练习，让理解内化为行动
+                    每卷配套练习，让理解内化为行动
                   </p>
                 </div>
+                <PracticeIcon />
               </div>
             </div>
           </div>
@@ -701,40 +650,19 @@ export function HandbookHome({
                 padding: rpx(18),
                 background:
                   "linear-gradient(135deg, rgba(184,151,90,0.1), rgba(184,151,90,0.04))",
-                border: "1px solid rgba(184,151,90,0.18)",
+                border: "1.5px solid rgba(233,216,166,0.6)",
                 borderRadius: rpx(24),
                 cursor: "pointer",
                 marginBottom: rpx(16),
               }}
             >
-              {/* 封面缩略 */}
-              <div
-                style={{
-                  width: rpx(84),
-                  height: rpx(112),
-                  borderRadius: rpx(10),
-                  overflow: "hidden",
-                  position: "relative",
-                  flexShrink: 0,
-                  boxShadow: "0 4px 12px rgba(60,50,30,0.16)",
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    backgroundImage: `url(${dockVolume.cover})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    background:
-                      "linear-gradient(to bottom, rgba(31,31,31,0.1), rgba(31,31,31,0.5))",
-                  }}
+              {/* 封面缩略（黑书风格小封面） */}
+              <div style={{ width: rpx(84), flexShrink: 0 }}>
+                <VolumeBookCover
+                  volumeNumber={dockVolume.volumeNumber}
+                  volumeCn={VOLUME_CN[dockVolume.volumeNumber - 1]}
+                  height={rpx(112)}
+                  compact
                 />
               </div>
               {/* 标题 + 副标题 + 进度条 */}
@@ -800,27 +728,21 @@ export function HandbookHome({
                 </div>
               </div>
               {/* 继续按钮 */}
-              <button
+              <div
+                style={{ flexShrink: 0, width: "100px" }}
                 onClick={(ev) => {
                   ev.stopPropagation();
                   onContinueReading?.(dockVolume.id, dockChapter.id);
                 }}
-                style={{
-                  flexShrink: 0,
-                  padding: `${rpx(16)} ${rpx(22)}`,
-                  border: "none",
-                  borderRadius: rpx(36),
-                  background: "linear-gradient(135deg, #C9A961, #B8975A)",
-                  color: "#fff",
-                  fontFamily: FONT_SERIF,
-                  fontSize: rpx(22),
-                  letterSpacing: rpx(1),
-                  cursor: "pointer",
-                  boxShadow: "0 6px 16px rgba(184,151,90,0.28)",
-                }}
               >
-                {nextVolume ? "开始" : "继续阅读"}
-              </button>
+                <PrimaryButton
+                  title={nextVolume ? "开始" : "继续阅读"}
+                  variant="filled"
+                  style={{
+                    padding: `${rpx(10)} ${rpx(20)}`,
+                  }}
+                />
+              </div>
             </div>
           </>
         )}
@@ -846,5 +768,109 @@ export function HandbookHome({
         onDismiss={toast.dismiss}
       />
     </div>
+  );
+}
+
+/**
+ * GuideIcon - 手册导读图标（代码绘制·偏冷银灰，呼应左卡渐变）
+ * 书签丝带 + 两行示意文字，寓意「导读 / 指引阅读路径」，区别于底部菜单。
+ */
+function GuideIcon() {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      style={{
+        width: rpx(60),
+        height: rpx(60),
+        flexShrink: 0,
+        filter: ICON_ENGRAVED,
+      }}
+      fill="none"
+    >
+      <defs>
+        <linearGradient id="hbGuide" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#C6CCD2" />
+          <stop offset="1" stopColor="#8B949D" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M16 9 h16 a3 3 0 0 1 3 3 v28 l-11 -7 -11 7 v-28 a3 3 0 0 1 3 -3 z"
+        fill="url(#hbGuide)"
+      />
+      <line
+        x1="20"
+        y1="18"
+        x2="28"
+        y2="18"
+        stroke="rgba(255,255,255,0.7)"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+      <line
+        x1="20"
+        y1="24"
+        x2="28"
+        y2="24"
+        stroke="rgba(255,255,255,0.5)"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+/**
+ * PracticeIcon - 读后练习图标（代码绘制·偏暖金，呼应右卡渐变）
+ * 圆形印记徽章 + 内放射光点，寓意「练习 / 内化印记」，区别于底部菜单。
+ */
+function PracticeIcon() {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      style={{
+        width: rpx(60),
+        height: rpx(60),
+        flexShrink: 0,
+        filter: ICON_ENGRAVED,
+      }}
+      fill="none"
+    >
+      <defs>
+        <linearGradient id="hbPractice" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="#DCC089" />
+          <stop offset="1" stopColor="#B6924F" />
+        </linearGradient>
+      </defs>
+      <circle
+        cx="24"
+        cy="24"
+        r="15"
+        stroke="url(#hbPractice)"
+        strokeWidth="2.4"
+      />
+      <circle
+        cx="24"
+        cy="24"
+        r="9"
+        stroke="rgba(182,146,79,0.55)"
+        strokeWidth="1.4"
+      />
+      {Array.from({ length: 8 }).map((_, i) => {
+        const a = (i * 45 * Math.PI) / 180;
+        return (
+          <line
+            key={i}
+            x1={24 + Math.cos(a) * 9}
+            y1={24 + Math.sin(a) * 9}
+            x2={24 + Math.cos(a) * 14}
+            y2={24 + Math.sin(a) * 14}
+            stroke="url(#hbPractice)"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+          />
+        );
+      })}
+      <circle cx="24" cy="24" r="2.6" fill="url(#hbPractice)" />
+    </svg>
   );
 }

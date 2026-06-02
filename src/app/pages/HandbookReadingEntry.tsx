@@ -16,9 +16,16 @@ import {
   CalendarDays,
 } from "lucide-react";
 import { ENTRY_OPTIONS } from "../config/handbook-v2-data";
-import { FONT_SERIF, LIQUID_GLASS, rpx } from "../config/styles";
-import bgLayer1 from "@/assets/images/home/1-menqian.webp";
+import {
+  FONT_SERIF,
+  LIQUID_GLASS,
+  rpx,
+  TEXT_ENGRAVED,
+  ICON_ENGRAVED,
+} from "../config/styles";
+import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
 import { Toast } from "../components/shared/Toast";
+import { PrimaryButton } from "../components/shared/PrimaryButton";
 import { useToast } from "../hooks/useToast";
 import {
   HandbookHeader,
@@ -101,7 +108,12 @@ export function HandbookReadingEntry({
               display: "flex",
             }}
           >
-            <User size={20} color={HANDBOOK_HEADER_ICON} strokeWidth={1.6} />
+            <User
+              size={20}
+              color={HANDBOOK_HEADER_ICON}
+              strokeWidth={1.6}
+              style={{ filter: ICON_ENGRAVED }}
+            />
           </button>
         }
       />
@@ -185,7 +197,7 @@ export function HandbookReadingEntry({
                     size={22}
                     color={GOLD}
                     strokeWidth={1.6}
-                    style={{ flexShrink: 0 }}
+                    style={{ flexShrink: 0, filter: ICON_ENGRAVED }}
                   />
                   <span
                     style={{
@@ -193,6 +205,7 @@ export function HandbookReadingEntry({
                       fontSize: rpx(30),
                       color: active ? INK : "#3A3A3A",
                       letterSpacing: rpx(1),
+                      textShadow: TEXT_ENGRAVED,
                     }}
                   >
                     {opt.label}
@@ -214,7 +227,14 @@ export function HandbookReadingEntry({
                     transition: "all 0.25s ease",
                   }}
                 >
-                  {active && <Check size={18} color="#fff" strokeWidth={2.4} />}
+                  {active && (
+                    <Check
+                      size={18}
+                      color="#fff"
+                      strokeWidth={2.4}
+                      style={{ filter: ICON_ENGRAVED }}
+                    />
+                  )}
                 </span>
               </button>
             );
@@ -239,29 +259,12 @@ export function HandbookReadingEntry({
           gap: rpx(14),
         }}
       >
-        <button
-          onClick={handleGenerate}
+        <PrimaryButton
+          title="生成阅读建议"
+          variant="filled"
           disabled={!selected}
-          style={{
-            width: "100%",
-            padding: `${rpx(24)} 0`,
-            border: "none",
-            borderRadius: rpx(44),
-            fontFamily: FONT_SERIF,
-            fontSize: rpx(30),
-            fontWeight: 600,
-            letterSpacing: rpx(4),
-            color: selected ? "#fff" : "#B0AC9F",
-            background: selected
-              ? "linear-gradient(135deg, #C9A961, #B8975A)"
-              : "rgba(0,0,0,0.05)",
-            boxShadow: selected ? "0 10px 30px rgba(184,151,90,0.3)" : "none",
-            cursor: selected ? "pointer" : "not-allowed",
-            transition: "all 0.25s ease",
-          }}
-        >
-          生成阅读建议
-        </button>
+          onClick={handleGenerate}
+        />
         <span style={{ fontSize: rpx(20), color: SUB, letterSpacing: rpx(1) }}>
           基于你的选择，生成个性化阅读路径
         </span>
