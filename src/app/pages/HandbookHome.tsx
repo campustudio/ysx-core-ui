@@ -168,7 +168,6 @@ export function HandbookHome({
         transition: "opacity 0.5s ease",
       }}
     >
-      {/* 顶部背景图（沿用首页第一层·门前光感，渐隐融入白色承托层） */}
       <div
         style={{
           position: "absolute",
@@ -179,7 +178,7 @@ export function HandbookHome({
           backgroundImage: `url(${bgLayer1})`,
           backgroundSize: "cover",
           backgroundPosition: "center top",
-          opacity: 0.3,
+          // opacity: 0.9,
           maskImage:
             "linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%)",
           WebkitMaskImage:
@@ -737,7 +736,7 @@ export function HandbookHome({
               >
                 <PrimaryButton
                   title={nextVolume ? "开始" : "继续阅读"}
-                  variant="filled"
+                  // variant="filled"
                   style={{
                     padding: `${rpx(10)} ${rpx(20)}`,
                   }}
@@ -753,6 +752,7 @@ export function HandbookHome({
           title="进入完整书架"
           subtitle="浏览全部书籍与资料"
           onClick={onOpenShelf}
+          variant="filled"
         />
       </div>
 
