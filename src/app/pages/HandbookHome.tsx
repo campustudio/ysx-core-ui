@@ -21,6 +21,7 @@ import {
   VOLUME_CN,
   getV2VolumeById,
   getV2Chapter,
+  getVolumeProgressPercent,
 } from "../config/handbook-v2-data";
 import {
   FONT_SERIF,
@@ -104,16 +105,16 @@ export function HandbookHome({
     useReadingProgress();
 
   // 继续阅读详情（卷名/章名/进度百分比）
+  // 新用户case：无进度时显示第一卷第一章
   const contVolume =
-    hasProgress && lastProgress ? getV2VolumeById(lastProgress.volumeId) : null;
+    hasProgress && lastProgress
+      ? getV2VolumeById(lastProgress.volumeId)
+      : V2_VOLUMES[0];
   const contChapter =
     hasProgress && lastProgress
       ? getV2Chapter(lastProgress.volumeId, lastProgress.chapterId)
-      : null;
-  const contPercent =
-    contVolume && contChapter
-      ? Math.round((contChapter.index / contVolume.chapters.length) * 100)
-      : 0;
+      : (V2_VOLUMES[0]?.chapters[0] ?? null);
+  const contPercent = contVolume ? getVolumeProgressPercent(contVolume.id) : 0;
 
   // 本卷是否已读完（最后一章）：若已读完，则「继续阅读」应指向下一卷
   const volumeFinished = !!(
@@ -132,6 +133,7 @@ export function HandbookHome({
   const dockVolume = nextVolume ?? contVolume;
   const dockChapter = nextVolume ? nextVolume.chapters[0] : contChapter;
   const dockPercent = nextVolume ? 0 : contPercent;
+  const isNewUser = !hasProgress;
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -656,7 +658,7 @@ export function HandbookHome({
           transition: "bottom 0.3s ease-out",
         }}
       >
-        {hasProgress && lastProgress && dockVolume && dockChapter && (
+        {dockVolume && dockChapter && (
           <>
             <div
               style={{
@@ -676,10 +678,14 @@ export function HandbookHome({
                   letterSpacing: rpx(2),
                 }}
               >
-                继续阅读
+                {isNewUser ? "开始阅读" : "继续阅读"}
               </h2>
               <span style={{ fontSize: rpx(20), color: SUB }}>
-                {nextVolume ? "开启下一卷" : "你的上次阅读进度"}
+                {isNewUser
+                  ? "从第一卷开始"
+                  : nextVolume
+                    ? "开启下一卷"
+                    : "你的上次阅读进度"}
               </span>
             </div>
             <div
@@ -735,17 +741,30 @@ export function HandbookHome({
                 >
                   第{dockChapter.index}章 · {dockChapter.title}
                 </p>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: rpx(12),
-                    margin: `${rpx(12)} 0 0`,
-                  }}
-                >
+                <div style={{ margin: `${rpx(12)} 0 0` }}>
                   <div
                     style={{
-                      flex: 1,
+                      display: "flex",
+                      alignItems: "baseline",
+                      justifyContent: "space-between",
+                      marginBottom: rpx(8),
+                    }}
+                  >
+                    <span style={{ fontSize: rpx(18), color: SUB }}>
+                      卷进度
+                    </span>
+                    <span
+                      style={{
+                        fontSize: rpx(18),
+                        color: GOLD,
+                        fontFamily: FONT_SERIF,
+                      }}
+                    >
+                      {isNewUser ? "0%" : `已读 ${dockPercent}%`}
+                    </span>
+                  </div>
+                  <div
+                    style={{
                       height: rpx(6),
                       background: "rgba(184,151,90,0.18)",
                       borderRadius: rpx(4),
@@ -758,14 +777,10 @@ export function HandbookHome({
                         height: "100%",
                         background: GOLD,
                         borderRadius: rpx(4),
+                        transition: "width 0.18s ease",
                       }}
                     />
                   </div>
-                  <span
-                    style={{ fontSize: rpx(18), color: GOLD, flexShrink: 0 }}
-                  >
-                    已读 {dockPercent}%
-                  </span>
                 </div>
               </div>
               {/* 继续按钮 */}
@@ -777,7 +792,9 @@ export function HandbookHome({
                 }}
               >
                 <PrimaryButton
-                  title={nextVolume ? "开始" : "继续阅读"}
+                  title={
+                    isNewUser ? "开始阅读" : nextVolume ? "开始" : "继续阅读"
+                  }
                   // variant="filled"
                   style={{
                     padding: `${rpx(10)} ${rpx(20)}`,

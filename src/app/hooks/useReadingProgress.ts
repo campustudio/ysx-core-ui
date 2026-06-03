@@ -6,9 +6,16 @@
  * - 自动保存最后阅读位置
  * - 手动添加多个书签
  * - 书签管理（添加、删除、查看）
+ * - 章节滚动进度与完成态（见 handbook-v2-data）
  */
 
 import { useState, useEffect, useCallback } from "react";
+import {
+  loadAllChapterProgress,
+  updateChapterScrollPercent,
+  markChapterComplete,
+  type StoredChapterProgress,
+} from "../config/handbook-v2-data";
 
 const STORAGE_KEY = "ysx_reading_progress";
 const BOOKMARKS_KEY = "ysx_bookmarks";
@@ -30,6 +37,8 @@ export interface Bookmark {
   createdAt: number;
 }
 
+export type ChapterProgress = StoredChapterProgress;
+
 interface UseReadingProgressReturn {
   /** 获取最后阅读位置 */
   lastProgress: ReadingProgress | null;
@@ -47,6 +56,14 @@ interface UseReadingProgressReturn {
   removeBookmark: (id: string) => void;
   /** 检查是否已收藏 */
   isBookmarked: (volumeId: string, chapterId: string) => boolean;
+  /** 章节进度变更计数（用于触发依赖方重渲染） */
+  progressRevision: number;
+  /** 获取章节进度 */
+  getChapterProgress: (chapterId: string) => ChapterProgress | null;
+  /** 更新章节滚动进度（只增不减） */
+  updateChapterScrollProgress: (chapterId: string, percent: number) => number;
+  /** 标记章节完成 */
+  markChapterAsComplete: (chapterId: string) => void;
 }
 
 export function useReadingProgress(): UseReadingProgressReturn {
@@ -54,6 +71,11 @@ export function useReadingProgress(): UseReadingProgressReturn {
     null,
   );
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
+  const [progressRevision, setProgressRevision] = useState(0);
+
+  const bumpProgressRevision = useCallback(() => {
+    setProgressRevision((n) => n + 1);
+  }, []);
 
   // 从 localStorage 加载进度和书签
   useEffect(() => {
@@ -104,7 +126,6 @@ export function useReadingProgress(): UseReadingProgressReturn {
   // 添加书签
   const addBookmark = useCallback(
     (bookmark: Omit<Bookmark, "id" | "createdAt">): boolean => {
-      // 检查是否已存在
       const exists = bookmarks.some(
         (b) =>
           b.volumeId === bookmark.volumeId &&
@@ -155,6 +176,31 @@ export function useReadingProgress(): UseReadingProgressReturn {
     [bookmarks],
   );
 
+  const getChapterProgress = useCallback(
+    (chapterId: string): ChapterProgress | null => {
+      const all = loadAllChapterProgress();
+      return all[chapterId] || null;
+    },
+    [progressRevision],
+  );
+
+  const updateChapterScrollProgress = useCallback(
+    (chapterId: string, percent: number): number => {
+      const newMax = updateChapterScrollPercent(chapterId, percent);
+      bumpProgressRevision();
+      return newMax;
+    },
+    [bumpProgressRevision],
+  );
+
+  const markChapterAsComplete = useCallback(
+    (chapterId: string) => {
+      markChapterComplete(chapterId);
+      bumpProgressRevision();
+    },
+    [bumpProgressRevision],
+  );
+
   return {
     lastProgress,
     saveProgress,
@@ -164,6 +210,10 @@ export function useReadingProgress(): UseReadingProgressReturn {
     addBookmark,
     removeBookmark,
     isBookmarked,
+    progressRevision,
+    getChapterProgress,
+    updateChapterScrollProgress,
+    markChapterAsComplete,
   };
 }
 

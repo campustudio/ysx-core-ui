@@ -7,7 +7,11 @@
 
 import { useState, useEffect } from "react";
 import { Share2 } from "lucide-react";
-import { getV2VolumeById, VOLUME_CN } from "../config/handbook-v2-data";
+import {
+  getV2VolumeById,
+  VOLUME_CN,
+  getChapterProgressLabel,
+} from "../config/handbook-v2-data";
 import {
   FONT_SERIF,
   rpx,
@@ -45,7 +49,7 @@ export function HandbookVolume({
     window.scrollTo(0, 0);
     const timer = setTimeout(() => setIsLoaded(true), 60);
     return () => clearTimeout(timer);
-  }, []);
+  }, [volumeId]);
 
   if (!volume) {
     return (
@@ -214,56 +218,72 @@ export function HandbookVolume({
           共 {volume.chapters.length} 章
         </p>
 
-        {volume.chapters.map((ch) => (
-          <div
-            key={ch.id}
-            onClick={() => onSelectChapter?.(volumeId, ch.id)}
-            style={{
-              display: "flex",
-              alignItems: "baseline",
-              gap: rpx(20),
-              padding: `${rpx(30)} 0`,
-              borderBottom: "1px solid rgba(0,0,0,0.05)",
-              cursor: "pointer",
-            }}
-          >
-            <span
+        {volume.chapters.map((ch) => {
+          const progressLabel = getChapterProgressLabel(ch.id);
+          return (
+            <div
+              key={ch.id}
+              onClick={() => onSelectChapter?.(volumeId, ch.id)}
               style={{
-                fontFamily: FONT_SERIF,
-                fontSize: rpx(30),
-                color: GOLD,
-                flexShrink: 0,
-                minWidth: rpx(48),
+                display: "flex",
+                alignItems: "flex-start",
+                gap: rpx(20),
+                padding: `${rpx(30)} 0`,
+                borderBottom: "1px solid rgba(0,0,0,0.05)",
+                cursor: "pointer",
               }}
             >
-              {String(ch.index).padStart(2, "0")}
-            </span>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <h3
+              <span
                 style={{
                   fontFamily: FONT_SERIF,
-                  fontSize: rpx(32),
-                  fontWeight: 500,
-                  color: INK,
-                  margin: 0,
-                  letterSpacing: rpx(1),
+                  fontSize: rpx(30),
+                  color: GOLD,
+                  flexShrink: 0,
+                  minWidth: rpx(48),
                 }}
               >
-                {ch.title}
-              </h3>
-              <p
-                style={{
-                  fontSize: rpx(22),
-                  color: SUB,
-                  margin: `${rpx(8)} 0 0`,
-                  lineHeight: 1.5,
-                }}
-              >
-                {ch.subtitle}
-              </p>
+                {String(ch.index).padStart(2, "0")}
+              </span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h3
+                  style={{
+                    fontFamily: FONT_SERIF,
+                    fontSize: rpx(32),
+                    fontWeight: 500,
+                    color: INK,
+                    margin: 0,
+                    letterSpacing: rpx(1),
+                  }}
+                >
+                  {ch.title}
+                </h3>
+                <p
+                  style={{
+                    fontSize: rpx(22),
+                    color: SUB,
+                    margin: `${rpx(8)} 0 0`,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {ch.subtitle}
+                </p>
+              </div>
+              {progressLabel ? (
+                <span
+                  style={{
+                    fontSize: rpx(22),
+                    color: progressLabel === "已完成" ? GOLD : SUB,
+                    fontFamily: FONT_SERIF,
+                    flexShrink: 0,
+                    paddingTop: rpx(4),
+                  }}
+                >
+                  {progressLabel}
+                </span>
+              ) : null}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <Toast

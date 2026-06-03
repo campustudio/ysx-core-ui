@@ -16,14 +16,14 @@ import {
   List,
   MessageCircle,
   X,
-  Check,
   Home,
   Library,
 } from "lucide-react";
 import {
   getV2VolumeById,
   getV2Chapter,
-  isChapterComplete,
+  getChapterProgressLabel,
+  getChapterScrollPercent,
 } from "../config/handbook-v2-data";
 import { FONT_SERIF, rpx } from "../config/styles";
 import { Toast } from "../components/shared/Toast";
@@ -66,8 +66,16 @@ export function HandbookReader({
   const [percent, setPercent] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const toast = useToast();
-  const { saveProgress, addBookmark, removeBookmark, isBookmarked, bookmarks } =
-    useReadingProgress();
+  const {
+    saveProgress,
+    addBookmark,
+    removeBookmark,
+    isBookmarked,
+    bookmarks,
+    getChapterProgress,
+    updateChapterScrollProgress,
+    markChapterAsComplete,
+  } = useReadingProgress();
 
   const volume = getV2VolumeById(volumeId);
   const chapter = getV2Chapter(volumeId, chapterId);
@@ -75,12 +83,21 @@ export function HandbookReader({
   const bookmarked = isBookmarked(volumeId, chapterId);
   const [marked, setMarked] = useState(bookmarked);
 
+  // 下一章
+  const idx = volume?.chapters.findIndex((c) => c.id === chapterId) ?? -1;
+  const nextChapter =
+    volume && idx >= 0 && idx < volume.chapters.length - 1
+      ? volume.chapters[idx + 1]
+      : null;
+
   useEffect(() => {
     window.scrollTo(0, 0);
     setMarked(isBookmarked(volumeId, chapterId));
+    // 初始化进度显示为已保存的最大进度
+    setPercent(getChapterScrollPercent(chapterId));
     const timer = setTimeout(() => setIsLoaded(true), 60);
     return () => clearTimeout(timer);
-  }, [volumeId, chapterId]);
+  }, [volumeId, chapterId, getChapterProgress]);
 
   // 监听 bookmarks 变化，同步收藏按钮状态
   useEffect(() => {
@@ -103,14 +120,47 @@ export function HandbookReader({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [volumeId, chapterId]);
 
-  const handleScroll = useCallback(() => {
+  /** 根据滚动容器计算阅读进度；无滚动条时视为已浏览全文 (100%) */
+  const syncScrollProgress = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
     const max = el.scrollHeight - el.clientHeight;
-    setPercent(
-      max > 0 ? Math.min(100, Math.round((el.scrollTop / max) * 100)) : 100,
-    );
-  }, []);
+    const currentPercent =
+      max > 0 ? Math.min(100, Math.round((el.scrollTop / max) * 100)) : 100;
+    setPercent((prev) => {
+      const next = Math.max(prev, currentPercent);
+      if (next > prev) {
+        updateChapterScrollProgress(chapterId, next);
+      }
+      return next;
+    });
+  }, [chapterId, updateChapterScrollProgress]);
+
+  const handleScroll = useCallback(() => {
+    syncScrollProgress();
+  }, [syncScrollProgress]);
+
+  // 内容较短无滚动条时 onScroll 不会触发，需在布局完成后主动测量
+  useEffect(() => {
+    if (!isLoaded) return;
+    syncScrollProgress();
+    const t1 = requestAnimationFrame(syncScrollProgress);
+    const t2 = window.setTimeout(syncScrollProgress, 150);
+    const el = scrollRef.current;
+    if (!el || typeof ResizeObserver === "undefined") {
+      return () => {
+        cancelAnimationFrame(t1);
+        clearTimeout(t2);
+      };
+    }
+    const ro = new ResizeObserver(syncScrollProgress);
+    ro.observe(el);
+    return () => {
+      cancelAnimationFrame(t1);
+      clearTimeout(t2);
+      ro.disconnect();
+    };
+  }, [volumeId, chapterId, isLoaded, fontIdx, syncScrollProgress]);
 
   // 收藏：Toggle（再点取消）
   const handleBookmark = useCallback(() => {
@@ -358,13 +408,36 @@ export function HandbookReader({
           </p>
         ))}
 
-        {/* 读完一节 → 去练习 */}
-        <PrimaryButton
-          title="读完本节 · 去练习"
-          variant="filled"
-          onClick={() => onFinish?.(volumeId, chapterId)}
-          style={{ marginTop: rpx(40) }}
-        />
+        {/* 底部按钮：下一节 + 去练习 */}
+        <div
+          style={{
+            display: "flex",
+            gap: rpx(16),
+            marginTop: rpx(40),
+          }}
+        >
+          <PrimaryButton
+            title={nextChapter ? "下一节" : "完成本卷"}
+            onClick={() => {
+              markChapterAsComplete(chapterId);
+              if (nextChapter) {
+                onSelectChapter?.(volumeId, nextChapter.id);
+              } else {
+                toast.show("本卷已读完，做得很好");
+              }
+            }}
+            style={{ flex: 1 }}
+          />
+          <PrimaryButton
+            title="去练习"
+            variant="filled"
+            onClick={() => {
+              markChapterAsComplete(chapterId);
+              onFinish?.(volumeId, chapterId);
+            }}
+            style={{ flex: 1.2 }}
+          />
+        </div>
       </div>
 
       {/* 进度 + 底部操作栏 */}
@@ -378,31 +451,41 @@ export function HandbookReader({
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
         }}
       >
-        {/* 进度条 */}
-        <div
-          style={{
-            padding: `${rpx(16)} ${rpx(40)} 0`,
-            display: "flex",
-            alignItems: "center",
-            gap: rpx(16),
-          }}
-        >
-          <span
-            style={{
-              fontSize: rpx(20),
-              color: sub,
-              fontFamily: FONT_SERIF,
-              minWidth: rpx(120),
-            }}
-          >
-            {chapter.index}/{total} · {percent}%
-          </span>
+        {/* 本章阅读进度（参照设计：标签上、进度条下） */}
+        <div style={{ padding: `${rpx(12)} ${rpx(40)} 0` }}>
           <div
             style={{
-              flex: 1,
-              height: rpx(6),
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "space-between",
+              marginBottom: rpx(10),
+            }}
+          >
+            <span
+              style={{
+                fontSize: rpx(20),
+                color: sub,
+                fontFamily: FONT_SERIF,
+              }}
+            >
+              章节进度 {chapter.index}/{total}
+            </span>
+            <span
+              style={{
+                fontSize: rpx(20),
+                color: GOLD,
+                fontFamily: FONT_SERIF,
+              }}
+            >
+              {percent}%
+            </span>
+          </div>
+          <div
+            style={{
+              height: rpx(4),
               background: night ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.07)",
-              borderRadius: rpx(4),
+              borderRadius: rpx(2),
+              overflow: "hidden",
             }}
           >
             <div
@@ -410,7 +493,7 @@ export function HandbookReader({
                 width: `${percent}%`,
                 height: "100%",
                 background: GOLD,
-                borderRadius: rpx(4),
+                borderRadius: rpx(2),
                 transition: "width 0.18s ease",
               }}
             />
@@ -605,7 +688,7 @@ export function HandbookReader({
 
             {volume.chapters.map((c) => {
               const active = c.id === chapterId;
-              const done = isChapterComplete(c.id);
+              const progressLabel = getChapterProgressLabel(c.id);
               const bookmarked = isBookmarked(volumeId, c.id);
               return (
                 <div
@@ -646,7 +729,18 @@ export function HandbookReader({
                   >
                     {c.title}
                   </span>
-                  {done && <Check size={16} color={GOLD} strokeWidth={2.4} />}
+                  {progressLabel ? (
+                    <span
+                      style={{
+                        fontSize: rpx(18),
+                        color: progressLabel === "已完成" ? GOLD : "#B8B4AA",
+                        fontFamily: FONT_SERIF,
+                        flexShrink: 0,
+                      }}
+                    >
+                      {progressLabel}
+                    </span>
+                  ) : null}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();

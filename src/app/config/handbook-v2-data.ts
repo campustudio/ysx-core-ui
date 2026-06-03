@@ -974,11 +974,55 @@ export function getRecommendation(
   return ENTRY_RECOMMENDATIONS[optionId];
 }
 
-// ─── 章节完成态（localStorage，本期轻量实现） ─────────────
+// ─── 章节阅读进度（localStorage，本期轻量实现） ─────────────
+//
+// 规则（由内向外）：
+// 1. 章内滚动进度 maxPercent：随向下阅读只增不减，向上滚动不减少
+// 2. 章节「已完成」：仅用户点击「下一节」或「去练习」时标记，滑到底不自动完成
+// 3. 卷进度：各章 maxPercent 的算术平均（支持跳读、读一半）
 
+export const CHAPTER_PROGRESS_KEY = "ysx_chapter_progress";
 const COMPLETED_KEY = "ysx_handbook_v2_completed";
 
-/** 读取已完成章节集合 */
+export interface StoredChapterProgress {
+  chapterId: string;
+  maxPercent: number;
+  completed: boolean;
+  updatedAt: number;
+}
+
+/** 读取全部章节进度 */
+export function loadAllChapterProgress(): Record<string, StoredChapterProgress> {
+  try {
+    const raw = localStorage.getItem(CHAPTER_PROGRESS_KEY);
+    return raw
+      ? (JSON.parse(raw) as Record<string, StoredChapterProgress>)
+      : {};
+  } catch {
+    return {};
+  }
+}
+
+function persistChapterProgress(all: Record<string, StoredChapterProgress>) {
+  try {
+    localStorage.setItem(CHAPTER_PROGRESS_KEY, JSON.stringify(all));
+  } catch {
+    // 静默失败
+  }
+}
+
+function syncLegacyCompleted(chapterId: string) {
+  try {
+    const raw = localStorage.getItem(COMPLETED_KEY);
+    const all = raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
+    all[chapterId] = true;
+    localStorage.setItem(COMPLETED_KEY, JSON.stringify(all));
+  } catch {
+    // 静默失败
+  }
+}
+
+/** 读取已完成章节集合（旧存储，仅作降级） */
 function loadCompleted(): Record<string, boolean> {
   try {
     const raw = localStorage.getItem(COMPLETED_KEY);
@@ -988,26 +1032,81 @@ function loadCompleted(): Record<string, boolean> {
   }
 }
 
-/** 标记章节为已完成 */
+/** 更新章内滚动进度（只增不减，不自动标记完成） */
+export function updateChapterScrollPercent(
+  chapterId: string,
+  percent: number,
+): number {
+  const all = loadAllChapterProgress();
+  const existing = all[chapterId];
+  const clamped = Math.min(100, Math.max(0, Math.round(percent)));
+  const newMax = existing
+    ? Math.max(existing.maxPercent, clamped)
+    : clamped;
+
+  all[chapterId] = {
+    chapterId,
+    maxPercent: newMax,
+    completed: existing?.completed ?? false,
+    updatedAt: Date.now(),
+  };
+  persistChapterProgress(all);
+  return newMax;
+}
+
+/** 标记章节为已完成（用户主动：下一节 / 去练习 / 读后练习页） */
 export function markChapterComplete(chapterId: string): void {
-  try {
-    const all = loadCompleted();
-    all[chapterId] = true;
-    localStorage.setItem(COMPLETED_KEY, JSON.stringify(all));
-  } catch {
-    // 静默失败
-  }
+  const all = loadAllChapterProgress();
+  all[chapterId] = {
+    chapterId,
+    maxPercent: 100,
+    completed: true,
+    updatedAt: Date.now(),
+  };
+  persistChapterProgress(all);
+  syncLegacyCompleted(chapterId);
 }
 
 /** 章节是否已完成 */
 export function isChapterComplete(chapterId: string): boolean {
+  const stored = loadAllChapterProgress()[chapterId];
+  if (stored) return stored.completed;
   return !!loadCompleted()[chapterId];
+}
+
+/** 章内已读百分比（滚动深度，只增不减） */
+export function getChapterScrollPercent(chapterId: string): number {
+  return loadAllChapterProgress()[chapterId]?.maxPercent ?? 0;
+}
+
+/** 章节列表右侧展示文案 */
+export function getChapterProgressLabel(chapterId: string): string | null {
+  const stored = loadAllChapterProgress()[chapterId];
+  if (!stored) return null;
+  if (stored.completed) return "已完成";
+  if (stored.maxPercent > 0) return `${stored.maxPercent}%`;
+  return null;
 }
 
 /** 某卷已完成章节数 */
 export function getVolumeCompletedCount(volumeId: string): number {
   const vol = getV2VolumeById(volumeId);
   if (!vol) return 0;
-  const all = loadCompleted();
-  return vol.chapters.filter((c) => all[c.id]).length;
+  const all = loadAllChapterProgress();
+  return vol.chapters.filter((c) => all[c.id]?.completed).length;
+}
+
+/**
+ * 卷整体进度：各章 maxPercent 的平均值。
+ * 例：10 章各读完 100% → 100%；5 章读完其余未读 → 50%；跳读亦正确累计。
+ */
+export function getVolumeProgressPercent(volumeId: string): number {
+  const vol = getV2VolumeById(volumeId);
+  if (!vol || vol.chapters.length === 0) return 0;
+  const all = loadAllChapterProgress();
+  const sum = vol.chapters.reduce(
+    (acc, ch) => acc + (all[ch.id]?.maxPercent ?? 0),
+    0,
+  );
+  return Math.round(sum / vol.chapters.length);
 }
