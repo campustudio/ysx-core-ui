@@ -7,16 +7,17 @@
  */
 
 import { useState, useEffect, type ReactNode } from "react";
-import { Sun, Quote, Sparkles, BookOpen, ChevronRight } from "lucide-react";
+import { Sun, Quote, Sparkles, BookOpen } from "lucide-react";
 import {
   TODAY_PASSAGE,
   VOLUME_COVER_PLACEHOLDER,
 } from "../config/handbook-v2-data";
-import { FONT_SERIF, rpx } from "../config/styles";
+import { FONT_SERIF, rpx, HANDBOOK_BG } from "../config/styles";
 import {
   HandbookHeader,
   HANDBOOK_HEADER_HEIGHT,
 } from "../components/shared/HandbookHeader";
+import { PrimaryButton } from "../components/shared/PrimaryButton";
 
 const GOLD = "#B8975A";
 const INK = "#1F1F1F";
@@ -76,7 +77,7 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
       style={{
         width: "100%",
         minHeight: "100vh",
-        background: "#F5F4F1",
+        background: HANDBOOK_BG,
         position: "relative",
         display: "flex",
         flexDirection: "column",
@@ -109,56 +110,36 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
         <div
           style={{
             marginTop: rpx(24),
-            borderRadius: rpx(40),
-            overflow: "hidden",
-            position: "relative",
-            boxShadow: "0 12px 32px rgba(60,50,30,0.12)",
+            borderRadius: rpx(32),
+            background: "rgba(255,255,255,0.85)",
+            border: "1px solid rgba(184,151,90,0.15)",
+            padding: `${rpx(40)} ${rpx(36)}`,
+            boxShadow: "0 4px 20px rgba(60,50,30,0.08)",
           }}
         >
-          <div
+          <Quote size={24} color={GOLD} strokeWidth={1.4} />
+          <p
             style={{
-              position: "absolute",
-              inset: 0,
-              backgroundImage: `url(${VOLUME_COVER_PLACEHOLDER})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
+              fontFamily: FONT_SERIF,
+              fontSize: rpx(38),
+              color: INK,
+              lineHeight: 1.8,
+              letterSpacing: rpx(1.5),
+              margin: `${rpx(20)} 0 0`,
             }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(135deg, rgba(31,28,22,0.82), rgba(31,28,22,0.62))",
-            }}
-          />
-          <div
-            style={{ position: "relative", padding: `${rpx(48)} ${rpx(44)}` }}
           >
-            <Quote size={28} color="#F2D894" strokeWidth={1.4} />
-            <p
-              style={{
-                fontFamily: FONT_SERIF,
-                fontSize: rpx(40),
-                color: "#fff",
-                lineHeight: 1.9,
-                letterSpacing: rpx(2),
-                margin: `${rpx(24)} 0 0`,
-              }}
-            >
-              {t.passage}
-            </p>
-            <p
-              style={{
-                fontSize: rpx(22),
-                color: "rgba(255,255,255,0.7)",
-                margin: `${rpx(28)} 0 0`,
-                letterSpacing: rpx(1),
-              }}
-            >
-              — 《{t.volumeTitle}》· {t.chapterTitle}
-            </p>
-          </div>
+            {t.passage}
+          </p>
+          <p
+            style={{
+              fontSize: rpx(20),
+              color: SUB,
+              margin: `${rpx(24)} 0 0`,
+              letterSpacing: rpx(1),
+            }}
+          >
+            — 《{t.volumeTitle}》· {t.chapterTitle}
+          </p>
         </div>
 
         {/* 白话导读 */}
@@ -167,9 +148,9 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
           "白话导读",
           <p
             style={{
-              fontSize: rpx(28),
+              fontSize: rpx(24),
               color: "#3A3A3A",
-              lineHeight: 1.9,
+              lineHeight: 1.8,
               margin: 0,
             }}
           >
@@ -193,7 +174,7 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
             <p
               style={{
                 fontFamily: FONT_SERIF,
-                fontSize: rpx(32),
+                fontSize: rpx(28),
                 color: INK,
                 lineHeight: 1.8,
                 margin: 0,
@@ -209,7 +190,12 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
           BookOpen,
           "一分钟练习",
           <div
-            style={{ display: "flex", flexDirection: "column", gap: rpx(18) }}
+            style={{
+              background: "rgba(255,255,255,0.85)",
+              border: "1px solid rgba(0,0,0,0.06)",
+              borderRadius: rpx(28),
+              padding: `${rpx(32)} ${rpx(36)}`,
+            }}
           >
             {t.practiceSteps.map((step, i) => (
               <div
@@ -217,26 +203,24 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
                 style={{
                   display: "flex",
                   alignItems: "flex-start",
-                  gap: rpx(18),
-                  padding: `${rpx(26)} ${rpx(30)}`,
-                  background: "rgba(255,255,255,0.85)",
-                  border: "1px solid rgba(0,0,0,0.06)",
-                  borderRadius: rpx(26),
+                  gap: rpx(16),
+                  marginBottom: i < t.practiceSteps.length - 1 ? rpx(20) : 0,
                 }}
               >
                 <span
                   style={{
-                    width: rpx(44),
-                    height: rpx(44),
+                    width: rpx(36),
+                    height: rpx(36),
                     borderRadius: "50%",
                     background: "rgba(184,151,90,0.14)",
                     color: GOLD,
                     fontFamily: FONT_SERIF,
-                    fontSize: rpx(24),
+                    fontSize: rpx(20),
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     flexShrink: 0,
+                    marginTop: rpx(2),
                   }}
                 >
                   {i + 1}
@@ -244,11 +228,10 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
                 <p
                   style={{
                     flex: 1,
-                    fontSize: rpx(26),
+                    fontSize: rpx(22),
                     color: "#3A3A3A",
                     lineHeight: 1.7,
                     margin: 0,
-                    paddingTop: rpx(6),
                   }}
                 >
                   {step}
@@ -257,31 +240,6 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
             ))}
           </div>,
         )}
-
-        {/* 去读这一章 */}
-        <button
-          onClick={() => onReadChapter?.(t.volumeId, t.chapterId)}
-          style={{
-            marginTop: rpx(52),
-            width: "100%",
-            padding: `${rpx(30)} 0`,
-            background: "transparent",
-            border: "1px solid rgba(184,151,90,0.4)",
-            borderRadius: rpx(48),
-            color: GOLD,
-            fontFamily: FONT_SERIF,
-            fontSize: rpx(28),
-            letterSpacing: rpx(2),
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: rpx(8),
-          }}
-        >
-          读这一章
-          <ChevronRight size={18} color={GOLD} strokeWidth={1.8} />
-        </button>
       </div>
     </div>
   );

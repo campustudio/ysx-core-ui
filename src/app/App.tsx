@@ -54,7 +54,12 @@ type PageRoute =
   | { page: "hb-recommend"; optionId: string }
   | { page: "hb-volume"; volumeId: string }
   | { page: "hb-reader"; volumeId: string; chapterId: string }
-  | { page: "hb-practice"; volumeId: string; chapterId: string }
+  | {
+      page: "hb-practice";
+      volumeId: string;
+      chapterId: string;
+      mode?: "reading" | "recommend";
+    }
   | { page: "hb-daily" }
   | { page: "volume-detail"; volumeId: string }
   | { page: "chapter-detail"; volumeId: string; chapterId: string }
@@ -462,6 +467,14 @@ export default function App() {
             onOpenVolume={(volumeId) =>
               navigateForward({ page: "hb-volume", volumeId })
             }
+            onOpenPractice={(volumeId, chapterId) =>
+              navigateForward({
+                page: "hb-practice",
+                volumeId,
+                chapterId,
+                mode: "recommend",
+              })
+            }
           />
         );
       case "hb-volume":
@@ -493,6 +506,7 @@ export default function App() {
           <HandbookPractice
             volumeId={route.volumeId}
             chapterId={route.chapterId}
+            mode={route.mode}
             onBack={goBack}
             onNextChapter={(volumeId, chapterId) =>
               navigateForward({ page: "hb-reader", volumeId, chapterId })

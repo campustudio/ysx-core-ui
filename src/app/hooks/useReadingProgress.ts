@@ -12,7 +12,6 @@ import { useState, useEffect, useCallback } from "react";
 
 const STORAGE_KEY = "ysx_reading_progress";
 const BOOKMARKS_KEY = "ysx_bookmarks";
-const MAX_BOOKMARKS = 20;
 
 export interface ReadingProgress {
   volumeId: string;
@@ -112,12 +111,6 @@ export function useReadingProgress(): UseReadingProgressReturn {
           b.chapterId === bookmark.chapterId,
       );
       if (exists) return false;
-
-      // 检查是否超过上限
-      if (bookmarks.length >= MAX_BOOKMARKS) {
-        console.warn("Bookmark limit reached");
-        return false;
-      }
 
       const newBookmark: Bookmark = {
         ...bookmark,

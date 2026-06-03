@@ -40,6 +40,13 @@ export type HeaderColorScheme = typeof HERO_COLORS;
 export const BG_PARCHMENT = "#F0E4CE";
 export const BG_PARCHMENT_END = "#F5E8D2";
 
+/**
+ * 人类手册模块统一默认背景（象牙白·温暖中性）
+ * 依据设计文档第四节视觉规范：色彩首位「象牙白 #F7F5F1」+ 风格「温暖中性(金白灰)」。
+ * 阅读器(纸/夜间专用色)不使用此常量；带整屏背景图的页面在其上叠图。
+ */
+export const HANDBOOK_BG = "#F7F5F1";
+
 /** 内容区渐变 */
 export const BG_CONTENT_GRADIENT = `linear-gradient(to bottom, ${BG_PARCHMENT}, ${BG_PARCHMENT_END})`;
 

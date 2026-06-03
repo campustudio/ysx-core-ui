@@ -19,6 +19,7 @@
 
 import { Home, BookOpen, Compass, Sparkles } from "lucide-react";
 import type { LucideProps } from "lucide-react";
+import { ICON_ENGRAVED, TEXT_ENGRAVED } from "../../config/styles";
 
 // ─── 导航项配置 ──────────────────────────────────────
 
@@ -107,7 +108,7 @@ export function BottomNavigation({
                   strokeWidth={isActive ? 1.8 : 1.5}
                   style={{
                     ...ICON_SIZE,
-                    filter: "drop-shadow(0 0 0.3px currentColor)",
+                    filter: ICON_ENGRAVED,
                   }}
                 />
                 <span
@@ -115,6 +116,7 @@ export function BottomNavigation({
                     fontSize: "calc(var(--rpx) * 18)",
                     lineHeight: 1,
                     opacity: isActive ? 1 : 0.7,
+                    textShadow: TEXT_ENGRAVED,
                   }}
                 >
                   {item.label}

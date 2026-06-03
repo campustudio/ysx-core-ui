@@ -22,6 +22,7 @@ import {
   rpx,
   TEXT_ENGRAVED,
   ICON_ENGRAVED,
+  HANDBOOK_BG,
 } from "../config/styles";
 import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
 import { Toast } from "../components/shared/Toast";
@@ -66,8 +67,8 @@ export function HandbookReadingEntry({
     <div
       style={{
         width: "100%",
-        minHeight: "100vh",
-        background: "#EEE7DA",
+        height: "100vh",
+        background: HANDBOOK_BG,
         position: "relative",
         display: "flex",
         flexDirection: "column",
@@ -75,20 +76,17 @@ export function HandbookReadingEntry({
         transition: "opacity 0.5s ease",
       }}
     >
-      {/* 顶部背景图（首页第一层·门前光感，渐隐融入底色） */}
+      {/* 顶部背景图（占满屏幕） */}
       <div
         style={{
-          position: "absolute",
+          position: "fixed",
           top: 0,
           left: 0,
           right: 0,
-          height: rpx(820),
+          height: "100vh",
           backgroundImage: `url(${bgLayer1})`,
           backgroundSize: "cover",
           backgroundPosition: "center top",
-          opacity: 0.45,
-          maskImage: "linear-gradient(to bottom, #000 35%, transparent)",
-          WebkitMaskImage: "linear-gradient(to bottom, #000 35%, transparent)",
           pointerEvents: "none",
         }}
       />
@@ -108,12 +106,7 @@ export function HandbookReadingEntry({
               display: "flex",
             }}
           >
-            <User
-              size={20}
-              color={HANDBOOK_HEADER_ICON}
-              strokeWidth={1.6}
-              style={{ filter: ICON_ENGRAVED }}
-            />
+            <User size={20} color={HANDBOOK_HEADER_ICON} strokeWidth={1.6} />
           </button>
         }
       />
@@ -251,8 +244,6 @@ export function HandbookReadingEntry({
           bottom: 0,
           zIndex: 5,
           padding: `${rpx(24)} ${rpx(48)} calc(env(safe-area-inset-bottom) + ${rpx(32)})`,
-          background:
-            "linear-gradient(to top, #EEE7DA 55%, rgba(238,231,218,0))",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",

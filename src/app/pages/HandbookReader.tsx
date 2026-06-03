@@ -7,7 +7,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
-  ArrowLeft,
   Type,
   Moon,
   Sun,
@@ -18,14 +17,7 @@ import {
   MessageCircle,
   X,
   Check,
-  Triangle,
-  Drama,
-  Eye,
-  Gem,
-  Sparkles,
-  Footprints,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import {
   getV2VolumeById,
   getV2Chapter,
@@ -35,20 +27,16 @@ import { FONT_SERIF, rpx } from "../config/styles";
 import { Toast } from "../components/shared/Toast";
 import { useToast } from "../hooks/useToast";
 import { useReadingProgress } from "../hooks/useReadingProgress";
+import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
+import { PrimaryButton } from "../components/shared/PrimaryButton";
+import {
+  HandbookHeader,
+  HANDBOOK_HEADER_HEIGHT,
+} from "../components/shared/HandbookHeader";
 
 const GOLD = "#B8975A";
 
 const FONT_SCALES = [28, 32, 36] as const; // 正文字号(rpx) 小/中/大
-
-/** 章节图标（与卷内首页一致，按序循环） */
-const CHAPTER_ICONS: LucideIcon[] = [
-  Triangle,
-  Drama,
-  Eye,
-  Gem,
-  Sparkles,
-  Footprints,
-];
 
 interface HandbookReaderProps {
   volumeId: string;
@@ -86,8 +74,15 @@ export function HandbookReader({
     setMarked(isBookmarked(volumeId, chapterId));
     const timer = setTimeout(() => setIsLoaded(true), 60);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [volumeId, chapterId]);
+
+  // 监听 bookmarks 变化，同步收藏按钮状态
+  useEffect(() => {
+    setMarked(isBookmarked(volumeId, chapterId));
+  }, [bookmarks, volumeId, chapterId, isBookmarked]);
+
+  // 防止目录抽屉背景滚动穿透
+  useBodyScrollLock(showToc);
 
   // 保存阅读进度（继续阅读 / 读后练习 依赖）
   useEffect(() => {
@@ -132,7 +127,8 @@ export function HandbookReader({
         setMarked(true);
         toast.show("已加入收藏");
       } else {
-        toast.show("收藏已满");
+        setMarked(true);
+        toast.show("已在收藏中");
       }
     }
   }, [
@@ -174,90 +170,55 @@ export function HandbookReader({
         transition: "opacity 0.4s ease, background 0.25s ease",
       }}
     >
-      {/* 顶栏 */}
-      <div
-        style={{
-          padding: `calc(env(safe-area-inset-top) + ${rpx(16)}) ${rpx(32)} ${rpx(16)}`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          background: barBg,
-          backdropFilter: "blur(10px)",
-          borderBottom: night
-            ? "1px solid rgba(255,255,255,0.06)"
-            : "1px solid rgba(0,0,0,0.05)",
-          zIndex: 10,
-        }}
-      >
-        <button
-          onClick={onBack}
-          style={{
-            background: "transparent",
-            border: "none",
-            padding: rpx(8),
-            cursor: "pointer",
-            display: "flex",
-          }}
-        >
-          <ArrowLeft size={20} color={ink} strokeWidth={1.5} />
-        </button>
-        <span
-          style={{
-            fontFamily: FONT_SERIF,
-            fontSize: rpx(24),
-            color: ink,
-            fontWeight: 500,
-            maxWidth: "50%",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {chapter.title}
-        </span>
-        <div style={{ display: "flex", alignItems: "center", gap: rpx(8) }}>
-          <button
-            onClick={() => setFontIdx((i) => (i + 1) % FONT_SCALES.length)}
-            style={{
-              background: "transparent",
-              border: "none",
-              padding: rpx(8),
-              cursor: "pointer",
-              display: "flex",
-            }}
-          >
-            <Type size={19} color={ink} strokeWidth={1.5} />
-          </button>
-          <button
-            onClick={() => setNight((n) => !n)}
-            style={{
-              background: "transparent",
-              border: "none",
-              padding: rpx(8),
-              cursor: "pointer",
-              display: "flex",
-            }}
-          >
-            {night ? (
-              <Sun size={19} color={ink} strokeWidth={1.5} />
-            ) : (
-              <Moon size={19} color={ink} strokeWidth={1.5} />
-            )}
-          </button>
-          <button
-            onClick={() => toast.show("更多设置即将开放")}
-            style={{
-              background: "transparent",
-              border: "none",
-              padding: rpx(8),
-              cursor: "pointer",
-              display: "flex",
-            }}
-          >
-            <MoreHorizontal size={19} color={ink} strokeWidth={1.5} />
-          </button>
-        </div>
-      </div>
+      <HandbookHeader
+        onBack={onBack}
+        title={chapter.title}
+        withBackground
+        rightContent={
+          <div style={{ display: "flex", alignItems: "center", gap: rpx(16) }}>
+            <button
+              onClick={() => setFontIdx((i) => (i + 1) % FONT_SCALES.length)}
+              style={{
+                background: "transparent",
+                border: "none",
+                padding: rpx(8),
+                cursor: "pointer",
+                display: "flex",
+              }}
+            >
+              <Type size={19} color={ink} strokeWidth={1.5} />
+            </button>
+            <button
+              onClick={() => setNight((n) => !n)}
+              style={{
+                background: "transparent",
+                border: "none",
+                padding: rpx(8),
+                cursor: "pointer",
+                display: "flex",
+              }}
+            >
+              {night ? (
+                <Sun size={19} color={ink} strokeWidth={1.5} />
+              ) : (
+                <Moon size={19} color={ink} strokeWidth={1.5} />
+              )}
+            </button>
+            <button
+              onClick={() => toast.show("更多设置即将开放")}
+              style={{
+                background: "transparent",
+                border: "none",
+                padding: rpx(8),
+                cursor: "pointer",
+                display: "flex",
+              }}
+            >
+              <MoreHorizontal size={19} color={ink} strokeWidth={1.5} />
+            </button>
+          </div>
+        }
+      />
 
       {/* 正文滚动区 */}
       <div
@@ -266,7 +227,7 @@ export function HandbookReader({
         style={{
           flex: 1,
           overflowY: "auto",
-          padding: `${rpx(40)} ${rpx(56)} ${rpx(80)}`,
+          padding: `calc(${HANDBOOK_HEADER_HEIGHT} + ${rpx(40)}) ${rpx(56)} ${rpx(80)}`,
         }}
       >
         {/* 导读盒（带「导读」标签） */}
@@ -310,7 +271,7 @@ export function HandbookReader({
           </p>
         </div>
 
-        {/* 章标题（居中 + 图标） */}
+        {/* 章标题（居中） */}
         <div
           style={{
             display: "flex",
@@ -320,29 +281,6 @@ export function HandbookReader({
             margin: `0 0 ${rpx(56)}`,
           }}
         >
-          {(() => {
-            const ChIcon =
-              CHAPTER_ICONS[(chapter.index - 1) % CHAPTER_ICONS.length];
-            return (
-              <span
-                style={{
-                  width: rpx(88),
-                  height: rpx(88),
-                  borderRadius: rpx(24),
-                  border: `1px solid ${night ? "rgba(184,151,90,0.3)" : "rgba(184,151,90,0.3)"}`,
-                  background: night
-                    ? "rgba(184,151,90,0.1)"
-                    : "rgba(184,151,90,0.06)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginBottom: rpx(28),
-                }}
-              >
-                <ChIcon size={28} color={GOLD} strokeWidth={1.4} />
-              </span>
-            );
-          })()}
           <span
             style={{
               fontFamily: FONT_SERIF,
@@ -351,7 +289,26 @@ export function HandbookReader({
               letterSpacing: rpx(4),
             }}
           >
-            第{chapter.index}章
+            {(() => {
+              const chineseNumbers = [
+                "",
+                "一",
+                "二",
+                "三",
+                "四",
+                "五",
+                "六",
+                "七",
+                "八",
+                "九",
+                "十",
+              ];
+              const num = chapter.index;
+              if (num <= 10) {
+                return `第${chineseNumbers[num]}章`;
+              }
+              return `第${num}章`;
+            })()}
           </span>
           <h1
             style={{
@@ -396,26 +353,12 @@ export function HandbookReader({
         ))}
 
         {/* 读完一节 → 去练习 */}
-        <button
+        <PrimaryButton
+          title="读完本节 · 去练习"
+          variant="filled"
           onClick={() => onFinish?.(volumeId, chapterId)}
-          style={{
-            width: "100%",
-            marginTop: rpx(40),
-            padding: `${rpx(32)} 0`,
-            border: "none",
-            borderRadius: rpx(48),
-            background: "linear-gradient(135deg, #C9A961, #B8975A)",
-            color: "#fff",
-            fontFamily: FONT_SERIF,
-            fontSize: rpx(30),
-            fontWeight: 600,
-            letterSpacing: rpx(3),
-            boxShadow: "0 10px 30px rgba(184,151,90,0.3)",
-            cursor: "pointer",
-          }}
-        >
-          读完本节 · 去练习
-        </button>
+          style={{ marginTop: rpx(40) }}
+        />
       </div>
 
       {/* 进度 + 底部操作栏 */}
@@ -479,7 +422,7 @@ export function HandbookReader({
         >
           {[
             { id: "fav", icon: Bookmark, label: "收藏", disabled: false },
-            { id: "note", icon: PenLine, label: "笔记", disabled: false },
+            { id: "note", icon: PenLine, label: "笔记", disabled: true },
             { id: "toc", icon: List, label: "目录", disabled: false },
             { id: "ask", icon: MessageCircle, label: "问答", disabled: true },
           ].map((a) => {
@@ -496,9 +439,8 @@ export function HandbookReader({
                 key={a.id}
                 onClick={() => {
                   if (a.disabled) {
-                    toast.show("「问答」即将开放，敬请期待");
+                    toast.show(`「${a.label}」即将开放，敬请期待`);
                   } else if (a.id === "fav") handleBookmark();
-                  else if (a.id === "note") toast.show("「笔记」即将开放");
                   else if (a.id === "toc") setShowToc(true);
                 }}
                 style={{
@@ -581,6 +523,7 @@ export function HandbookReader({
             {volume.chapters.map((c) => {
               const active = c.id === chapterId;
               const done = isChapterComplete(c.id);
+              const bookmarked = isBookmarked(volumeId, c.id);
               return (
                 <div
                   key={c.id}
@@ -621,6 +564,42 @@ export function HandbookReader({
                     {c.title}
                   </span>
                   {done && <Check size={16} color={GOLD} strokeWidth={2.4} />}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (bookmarked) {
+                        const existing = bookmarks.find(
+                          (b) =>
+                            b.volumeId === volumeId && b.chapterId === c.id,
+                        );
+                        if (existing) removeBookmark(existing.id);
+                        toast.show("已取消收藏");
+                      } else {
+                        const ok = addBookmark({
+                          volumeId,
+                          chapterId: c.id,
+                          title: `${volume.title} · ${c.title}`,
+                        });
+                        if (ok) toast.show("已加入收藏");
+                        else toast.show("已在收藏中");
+                      }
+                    }}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: rpx(4),
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Bookmark
+                      size={18}
+                      color={bookmarked ? GOLD : sub}
+                      strokeWidth={1.5}
+                      fill={bookmarked ? GOLD : "none"}
+                    />
+                  </button>
                 </div>
               );
             })}

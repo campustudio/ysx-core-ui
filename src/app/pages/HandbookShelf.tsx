@@ -16,8 +16,12 @@ import {
   TEXT_ENGRAVED,
   TEXT_ENGRAVED_SOFT,
   ICON_ENGRAVED,
+  HANDBOOK_BG,
 } from "../config/styles";
+import { ICON_ENGRAVED as ICON_ENGRAVED_STYLE } from "../config/styles";
 import { Toast } from "../components/shared/Toast";
+import { HandbookPlaceholderCard } from "../components/shared/HandbookPlaceholderCard";
+import { VolumeBookCover } from "../components/shared/VolumeBookCover";
 import { useToast } from "../hooks/useToast";
 import {
   HandbookHeader,
@@ -66,6 +70,7 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
           size={18}
           strokeWidth={1.6}
           color={view === mode ? GOLD : "#A8A498"}
+          style={{ filter: ICON_ENGRAVED_STYLE }}
         />
       </button>
     ),
@@ -76,8 +81,8 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
     <div
       style={{
         width: "100%",
-        minHeight: "100vh",
-        background: "#F3EEE3",
+        height: "100vh",
+        background: HANDBOOK_BG,
         position: "relative",
         display: "flex",
         flexDirection: "column",
@@ -97,7 +102,7 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
           backgroundImage: `url(${bgLayer1})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
-          opacity: 0.16,
+          opacity: view === "list" ? 0.5 : 1,
           pointerEvents: "none",
         }}
       />
@@ -106,8 +111,11 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
         onBack={onBack}
         title="十卷母本书架"
         subtitle="完整体系 · 自由探索"
+        withBackground={view === "list"}
         rightContent={
-          <div style={{ display: "flex", gap: rpx(6) }}>
+          <div
+            style={{ display: "flex", gap: view === "list" ? rpx(28) : rpx(6) }}
+          >
             {ToggleBtn("shelf", LayoutGrid)}
             {ToggleBtn("list", List)}
           </div>
@@ -132,93 +140,80 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
                 onClick={() => onOpenVolume?.(vol.id)}
                 style={{
                   display: "flex",
-                  alignItems: "center",
-                  gap: rpx(28),
-                  padding: `${rpx(32)} 0`,
+                  flexDirection: "column",
+                  gap: rpx(24),
+                  padding: `${rpx(36)} 0`,
                   borderBottom: "1px solid rgba(0,0,0,0.05)",
                   cursor: "pointer",
                 }}
               >
+                {/* 第一行：封面 + 标题信息 */}
                 <div
                   style={{
-                    width: rpx(110),
-                    height: rpx(150),
-                    borderRadius: rpx(16),
-                    overflow: "hidden",
-                    position: "relative",
-                    flexShrink: 0,
-                    boxShadow: "0 6px 18px rgba(60,50,30,0.12)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: rpx(28),
                   }}
                 >
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      backgroundImage: `url(${vol.cover})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  />
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background:
-                        "linear-gradient(to bottom, rgba(31,31,31,0.05), rgba(31,31,31,0.5))",
-                    }}
-                  />
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: rpx(12),
-                      left: rpx(12),
-                      fontFamily: FONT_SERIF,
-                      fontSize: rpx(18),
-                      color: "rgba(255,255,255,0.9)",
-                    }}
-                  >
-                    第{VOLUME_CN[vol.volumeNumber - 1]}卷
-                  </span>
+                  <div style={{ width: rpx(100), flexShrink: 0 }}>
+                    <VolumeBookCover
+                      volumeNumber={vol.volumeNumber}
+                      volumeCn={VOLUME_CN[vol.volumeNumber - 1]}
+                      height={rpx(140)}
+                      compact
+                    />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h3
+                      style={{
+                        fontFamily: FONT_SERIF,
+                        fontSize: rpx(40),
+                        fontWeight: 600,
+                        color: INK,
+                        margin: 0,
+                        letterSpacing: rpx(2),
+                      }}
+                    >
+                      {vol.title}
+                    </h3>
+                    <p
+                      style={{
+                        fontSize: rpx(26),
+                        color: SUB,
+                        margin: `${rpx(10)} 0 0`,
+                      }}
+                    >
+                      {vol.subtitle}
+                    </p>
+                    <p
+                      style={{
+                        fontSize: rpx(24),
+                        color: "#8A8678",
+                        margin: `${rpx(10)} 0 0`,
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {vol.oneLine}
+                    </p>
+                  </div>
+                  <ChevronRight size={25} color="#C7C2B6" strokeWidth={1.5} />
                 </div>
-                <div style={{ flex: 1 }}>
-                  <h3
-                    style={{
-                      fontFamily: FONT_SERIF,
-                      fontSize: rpx(36),
-                      fontWeight: 600,
-                      color: INK,
-                      margin: 0,
-                      letterSpacing: rpx(2),
-                    }}
-                  >
-                    {vol.title}
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: rpx(22),
-                      color: SUB,
-                      margin: `${rpx(10)} 0 0`,
-                    }}
-                  >
-                    {vol.subtitle}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: rpx(22),
-                      color: "#8A8678",
-                      margin: `${rpx(12)} 0 0`,
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    {vol.oneLine}
-                  </p>
-                </div>
-                <ChevronRight size={20} color="#C7C2B6" strokeWidth={1.5} />
+                {/* 第二行：导言 */}
+                <p
+                  style={{
+                    fontSize: rpx(26),
+                    color: "#9A9282",
+                    margin: 0,
+                    lineHeight: 1.7,
+                  }}
+                >
+                  {vol.intro}
+                </p>
               </div>
             ))}
-            {/* 占位 */}
+            {/* 占位（列表模式保持简单样式） */}
             <div
-              onClick={() => toast.show("更多卷正在敬请期待")}
+              onClick={() => toast.show("更多内容敬请期待")}
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -241,7 +236,7 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
                 持续更新中
               </span>
               <span style={{ fontSize: rpx(18), color: "#B0AC9F" }}>
-                更多卷正在敬请期待
+                更多内容敬请期待
               </span>
             </div>
           </div>
@@ -306,50 +301,10 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
                 </p>
               </div>
             ))}
-            {/* 占位卡（与其它卡片统一为液态玻璃 + 刻进去质感） */}
-            <div
-              onClick={() => toast.show("更多卷正在敬请期待")}
-              style={{
-                ...LIQUID_GLASS,
-                minHeight: rpx(260),
-                borderRadius: rpx(24),
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: rpx(12),
-                cursor: "pointer",
-                padding: `0 ${rpx(16)}`,
-                textAlign: "center",
-              }}
-            >
-              <Plus
-                size={24}
-                strokeWidth={1.6}
-                color={GOLD}
-                style={{ filter: ICON_ENGRAVED }}
-              />
-              <span
-                style={{
-                  fontSize: rpx(22),
-                  fontFamily: FONT_SERIF,
-                  color: "#8A8170",
-                  textShadow: TEXT_ENGRAVED,
-                }}
-              >
-                持续更新中
-              </span>
-              <span
-                style={{
-                  fontSize: rpx(17),
-                  color: "#9A9282",
-                  lineHeight: 1.5,
-                  textShadow: TEXT_ENGRAVED_SOFT,
-                }}
-              >
-                更多卷正在敬请期待
-              </span>
-            </div>
+            <HandbookPlaceholderCard
+              onClick={() => toast.show("更多内容敬请期待")}
+              height={rpx(260)}
+            />
           </div>
         )}
       </div>

@@ -8,7 +8,7 @@
 
 import React from "react";
 import { ArrowLeft } from "lucide-react";
-import { FONT_SERIF, rpx } from "../../config/styles";
+import { FONT_SERIF, rpx, ICON_ENGRAVED } from "../../config/styles";
 
 /** Header 高度（含安全区），供页面占位 */
 export const HANDBOOK_HEADER_HEIGHT = `calc(env(safe-area-inset-top) + ${rpx(132)})`;
@@ -23,6 +23,8 @@ interface HandbookHeaderProps {
   rightContent?: React.ReactNode;
   /** 深色文字（深色 Hero 背景设 true） */
   light?: boolean;
+  /** 是否带吸顶背景色（用于需要滚动的页面） */
+  withBackground?: boolean;
 }
 
 /**
@@ -48,6 +50,7 @@ export function HandbookHeader({
   subtitle,
   rightContent,
   light = false,
+  withBackground = false,
 }: HandbookHeaderProps) {
   const titleColor = light ? "rgba(255,255,255,0.96)" : "#5A4B33";
   const subColor = light ? "rgba(255,255,255,0.75)" : "#9A968C";
@@ -68,24 +71,46 @@ export function HandbookHeader({
         alignItems: "center",
         justifyContent: "space-between",
         gap: rpx(16),
+        ...(withBackground
+          ? {
+              background: "rgba(243,238,227,0.85)",
+              backdropFilter: "blur(3px)",
+              WebkitBackdropFilter: "blur(3px)",
+            }
+          : {}),
       }}
     >
-      {/* 左：返回（磨砂胶囊，任意背景可见） */}
+      {/* 左：返回 */}
       <div style={{ width: rpx(64), flexShrink: 0 }}>
         {onBack && (
           <button
             onClick={onBack}
-            style={{
-              ...CHIP_STYLE,
-              width: rpx(64),
-              padding: 0,
-              cursor: "pointer",
-            }}
+            style={
+              withBackground
+                ? {
+                    width: rpx(64),
+                    height: rpx(64),
+                    padding: 0,
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }
+                : {
+                    ...CHIP_STYLE,
+                    width: rpx(64),
+                    padding: 0,
+                    cursor: "pointer",
+                  }
+            }
           >
             <ArrowLeft
-              size={20}
+              size={withBackground ? 24 : 20}
               color={HANDBOOK_HEADER_ICON}
-              strokeWidth={1.8}
+              strokeWidth={withBackground ? 2 : 1.8}
+              style={withBackground ? { filter: ICON_ENGRAVED } : undefined}
             />
           </button>
         )}
@@ -123,7 +148,7 @@ export function HandbookHeader({
         )}
       </div>
 
-      {/* 右：操作位（磨砂胶囊包裹，确保可见） */}
+      {/* 右：操作位 */}
       <div
         style={{
           minWidth: rpx(64),
@@ -133,11 +158,34 @@ export function HandbookHeader({
           alignItems: "center",
         }}
       >
-        {rightContent && (
-          <div style={{ ...CHIP_STYLE, padding: `0 ${rpx(10)}` }}>
-            {rightContent}
-          </div>
-        )}
+        {rightContent &&
+          (withBackground ? (
+            React.cloneElement(rightContent as React.ReactElement, {
+              style: {
+                ...(rightContent as React.ReactElement).props.style,
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              },
+              children: React.Children.map(
+                (rightContent as React.ReactElement).props.children,
+                (child) => {
+                  if (React.isValidElement(child)) {
+                    return React.cloneElement(child, {
+                      style: {
+                        filter: ICON_ENGRAVED,
+                      },
+                    });
+                  }
+                  return child;
+                },
+              ),
+            })
+          ) : (
+            <div style={{ ...CHIP_STYLE, padding: `0 ${rpx(10)}` }}>
+              {rightContent}
+            </div>
+          ))}
       </div>
     </div>
   );

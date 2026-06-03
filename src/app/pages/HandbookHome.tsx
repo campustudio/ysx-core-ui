@@ -6,7 +6,15 @@
  */
 
 import { useState, useCallback, useEffect } from "react";
-import { ChevronRight, Sun, Lock, Library, Book, Map } from "lucide-react";
+import {
+  ChevronRight,
+  Sun,
+  Lock,
+  Library,
+  Book,
+  Map,
+  Bookmark,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import {
   V2_VOLUMES,
@@ -21,14 +29,17 @@ import {
   TEXT_ENGRAVED,
   TEXT_ENGRAVED_SOFT,
   ICON_ENGRAVED,
+  HANDBOOK_BG,
 } from "../config/styles";
 import { BottomNavigation } from "../components/navigation/BottomNavigation";
 import { Toast } from "../components/shared/Toast";
 import { PrimaryButton } from "../components/shared/PrimaryButton";
 import { VolumeBookCover } from "../components/shared/VolumeBookCover";
+import { HandbookPlaceholderCard } from "../components/shared/HandbookPlaceholderCard";
 import { useToast } from "../hooks/useToast";
 import { useNavigation } from "../hooks/useNavigation";
 import { useReadingProgress } from "../hooks/useReadingProgress";
+import { HandbookBookmarksSheet } from "../components/shared/HandbookBookmarksSheet";
 import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
 
 const GOLD = "#B8975A";
@@ -65,7 +76,7 @@ const ENTRIES: {
     icon: Map,
     iconImg: null,
     title: "找到我的阅读入口",
-    desc: "从当下感受出发，找到适合的路径",
+    desc: "从当下感知出发，找到适合的路径",
   },
   {
     id: "daily",
@@ -86,9 +97,11 @@ export function HandbookHome({
   onNavChange,
 }: HandbookHomeProps) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showBookmarks, setShowBookmarks] = useState(false);
   const toast = useToast();
   const { isHidden } = useNavigation("handbook");
-  const { lastProgress, hasProgress } = useReadingProgress();
+  const { lastProgress, hasProgress, bookmarks, removeBookmark } =
+    useReadingProgress();
 
   // 继续阅读详情（卷名/章名/进度百分比）
   const contVolume =
@@ -160,7 +173,7 @@ export function HandbookHome({
       style={{
         width: "100%",
         minHeight: "100vh",
-        background: "#EEE7DA",
+        background: HANDBOOK_BG,
         position: "relative",
         display: "flex",
         flexDirection: "column",
@@ -195,13 +208,32 @@ export function HandbookHome({
           zIndex: 1,
         }}
       >
-        {/* 标题区（居中） */}
+        {/* 标题区（居中 + 右上角收藏入口） */}
         <div
           style={{
             padding: `calc(env(safe-area-inset-top) + ${rpx(72)}) ${rpx(48)} 0`,
             textAlign: "center",
+            position: "relative",
           }}
         >
+          {/* 右上角收藏入口 */}
+          <button
+            onClick={() => setShowBookmarks(true)}
+            style={{
+              position: "absolute",
+              right: rpx(48),
+              top: rpx(8),
+              background: "transparent",
+              border: "none",
+              cursor: "pointer",
+              padding: rpx(8),
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Bookmark size={20} color={GOLD} strokeWidth={1.5} />
+          </button>
+
           <h1
             style={{
               fontFamily: FONT_SERIF,
@@ -449,6 +481,16 @@ export function HandbookHome({
                 </p>
               </div>
             ))}
+            <HandbookPlaceholderCard
+              onClick={() => toast.show("更多内容敬请期待")}
+              width={rpx(184)}
+              height={rpx(248)}
+              fixedHeight
+              containerStyle={{
+                flexShrink: 0,
+                scrollSnapAlign: "start",
+              }}
+            />
           </div>
 
           {/* 阅读陪伴（标题+副标题，左右两卡带背景图） */}
@@ -766,6 +808,18 @@ export function HandbookHome({
         visible={toast.visible}
         duration={2500}
         onDismiss={toast.dismiss}
+      />
+      <HandbookBookmarksSheet
+        visible={showBookmarks}
+        bookmarks={bookmarks}
+        onClose={() => setShowBookmarks(false)}
+        onNavigateToChapter={(volumeId, chapterId) =>
+          onContinueReading?.(volumeId, chapterId)
+        }
+        onRemoveBookmark={(id) => {
+          removeBookmark(id);
+          toast.show("已删除收藏");
+        }}
       />
     </div>
   );

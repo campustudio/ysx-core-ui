@@ -7,9 +7,9 @@
  */
 
 import { useState, useEffect } from "react";
-import { BookOpen, Target, BookMarked, ChevronRight } from "lucide-react";
+import { BookOpen, Target, BookMarked } from "lucide-react";
 import { getRecommendation, VOLUME_CN } from "../config/handbook-v2-data";
-import { FONT_SERIF, LIQUID_GLASS, rpx } from "../config/styles";
+import { FONT_SERIF, LIQUID_GLASS, rpx, HANDBOOK_BG } from "../config/styles";
 import bgLayer2 from "@/assets/images/home/2-dingqi.webp";
 import { Toast } from "../components/shared/Toast";
 import { useToast } from "../hooks/useToast";
@@ -17,6 +17,7 @@ import {
   HandbookHeader,
   HANDBOOK_HEADER_HEIGHT,
 } from "../components/shared/HandbookHeader";
+import { PrimaryButton } from "../components/shared/PrimaryButton";
 
 const GOLD = "#B8975A";
 const INK = "#1F1F1F";
@@ -27,6 +28,7 @@ interface HandbookRecommendProps {
   onBack?: () => void;
   onStartReading?: (volumeId: string, chapterId?: string) => void;
   onOpenVolume?: (volumeId: string) => void;
+  onOpenPractice?: (volumeId: string, chapterId: string) => void;
 }
 
 export function HandbookRecommend({
@@ -34,6 +36,7 @@ export function HandbookRecommend({
   onBack,
   onStartReading,
   onOpenVolume,
+  onOpenPractice,
 }: HandbookRecommendProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const toast = useToast();
@@ -105,7 +108,17 @@ export function HandbookRecommend({
       >
         {text}
       </span>
-      <ChevronRight size={17} color="#C7B98E" strokeWidth={1.5} />
+      {onClick && (
+        <span
+          style={{
+            fontSize: rpx(20),
+            color: "#C7B98E",
+            fontFamily: FONT_SERIF,
+          }}
+        >
+          →
+        </span>
+      )}
     </div>
   );
 
@@ -114,7 +127,7 @@ export function HandbookRecommend({
       style={{
         width: "100%",
         minHeight: "100vh",
-        background: "#EEE7DA",
+        background: HANDBOOK_BG,
         position: "relative",
         display: "flex",
         flexDirection: "column",
@@ -289,7 +302,14 @@ export function HandbookRecommend({
             {/* 推荐练习（合并为一个入口） */}
             {sectionTitle(Target, "推荐练习")}
             <div style={{ margin: `0 0 ${rpx(28)} ${rpx(30)}` }}>
-              {entryRow(rec.practices.join(" · "))}
+              {entryRow(rec.practices.join(" · "), () => {
+                if (rec.coreChapters.length > 0 && onOpenPractice) {
+                  onOpenPractice(
+                    rec.coreChapters[0].volumeId,
+                    rec.coreChapters[0].chapterId,
+                  );
+                }
+              })}
             </div>
 
             {/* 延伸阅读 */}
@@ -314,42 +334,17 @@ export function HandbookRecommend({
                 margin: `${rpx(44)} 0 0`,
               }}
             >
-              <button
+              <PrimaryButton
+                title="开始阅读"
+                variant="filled"
                 onClick={() => onStartReading?.(rec.volumeId)}
-                style={{
-                  flex: 1.4,
-                  padding: `${rpx(22)} 0`,
-                  border: "none",
-                  borderRadius: rpx(40),
-                  background: "linear-gradient(135deg, #C9A961, #B8975A)",
-                  color: "#fff",
-                  fontFamily: FONT_SERIF,
-                  fontSize: rpx(28),
-                  fontWeight: 600,
-                  letterSpacing: rpx(2),
-                  boxShadow: "0 8px 22px rgba(184,151,90,0.28)",
-                  cursor: "pointer",
-                }}
-              >
-                开始阅读
-              </button>
-              <button
+                style={{ flex: 1.4 }}
+              />
+              <PrimaryButton
+                title="查看完整路径"
                 onClick={() => toast.show("『完整路径』即将开放，敬请期待")}
-                style={{
-                  flex: 1,
-                  padding: `${rpx(22)} 0`,
-                  border: "1px solid rgba(184,151,90,0.45)",
-                  borderRadius: rpx(40),
-                  background: "transparent",
-                  color: GOLD,
-                  fontFamily: FONT_SERIF,
-                  fontSize: rpx(26),
-                  letterSpacing: rpx(1),
-                  cursor: "pointer",
-                }}
-              >
-                查看完整路径
-              </button>
+                style={{ flex: 1 }}
+              />
             </div>
           </div>
         </div>
