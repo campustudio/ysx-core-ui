@@ -499,6 +499,8 @@ export default function App() {
             onFinish={(volumeId, chapterId) =>
               navigateForward({ page: "hb-practice", volumeId, chapterId })
             }
+            onGoHome={() => navigateForward({ page: "handbook-home" })}
+            onGoShelf={() => navigateForward({ page: "hb-shelf" })}
           />
         );
       case "hb-practice":

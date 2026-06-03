@@ -17,6 +17,8 @@ import {
   MessageCircle,
   X,
   Check,
+  Home,
+  Library,
 } from "lucide-react";
 import {
   getV2VolumeById,
@@ -44,6 +46,8 @@ interface HandbookReaderProps {
   onBack?: () => void;
   onSelectChapter?: (volumeId: string, chapterId: string) => void;
   onFinish?: (volumeId: string, chapterId: string) => void;
+  onGoHome?: () => void;
+  onGoShelf?: () => void;
 }
 
 export function HandbookReader({
@@ -52,6 +56,8 @@ export function HandbookReader({
   onBack,
   onSelectChapter,
   onFinish,
+  onGoHome,
+  onGoShelf,
 }: HandbookReaderProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [night, setNight] = useState(false);
@@ -520,6 +526,83 @@ export function HandbookReader({
                 <X size={20} color={sub} strokeWidth={1.6} />
               </button>
             </div>
+
+            {/* 快捷导航：返回首页 / 查看书架 */}
+            <div
+              style={{
+                display: "flex",
+                gap: rpx(12),
+                marginBottom: rpx(24),
+                paddingBottom: rpx(24),
+                borderBottom: night
+                  ? "1px solid rgba(255,255,255,0.06)"
+                  : "1px solid rgba(0,0,0,0.05)",
+              }}
+            >
+              <button
+                onClick={() => {
+                  setShowToc(false);
+                  onGoHome?.();
+                }}
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: rpx(8),
+                  padding: `${rpx(16)} 0`,
+                  background: night
+                    ? "rgba(255,255,255,0.06)"
+                    : "rgba(0,0,0,0.04)",
+                  border: "none",
+                  borderRadius: rpx(16),
+                  cursor: "pointer",
+                }}
+              >
+                <Home size={16} color={GOLD} strokeWidth={1.6} />
+                <span
+                  style={{
+                    fontSize: rpx(22),
+                    color: ink,
+                    fontFamily: FONT_SERIF,
+                  }}
+                >
+                  返回首页
+                </span>
+              </button>
+              <button
+                onClick={() => {
+                  setShowToc(false);
+                  onGoShelf?.();
+                }}
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: rpx(8),
+                  padding: `${rpx(16)} 0`,
+                  background: night
+                    ? "rgba(255,255,255,0.06)"
+                    : "rgba(0,0,0,0.04)",
+                  border: "none",
+                  borderRadius: rpx(16),
+                  cursor: "pointer",
+                }}
+              >
+                <Library size={16} color={GOLD} strokeWidth={1.6} />
+                <span
+                  style={{
+                    fontSize: rpx(22),
+                    color: ink,
+                    fontFamily: FONT_SERIF,
+                  }}
+                >
+                  查看书架
+                </span>
+              </button>
+            </div>
+
             {volume.chapters.map((c) => {
               const active = c.id === chapterId;
               const done = isChapterComplete(c.id);
