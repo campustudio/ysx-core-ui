@@ -1,8 +1,8 @@
 /**
  * HandbookReader - 正文阅读器（图5-02）
  *
- * 沉浸阅读：顶栏(章名/Aa/夜间/更多) + 导读条 + 章标题副标题 + 正文 + 进度。
- * 底部：收藏 / 笔记 / 目录 / 问答(预留，第一版置灰)。读完一节 → 读后练习。
+ * 沉浸阅读：顶栏 + 导读 + 正文；滚动时收起底栏，减少干扰。
+ * 底部：收藏 / 目录（笔记、问答置灰静默）；进度条无百分比数字。
  */
 
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -38,7 +38,10 @@ import {
 
 const GOLD = "#B8975A";
 
-const FONT_SCALES = [28, 32, 36] as const; // 正文字号(rpx) 小/中/大
+/** 正文三档字号：对齐规范 16pt 基准（rpx 32） */
+const FONT_SCALES = [28, 32, 36] as const;
+const CONTENT_MAX_WIDTH = rpx(620);
+const SCROLL_CHROME_HIDE_MS = 720;
 
 interface HandbookReaderProps {
   volumeId: string;
@@ -64,7 +67,9 @@ export function HandbookReader({
   const [fontIdx, setFontIdx] = useState(1);
   const [showToc, setShowToc] = useState(false);
   const [percent, setPercent] = useState(0);
+  const [chromeVisible, setChromeVisible] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollIdleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toast = useToast();
   const {
     saveProgress,
@@ -83,7 +88,6 @@ export function HandbookReader({
   const bookmarked = isBookmarked(volumeId, chapterId);
   const [marked, setMarked] = useState(bookmarked);
 
-  // 下一章
   const idx = volume?.chapters.findIndex((c) => c.id === chapterId) ?? -1;
   const nextChapter =
     volume && idx >= 0 && idx < volume.chapters.length - 1
@@ -93,21 +97,18 @@ export function HandbookReader({
   useEffect(() => {
     window.scrollTo(0, 0);
     setMarked(isBookmarked(volumeId, chapterId));
-    // 初始化进度显示为已保存的最大进度
     setPercent(getChapterScrollPercent(chapterId));
+    setChromeVisible(true);
     const timer = setTimeout(() => setIsLoaded(true), 60);
     return () => clearTimeout(timer);
-  }, [volumeId, chapterId, getChapterProgress]);
+  }, [volumeId, chapterId, getChapterProgress, isBookmarked]);
 
-  // 监听 bookmarks 变化，同步收藏按钮状态
   useEffect(() => {
     setMarked(isBookmarked(volumeId, chapterId));
   }, [bookmarks, volumeId, chapterId, isBookmarked]);
 
-  // 防止目录抽屉背景滚动穿透
   useBodyScrollLock(showToc);
 
-  // 保存阅读进度（继续阅读 / 读后练习 依赖）
   useEffect(() => {
     if (volume && chapter) {
       saveProgress({
@@ -120,7 +121,6 @@ export function HandbookReader({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [volumeId, chapterId]);
 
-  /** 根据滚动容器计算阅读进度；无滚动条时视为已浏览全文 (100%) */
   const syncScrollProgress = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -134,13 +134,27 @@ export function HandbookReader({
       }
       return next;
     });
+    if (max > 0 && el.scrollTop + el.clientHeight >= el.scrollHeight - 48) {
+      setChromeVisible(true);
+    }
   }, [chapterId, updateChapterScrollProgress]);
 
   const handleScroll = useCallback(() => {
+    setChromeVisible(false);
+    if (scrollIdleTimer.current) clearTimeout(scrollIdleTimer.current);
+    scrollIdleTimer.current = setTimeout(() => {
+      setChromeVisible(true);
+      scrollIdleTimer.current = null;
+    }, SCROLL_CHROME_HIDE_MS);
     syncScrollProgress();
   }, [syncScrollProgress]);
 
-  // 内容较短无滚动条时 onScroll 不会触发，需在布局完成后主动测量
+  useEffect(() => {
+    return () => {
+      if (scrollIdleTimer.current) clearTimeout(scrollIdleTimer.current);
+    };
+  }, []);
+
   useEffect(() => {
     if (!isLoaded) return;
     syncScrollProgress();
@@ -162,7 +176,6 @@ export function HandbookReader({
     };
   }, [volumeId, chapterId, isLoaded, fontIdx, syncScrollProgress]);
 
-  // 收藏：Toggle（再点取消）
   const handleBookmark = useCallback(() => {
     if (marked) {
       const existing = bookmarks.find(
@@ -213,6 +226,25 @@ export function HandbookReader({
   const barBg = night ? "rgba(22,24,28,0.96)" : "rgba(247,245,240,0.96)";
   const fontSize = FONT_SCALES[fontIdx];
 
+  const chapterLabel = (() => {
+    const chineseNumbers = [
+      "",
+      "一",
+      "二",
+      "三",
+      "四",
+      "五",
+      "六",
+      "七",
+      "八",
+      "九",
+      "十",
+    ];
+    const num = chapter.index;
+    if (num <= 10) return `第${chineseNumbers[num]}章`;
+    return `第${num}章`;
+  })();
+
   return (
     <div
       style={{
@@ -241,6 +273,7 @@ export function HandbookReader({
                 cursor: "pointer",
                 display: "flex",
               }}
+              aria-label="调整字号"
             >
               <Type size={19} color={ink} strokeWidth={1.5} />
             </button>
@@ -253,6 +286,7 @@ export function HandbookReader({
                 cursor: "pointer",
                 display: "flex",
               }}
+              aria-label={night ? "日间模式" : "夜间模式"}
             >
               {night ? (
                 <Sun size={19} color={ink} strokeWidth={1.5} />
@@ -269,6 +303,7 @@ export function HandbookReader({
                 cursor: "pointer",
                 display: "flex",
               }}
+              aria-label="更多"
             >
               <MoreHorizontal size={19} color={ink} strokeWidth={1.5} />
             </button>
@@ -276,171 +311,156 @@ export function HandbookReader({
         }
       />
 
-      {/* 正文滚动区 */}
       <div
         ref={scrollRef}
         onScroll={handleScroll}
+        onClick={() => setChromeVisible((v) => !v)}
         style={{
           flex: 1,
           overflowY: "auto",
-          padding: `calc(${HANDBOOK_HEADER_HEIGHT} + ${rpx(40)}) ${rpx(56)} ${rpx(80)}`,
+          padding: `calc(${HANDBOOK_HEADER_HEIGHT} + ${rpx(32)}) ${rpx(32)} ${rpx(48)}`,
         }}
       >
-        {/* 导读盒（带「导读」标签） */}
         <div
           style={{
-            background: night
-              ? "rgba(184,151,90,0.12)"
-              : "rgba(184,151,90,0.07)",
-            border: `1px solid ${night ? "rgba(184,151,90,0.24)" : "rgba(184,151,90,0.18)"}`,
-            borderRadius: rpx(24),
-            padding: `${rpx(28)} ${rpx(30)}`,
-            marginBottom: rpx(56),
+            maxWidth: CONTENT_MAX_WIDTH,
+            margin: "0 auto",
           }}
         >
-          <span
+          <div
             style={{
-              display: "inline-block",
-              fontFamily: FONT_SERIF,
-              fontSize: rpx(20),
-              color: GOLD,
-              letterSpacing: rpx(2),
               background: night
-                ? "rgba(184,151,90,0.16)"
-                : "rgba(184,151,90,0.12)",
-              padding: `${rpx(4)} ${rpx(16)}`,
-              borderRadius: rpx(14),
-              marginBottom: rpx(16),
+                ? "rgba(184,151,90,0.12)"
+                : "rgba(184,151,90,0.07)",
+              border: `1px solid ${night ? "rgba(184,151,90,0.24)" : "rgba(184,151,90,0.18)"}`,
+              borderRadius: rpx(24),
+              padding: `${rpx(24)} ${rpx(28)}`,
+              marginBottom: rpx(48),
             }}
           >
-            导读
-          </span>
-          <p
-            style={{
-              fontSize: rpx(22),
-              color: night ? "rgba(255,255,255,0.66)" : "#8A7B55",
-              margin: 0,
-              lineHeight: 1.8,
-            }}
-          >
-            {chapter.guide}
-          </p>
-        </div>
+            <span
+              style={{
+                display: "inline-block",
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(20),
+                color: GOLD,
+                letterSpacing: rpx(2),
+                background: night
+                  ? "rgba(184,151,90,0.16)"
+                  : "rgba(184,151,90,0.12)",
+                padding: `${rpx(4)} ${rpx(16)}`,
+                borderRadius: rpx(14),
+                marginBottom: rpx(12),
+              }}
+            >
+              导读
+            </span>
+            <p
+              style={{
+                fontSize: rpx(24),
+                color: night ? "rgba(255,255,255,0.66)" : "#8A7B55",
+                margin: 0,
+                lineHeight: 1.6,
+              }}
+            >
+              {chapter.guide}
+            </p>
+          </div>
 
-        {/* 章标题（居中） */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            textAlign: "center",
-            margin: `0 0 ${rpx(56)}`,
-          }}
-        >
-          <span
+          <div
             style={{
-              fontFamily: FONT_SERIF,
-              fontSize: rpx(24),
-              color: GOLD,
-              letterSpacing: rpx(4),
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              margin: `0 0 ${rpx(48)}`,
             }}
           >
-            {(() => {
-              const chineseNumbers = [
-                "",
-                "一",
-                "二",
-                "三",
-                "四",
-                "五",
-                "六",
-                "七",
-                "八",
-                "九",
-                "十",
-              ];
-              const num = chapter.index;
-              if (num <= 10) {
-                return `第${chineseNumbers[num]}章`;
-              }
-              return `第${num}章`;
-            })()}
-          </span>
-          <h1
-            style={{
-              fontFamily: FONT_SERIF,
-              fontSize: rpx(56),
-              fontWeight: 600,
-              color: ink,
-              margin: `${rpx(14)} 0 0`,
-              letterSpacing: rpx(4),
-              lineHeight: 1.35,
-            }}
-          >
-            {chapter.title}
-          </h1>
-          <p
-            style={{
-              fontFamily: FONT_SERIF,
-              fontSize: rpx(26),
-              color: sub,
-              margin: `${rpx(16)} 0 0`,
-              letterSpacing: rpx(2),
-            }}
-          >
-            {chapter.subtitle}
-          </p>
-        </div>
+            <span
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(24),
+                color: GOLD,
+                letterSpacing: rpx(4),
+              }}
+            >
+              {chapterLabel}
+            </span>
+            <h1
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(52),
+                fontWeight: 600,
+                color: ink,
+                margin: `${rpx(14)} 0 0`,
+                letterSpacing: rpx(4),
+                lineHeight: 1.35,
+              }}
+            >
+              {chapter.title}
+            </h1>
+            <p
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(26),
+                color: sub,
+                margin: `${rpx(16)} 0 0`,
+                letterSpacing: rpx(2),
+              }}
+            >
+              {chapter.subtitle}
+            </p>
+          </div>
 
-        {/* 正文 */}
-        {chapter.paragraphs.map((p, i) => (
-          <p
-            key={i}
-            style={{
-              fontSize: rpx(fontSize),
-              color: ink,
-              lineHeight: 1.95,
-              margin: `0 0 ${rpx(36)}`,
-              letterSpacing: rpx(0.5),
-            }}
-          >
-            {p}
-          </p>
-        ))}
+          {chapter.paragraphs.map((p, i) => (
+            <p
+              key={i}
+              style={{
+                fontSize: rpx(fontSize),
+                color: ink,
+                lineHeight: 1.6,
+                margin: `0 0 ${rpx(32)}`,
+                letterSpacing: rpx(0.5),
+              }}
+            >
+              {p}
+            </p>
+          ))}
 
-        {/* 底部按钮：下一节 + 去练习 */}
-        <div
-          style={{
-            display: "flex",
-            gap: rpx(16),
-            marginTop: rpx(40),
-          }}
-        >
-          <PrimaryButton
-            title={nextChapter ? "下一节" : "完成本卷"}
-            onClick={() => {
-              markChapterAsComplete(chapterId);
-              if (nextChapter) {
-                onSelectChapter?.(volumeId, nextChapter.id);
-              } else {
-                toast.show("本卷已读完，做得很好");
-              }
+          <div
+            style={{
+              display: "flex",
+              gap: rpx(16),
+              marginTop: rpx(48),
+              paddingBottom: rpx(24),
             }}
-            style={{ flex: 1 }}
-          />
-          <PrimaryButton
-            title="去练习"
-            variant="filled"
-            onClick={() => {
-              markChapterAsComplete(chapterId);
-              onFinish?.(volumeId, chapterId);
-            }}
-            style={{ flex: 1.2 }}
-          />
+            onClick={(e) => e.stopPropagation()}
+          >
+            <PrimaryButton
+              title={nextChapter ? "下一节" : "完成本卷"}
+              onClick={() => {
+                markChapterAsComplete(chapterId);
+                if (nextChapter) {
+                  onSelectChapter?.(volumeId, nextChapter.id);
+                } else {
+                  toast.show("本卷已读完，做得很好");
+                }
+              }}
+              style={{ flex: 1 }}
+            />
+            <PrimaryButton
+              title="去练习"
+              variant="filled"
+              onClick={() => {
+                markChapterAsComplete(chapterId);
+                onFinish?.(volumeId, chapterId);
+              }}
+              style={{ flex: 1.2 }}
+            />
+          </div>
         </div>
       </div>
 
-      {/* 进度 + 底部操作栏 */}
       <div
         style={{
           background: barBg,
@@ -449,16 +469,19 @@ export function HandbookReader({
             ? "1px solid rgba(255,255,255,0.06)"
             : "1px solid rgba(0,0,0,0.05)",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
+          transform: chromeVisible ? "translateY(0)" : "translateY(100%)",
+          opacity: chromeVisible ? 1 : 0,
+          transition: "transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease",
+          pointerEvents: chromeVisible ? "auto" : "none",
         }}
       >
-        {/* 本章阅读进度（参照设计：标签上、进度条下） */}
-        <div style={{ padding: `${rpx(12)} ${rpx(40)} 0` }}>
+        <div style={{ padding: `${rpx(10)} ${rpx(40)} 0` }}>
           <div
             style={{
               display: "flex",
               alignItems: "baseline",
               justifyContent: "space-between",
-              marginBottom: rpx(10),
+              marginBottom: rpx(8),
             }}
           >
             <span
@@ -468,16 +491,16 @@ export function HandbookReader({
                 fontFamily: FONT_SERIF,
               }}
             >
-              章节进度 {chapter.index}/{total}
+              第 {chapter.index} / {total} 章
             </span>
             <span
               style={{
                 fontSize: rpx(20),
-                color: GOLD,
+                color: sub,
                 fontFamily: FONT_SERIF,
               }}
             >
-              {percent}%
+              阅读中
             </span>
           </div>
           <div
@@ -500,13 +523,12 @@ export function HandbookReader({
           </div>
         </div>
 
-        {/* 操作栏 */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-around",
-            padding: `${rpx(16)} ${rpx(20)} ${rpx(20)}`,
+            padding: `${rpx(14)} ${rpx(20)} ${rpx(18)}`,
           }}
         >
           {[
@@ -518,8 +540,8 @@ export function HandbookReader({
             const Icon = a.icon;
             const color = a.disabled
               ? night
-                ? "rgba(255,255,255,0.25)"
-                : "#C2BEB3"
+                ? "rgba(255,255,255,0.22)"
+                : "#C8C4BA"
               : a.id === "fav" && marked
                 ? GOLD
                 : ink;
@@ -527,11 +549,11 @@ export function HandbookReader({
               <button
                 key={a.id}
                 onClick={() => {
-                  if (a.disabled) {
-                    toast.show(`「${a.label}」即将开放，敬请期待`);
-                  } else if (a.id === "fav") handleBookmark();
+                  if (a.disabled) return;
+                  if (a.id === "fav") handleBookmark();
                   else if (a.id === "toc") setShowToc(true);
                 }}
+                disabled={a.disabled}
                 style={{
                   background: "transparent",
                   border: "none",
@@ -539,8 +561,10 @@ export function HandbookReader({
                   flexDirection: "column",
                   alignItems: "center",
                   gap: rpx(6),
-                  cursor: a.disabled ? "not-allowed" : "pointer",
+                  cursor: a.disabled ? "default" : "pointer",
+                  opacity: a.disabled ? 0.55 : 1,
                 }}
+                aria-label={a.disabled ? `${a.label}（即将开放）` : a.label}
               >
                 <Icon
                   size={20}
@@ -555,7 +579,6 @@ export function HandbookReader({
         </div>
       </div>
 
-      {/* 目录弹层 */}
       {showToc && (
         <div
           onClick={() => setShowToc(false)}
@@ -610,7 +633,6 @@ export function HandbookReader({
               </button>
             </div>
 
-            {/* 快捷导航：返回首页 / 查看书架 */}
             <div
               style={{
                 display: "flex",
@@ -689,7 +711,7 @@ export function HandbookReader({
             {volume.chapters.map((c) => {
               const active = c.id === chapterId;
               const progressLabel = getChapterProgressLabel(c.id);
-              const bookmarked = isBookmarked(volumeId, c.id);
+              const chBookmarked = isBookmarked(volumeId, c.id);
               return (
                 <div
                   key={c.id}
@@ -744,7 +766,7 @@ export function HandbookReader({
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      if (bookmarked) {
+                      if (chBookmarked) {
                         const existing = bookmarks.find(
                           (b) =>
                             b.volumeId === volumeId && b.chapterId === c.id,
@@ -772,9 +794,9 @@ export function HandbookReader({
                   >
                     <Bookmark
                       size={18}
-                      color={bookmarked ? GOLD : sub}
+                      color={chBookmarked ? GOLD : sub}
                       strokeWidth={1.5}
-                      fill={bookmarked ? GOLD : "none"}
+                      fill={chBookmarked ? GOLD : "none"}
                     />
                   </button>
                 </div>

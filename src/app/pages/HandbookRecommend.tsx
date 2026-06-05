@@ -1,18 +1,22 @@
 /**
  * HandbookRecommend - 阅读建议结果（图4-02）
  *
- * 基于问卷选择生成个性化阅读路径（静态模拟推荐，后台推荐系统为后续工作）。
- * 核心卡：建议从第 N 卷开始 + 理由；为你解锁：核心章节 / 推荐练习 / 延伸阅读。
- * 按钮：开始阅读 / 查看完整路径。
+ * 路径引导（非算法推荐）：首屏仅展示建议卷 + 理由 + 开始阅读；
+ * 章节/练习/延伸路径默认折叠，可展开查看。
  */
 
 import { useState, useEffect } from "react";
-import { BookOpen, Target, BookMarked } from "lucide-react";
+import { BookOpen, Target, BookMarked, ChevronDown } from "lucide-react";
 import { getRecommendation, VOLUME_CN } from "../config/handbook-v2-data";
-import { FONT_SERIF, LIQUID_GLASS, rpx, HANDBOOK_BG } from "../config/styles";
+import {
+  FONT_SERIF,
+  LIQUID_GLASS,
+  TEXT_ENGRAVED,
+  TEXT_ENGRAVED_SOFT,
+  rpx,
+  HANDBOOK_BG,
+} from "../config/styles";
 import bgLayer2 from "@/assets/images/home/2-dingqi.webp";
-import { Toast } from "../components/shared/Toast";
-import { useToast } from "../hooks/useToast";
 import {
   HandbookHeader,
   HANDBOOK_HEADER_HEIGHT,
@@ -39,7 +43,7 @@ export function HandbookRecommend({
   onOpenPractice,
 }: HandbookRecommendProps) {
   const [isLoaded, setIsLoaded] = useState(false);
-  const toast = useToast();
+  const [pathExpanded, setPathExpanded] = useState(false);
   const rec = getRecommendation(optionId);
 
   useEffect(() => {
@@ -54,7 +58,7 @@ export function HandbookRecommend({
         <HandbookHeader
           onBack={onBack}
           title="阅读建议"
-          subtitle="为你生成的个性化路径"
+          subtitle="根据你的选择整理的路径"
         />
         暂无建议，请返回重新选择。
       </div>
@@ -144,8 +148,7 @@ export function HandbookRecommend({
           padding: `calc(${HANDBOOK_HEADER_HEIGHT} + ${rpx(8)}) ${rpx(40)} ${rpx(80)}`,
         }}
       >
-        {/* 副标题（两行居中） */}
-        <div style={{ textAlign: "center", marginBottom: rpx(32) }}>
+        <div style={{ textAlign: "center", marginBottom: rpx(28) }}>
           <p
             style={{
               fontSize: rpx(24),
@@ -154,7 +157,7 @@ export function HandbookRecommend({
               letterSpacing: rpx(2),
             }}
           >
-            基于你的选择
+            根据你的选择
           </p>
           <p
             style={{
@@ -165,11 +168,10 @@ export function HandbookRecommend({
               letterSpacing: rpx(2),
             }}
           >
-            为你生成个性化阅读路径
+            我们建议你从这一卷开始
           </p>
         </div>
 
-        {/* 液态玻璃主卡（含全部内容） */}
         <div
           style={{
             ...LIQUID_GLASS,
@@ -178,7 +180,6 @@ export function HandbookRecommend({
             position: "relative",
           }}
         >
-          {/* 顶部背景图（首页第二层） */}
           <div
             style={{
               position: "absolute",
@@ -200,7 +201,6 @@ export function HandbookRecommend({
           <div
             style={{ position: "relative", padding: `${rpx(48)} ${rpx(40)}` }}
           >
-            {/* 建议块（居中） */}
             <div style={{ textAlign: "center" }}>
               <span
                 style={{
@@ -208,6 +208,7 @@ export function HandbookRecommend({
                   fontSize: rpx(28),
                   color: SUB,
                   letterSpacing: rpx(2),
+                  textShadow: TEXT_ENGRAVED_SOFT,
                 }}
               >
                 建议从
@@ -221,6 +222,7 @@ export function HandbookRecommend({
                   margin: `${rpx(8)} 0 0`,
                   letterSpacing: rpx(4),
                   lineHeight: 1.3,
+                  textShadow: TEXT_ENGRAVED,
                 }}
               >
                 第{VOLUME_CN[rec.volumeNumber - 1]}卷开始
@@ -242,132 +244,167 @@ export function HandbookRecommend({
                   color: SUB,
                   margin: `${rpx(24)} 0 0`,
                   lineHeight: 1.8,
+                  textAlign: "left",
                 }}
               >
                 {rec.reason}
               </p>
             </div>
 
-            {/* 将为你解锁（居中分隔） */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: rpx(20),
-                margin: `${rpx(44)} 0 ${rpx(32)}`,
-              }}
-            >
-              <span
-                style={{
-                  flex: 1,
-                  height: 1,
-                  background: "rgba(184,151,90,0.25)",
-                }}
-              />
-              <span
-                style={{
-                  fontFamily: FONT_SERIF,
-                  fontSize: rpx(26),
-                  color: INK,
-                  letterSpacing: rpx(3),
-                }}
-              >
-                将为你解锁
-              </span>
-              <span
-                style={{
-                  flex: 1,
-                  height: 1,
-                  background: "rgba(184,151,90,0.25)",
-                }}
-              />
-            </div>
-
-            {/* 核心阅读章节 */}
-            {sectionTitle(BookOpen, "核心阅读章节")}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                margin: `0 0 ${rpx(28)} ${rpx(30)}`,
-              }}
-            >
-              {rec.coreChapters.map((c) =>
-                entryRow(c.label, () =>
-                  onStartReading?.(c.volumeId, c.chapterId),
-                ),
-              )}
-            </div>
-
-            {/* 推荐练习（合并为一个入口） */}
-            {sectionTitle(Target, "推荐练习")}
-            <div style={{ margin: `0 0 ${rpx(28)} ${rpx(30)}` }}>
-              {entryRow(rec.practices.join(" · "), () => {
-                if (rec.coreChapters.length > 0 && onOpenPractice) {
-                  onOpenPractice(
-                    rec.coreChapters[0].volumeId,
-                    rec.coreChapters[0].chapterId,
-                  );
-                }
-              })}
-            </div>
-
-            {/* 延伸阅读 */}
-            {sectionTitle(BookMarked, "延伸阅读")}
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                margin: `0 0 0 ${rpx(30)}`,
-              }}
-            >
-              {rec.extendedReading.map((e) =>
-                entryRow(e.label, () => onOpenVolume?.(e.volumeId)),
-              )}
-            </div>
-
-            {/* 按钮（紧凑） */}
-            <div
-              style={{
-                display: "flex",
-                gap: rpx(20),
-                margin: `${rpx(44)} 0 0`,
-              }}
-            >
+            <div style={{ margin: `${rpx(40)} 0 0` }}>
               <PrimaryButton
                 title="开始阅读"
                 variant="filled"
                 onClick={() => onStartReading?.(rec.volumeId)}
-                style={{ flex: 1.4 }}
               />
-              <PrimaryButton
-                title="查看完整路径"
-                onClick={() => toast.show("『完整路径』即将开放，敬请期待")}
-                style={{ flex: 1 }}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setPathExpanded((v) => !v)}
+              style={{
+                width: "100%",
+                marginTop: rpx(28),
+                padding: `${rpx(16)} 0`,
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: rpx(8),
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(24),
+                color: INK,
+                letterSpacing: rpx(2),
+              }}
+            >
+              {pathExpanded ? "收起阅读路径" : "展开阅读路径"}
+              <ChevronDown
+                size={18}
+                color={GOLD}
+                strokeWidth={1.8}
+                style={{
+                  transform: pathExpanded ? "rotate(180deg)" : "rotate(0)",
+                  transition: pathExpanded
+                    ? "transform 0.65s cubic-bezier(0.22, 1, 0.36, 1)"
+                    : "transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)",
+                }}
               />
+            </button>
+
+            {/* 展开/收起：展开慢于收起，避免急促感（见设计文档 §7.1） */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateRows: pathExpanded ? "1fr" : "0fr",
+                marginTop: pathExpanded ? rpx(8) : 0,
+                transition: pathExpanded
+                  ? "grid-template-rows 1.1s cubic-bezier(0.22, 1, 0.36, 1), margin-top 0.5s ease"
+                  : "grid-template-rows 0.85s cubic-bezier(0.4, 0, 0.2, 1), margin-top 0.45s ease",
+                pointerEvents: pathExpanded ? "auto" : "none",
+              }}
+            >
+              <div style={{ overflow: "hidden", minHeight: 0 }}>
+                <div
+                  style={{
+                    opacity: pathExpanded ? 1 : 0,
+                    transition: pathExpanded
+                      ? "opacity 0.8s ease 0.15s"
+                      : "opacity 0.6s ease",
+                  }}
+                >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: rpx(20),
+                    margin: `${rpx(16)} 0 ${rpx(24)}`,
+                  }}
+                >
+                  <span
+                    style={{
+                      flex: 1,
+                      height: 1,
+                      background: "rgba(184,151,90,0.25)",
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontFamily: FONT_SERIF,
+                      fontSize: rpx(24),
+                      color: INK,
+                      letterSpacing: rpx(2),
+                    }}
+                  >
+                    阅读路径
+                  </span>
+                  <span
+                    style={{
+                      flex: 1,
+                      height: 1,
+                      background: "rgba(184,151,90,0.25)",
+                    }}
+                  />
+                </div>
+
+                {sectionTitle(BookOpen, "核心阅读章节")}
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    margin: `0 0 ${rpx(28)} ${rpx(30)}`,
+                  }}
+                >
+                  {rec.coreChapters.map((c) =>
+                    entryRow(c.label, () =>
+                      onStartReading?.(c.volumeId, c.chapterId),
+                    ),
+                  )}
+                </div>
+
+                {sectionTitle(Target, "推荐练习")}
+                <div style={{ margin: `0 0 ${rpx(28)} ${rpx(30)}` }}>
+                  {entryRow(rec.practices.join(" · "), () => {
+                    if (rec.coreChapters.length > 0 && onOpenPractice) {
+                      onOpenPractice(
+                        rec.coreChapters[0].volumeId,
+                        rec.coreChapters[0].chapterId,
+                      );
+                    }
+                  })}
+                </div>
+
+                {sectionTitle(BookMarked, "延伸阅读")}
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    margin: `0 0 0 ${rpx(30)}`,
+                  }}
+                >
+                  {rec.extendedReading.map((e) =>
+                    entryRow(e.label, () => onOpenVolume?.(e.volumeId)),
+                  )}
+                </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* 底部说明（液态玻璃卡外部） */}
         <p
           style={{
             fontSize: rpx(20),
             color: "#A8A498",
             margin: `${rpx(28)} 0 0`,
             textAlign: "center",
+            lineHeight: 1.7,
           }}
         >
-          随时可在『我的路径』中调整
+          这是根据你的选择整理的路径建议，你随时可以换卷阅读
         </p>
       </div>
-
-      <Toast
-        message={toast.message}
-        visible={toast.visible}
-        duration={2500}
-        onDismiss={toast.dismiss}
-      />
     </div>
   );
 }

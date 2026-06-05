@@ -10,7 +10,6 @@ import {
   ChevronRight,
   Sun,
   Lock,
-  Library,
   Book,
   Map,
   Bookmark,
@@ -264,7 +263,7 @@ export function HandbookHome({
           </p>
         </div>
 
-        {/* 三大入口（液态玻璃·三列，参照首页第三层质感） */}
+        {/* 三大入口（液态玻璃·三列） */}
         <div
           style={{
             display: "flex",
@@ -368,7 +367,7 @@ export function HandbookHome({
           })}
         </div>
 
-        {/* 白色内容承托层 */}
+        {/* 白色内容承托层：十卷横滑 + 阅读陪伴 */}
         <div
           style={{
             marginTop: rpx(56),
@@ -381,7 +380,7 @@ export function HandbookHome({
             minHeight: rpx(800),
           }}
         >
-          {/* 十卷母本横滑（缩小卡片） */}
+          {/* 十卷母本横滑 */}
           <div
             style={{
               display: "flex",
@@ -805,14 +804,24 @@ export function HandbookHome({
           </>
         )}
 
-        {/* 进入完整书架（紧凑·图标左 + 文案右） */}
-        <PrimaryButton
-          icon={Library}
-          title="进入完整书架"
-          subtitle="浏览全部书籍与资料"
+        <button
+          type="button"
           onClick={onOpenShelf}
-          variant="filled"
-        />
+          style={{
+            width: "100%",
+            marginTop: rpx(4),
+            padding: `${rpx(12)} 0`,
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            fontSize: rpx(22),
+            color: GOLD,
+            fontFamily: FONT_SERIF,
+            letterSpacing: rpx(2),
+          }}
+        >
+          浏览完整书架 →
+        </button>
       </div>
 
       <BottomNavigation

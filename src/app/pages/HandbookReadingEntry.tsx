@@ -7,8 +7,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import {
-  Check,
-  User,
   BookOpen,
   HeartCrack,
   Layers,
@@ -31,7 +29,6 @@ import { useToast } from "../hooks/useToast";
 import {
   HandbookHeader,
   HANDBOOK_HEADER_HEIGHT,
-  HANDBOOK_HEADER_ICON,
 } from "../components/shared/HandbookHeader";
 
 const GOLD = "#B8975A";
@@ -93,22 +90,8 @@ export function HandbookReadingEntry({
 
       <HandbookHeader
         onBack={onBack}
-        title="人类手册管"
+        title="人类手册馆"
         subtitle="看见真相，回到生命本身"
-        rightContent={
-          <button
-            onClick={() => toast.show("个人中心即将开放")}
-            style={{
-              background: "transparent",
-              border: "none",
-              padding: rpx(8),
-              cursor: "pointer",
-              display: "flex",
-            }}
-          >
-            <User size={20} color={HANDBOOK_HEADER_ICON} strokeWidth={1.6} />
-          </button>
-        }
       />
 
       <div
@@ -157,7 +140,6 @@ export function HandbookReadingEntry({
                   ...LIQUID_GLASS,
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
                   gap: rpx(20),
                   width: "100%",
                   textAlign: "left",
@@ -178,56 +160,22 @@ export function HandbookReadingEntry({
                   transition: "all 0.25s ease",
                 }}
               >
+                <Icon
+                  size={22}
+                  color={GOLD}
+                  strokeWidth={1.6}
+                  style={{ flexShrink: 0, filter: ICON_ENGRAVED }}
+                />
                 <span
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: rpx(20),
-                    minWidth: 0,
+                    fontFamily: FONT_SERIF,
+                    fontSize: rpx(30),
+                    color: active ? INK : "#3A3A3A",
+                    letterSpacing: rpx(1),
+                    textShadow: TEXT_ENGRAVED,
                   }}
                 >
-                  <Icon
-                    size={22}
-                    color={GOLD}
-                    strokeWidth={1.6}
-                    style={{ flexShrink: 0, filter: ICON_ENGRAVED }}
-                  />
-                  <span
-                    style={{
-                      fontFamily: FONT_SERIF,
-                      fontSize: rpx(30),
-                      color: active ? INK : "#3A3A3A",
-                      letterSpacing: rpx(1),
-                      textShadow: TEXT_ENGRAVED,
-                    }}
-                  >
-                    {opt.label}
-                  </span>
-                </span>
-                <span
-                  style={{
-                    width: rpx(44),
-                    height: rpx(44),
-                    borderRadius: "50%",
-                    flexShrink: 0,
-                    border: active
-                      ? "none"
-                      : "1.5px solid rgba(120,110,90,0.3)",
-                    background: active ? GOLD : "transparent",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    transition: "all 0.25s ease",
-                  }}
-                >
-                  {active && (
-                    <Check
-                      size={18}
-                      color="#fff"
-                      strokeWidth={2.4}
-                      style={{ filter: ICON_ENGRAVED }}
-                    />
-                  )}
+                  {opt.label}
                 </span>
               </button>
             );

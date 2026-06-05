@@ -12,7 +12,15 @@ import {
   TODAY_PASSAGE,
   VOLUME_COVER_PLACEHOLDER,
 } from "../config/handbook-v2-data";
-import { FONT_SERIF, rpx, HANDBOOK_BG } from "../config/styles";
+import {
+  FONT_SERIF,
+  rpx,
+  HANDBOOK_BG,
+  LIQUID_GLASS,
+  TEXT_ENGRAVED,
+  TEXT_ENGRAVED_SOFT,
+  ICON_ENGRAVED,
+} from "../config/styles";
 import {
   HandbookHeader,
   HANDBOOK_HEADER_HEIGHT,
@@ -106,36 +114,45 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
           {todayLabel()}
         </p>
 
-        {/* 原文卡 */}
+        {/* 原文卡（液态玻璃 + 阴刻正文，页面视觉重心） */}
         <div
           style={{
             marginTop: rpx(24),
             borderRadius: rpx(32),
-            background: "rgba(255,255,255,0.85)",
-            border: "1px solid rgba(184,151,90,0.15)",
+            ...LIQUID_GLASS,
+            background:
+              "linear-gradient(135deg, rgba(255,255,255,0.55), rgba(233,216,166,0.12))",
             padding: `${rpx(40)} ${rpx(36)}`,
-            boxShadow: "0 4px 20px rgba(60,50,30,0.08)",
           }}
         >
-          <Quote size={24} color={GOLD} strokeWidth={1.4} />
+          <Quote
+            size={24}
+            color={GOLD}
+            strokeWidth={1.4}
+            style={{ filter: ICON_ENGRAVED }}
+          />
           <p
             style={{
               fontFamily: FONT_SERIF,
               fontSize: rpx(38),
+              fontWeight: 600,
               color: INK,
               lineHeight: 1.8,
               letterSpacing: rpx(1.5),
               margin: `${rpx(20)} 0 0`,
+              textShadow: TEXT_ENGRAVED,
             }}
           >
             {t.passage}
           </p>
           <p
             style={{
+              fontFamily: FONT_SERIF,
               fontSize: rpx(20),
               color: SUB,
               margin: `${rpx(24)} 0 0`,
               letterSpacing: rpx(1),
+              textShadow: TEXT_ENGRAVED_SOFT,
             }}
           >
             — 《{t.volumeTitle}》· {t.chapterTitle}

@@ -553,6 +553,16 @@ export const V2_VOLUMES: V2Volume[] = [
           "但每段关系都是一面镜子，照见我们自己的模式与未完成的课题。",
           "当你停止要求对方改变，开始在关系中观察自己，成长就开始了。",
           "好的关系不是没有冲突，而是两个人都愿意借关系成长。",
+          "我们常常在关系里扮演角色：懂事的人、付出的人、正确的人。角色戴久了，会忘记自己本来是谁。",
+          "面对关系，第一步不是分析对方，而是承认：此刻我在关系里感受到了什么。",
+          "愤怒、委屈、失望、渴望被看见——这些感受本身并不可耻，它们是指向内心的路标。",
+          "当你说『他应该怎样』的时候，不妨换成『我此刻需要什么』。问题会从外部拉回内在。",
+          "关系中的控制，往往源于恐惧：害怕被抛弃、害怕不被爱、害怕再次受伤。",
+          "照见恐惧，不等于纵容伤害。边界与真实可以并存：我可以爱你，也可以不牺牲自己。",
+          "试着在冲突中暂停三秒，问自己：我是在回应事实，还是在回应旧伤？",
+          "每一次愿意在关系里多看见自己一点，就少一分把幸福寄托在他人改变上的无力感。",
+          "关系最深的功课，是学会在不完美的相遇里，仍然选择真实地在场。",
+          "读到这里，可以合上眼片刻：此刻你生命中最重要的一段关系，教会了你什么？",
         ],
         practice: {
           intro: "暂停，是为了更深地前行。",
@@ -938,6 +948,37 @@ export const TODAY_PASSAGE: DailyPassage = {
   ],
 };
 
+// ─── 阅读正文补足（交互演示期，PDF 灌库后可移除） ─────
+
+const READING_BODY_MIN_PARAGRAPHS = 10;
+
+const READING_BODY_BRIDGES = [
+  "不必急着读完。让上一句在心里多停留几秒，再往下读。",
+  "阅读时，可以留意呼吸是否变浅——那是身体在告诉你：有些感受被触动了。",
+  "若某句话让你停顿，那往往正是这一节要带给你的地方。",
+  "把速度放慢，文字才会从头脑走进身体。",
+];
+
+/** 章节正文偏短时补足可读长度，便于测试阅读器滚动与沉浸交互 */
+function enrichChapterForReading(chapter: V2Chapter): V2Chapter {
+  if (chapter.paragraphs.length >= READING_BODY_MIN_PARAGRAPHS) {
+    return chapter;
+  }
+  const out = [...chapter.paragraphs];
+  let bridge = 0;
+  let src = 0;
+  while (out.length < READING_BODY_MIN_PARAGRAPHS) {
+    if (out.length % 2 === 1) {
+      out.push(READING_BODY_BRIDGES[bridge % READING_BODY_BRIDGES.length]);
+      bridge += 1;
+    } else {
+      out.push(chapter.paragraphs[src % chapter.paragraphs.length]);
+      src += 1;
+    }
+  }
+  return { ...chapter, paragraphs: out };
+}
+
 // ─── 查找工具 ──────────────────────────────────────────
 
 /** 根据 id 获取卷 */
@@ -950,7 +991,8 @@ export function getV2Chapter(
   volumeId: string,
   chapterId: string,
 ): V2Chapter | undefined {
-  return getV2VolumeById(volumeId)?.chapters.find((c) => c.id === chapterId);
+  const ch = getV2VolumeById(volumeId)?.chapters.find((c) => c.id === chapterId);
+  return ch ? enrichChapterForReading(ch) : undefined;
 }
 
 /** 卷序号中文 */
