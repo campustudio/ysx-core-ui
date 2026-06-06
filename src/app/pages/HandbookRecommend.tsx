@@ -42,14 +42,11 @@ export function HandbookRecommend({
   onOpenVolume,
   onOpenPractice,
 }: HandbookRecommendProps) {
-  const [isLoaded, setIsLoaded] = useState(false);
   const [pathExpanded, setPathExpanded] = useState(false);
   const rec = getRecommendation(optionId);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const timer = setTimeout(() => setIsLoaded(true), 60);
-    return () => clearTimeout(timer);
   }, []);
 
   if (!rec) {
@@ -135,8 +132,6 @@ export function HandbookRecommend({
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        opacity: isLoaded ? 1 : 0,
-        transition: "opacity 0.5s ease",
       }}
     >
       <HandbookHeader onBack={onBack} title="阅读建议" />
@@ -145,7 +140,7 @@ export function HandbookRecommend({
         style={{
           flex: 1,
           overflowY: "auto",
-          padding: `calc(${HANDBOOK_HEADER_HEIGHT} + ${rpx(8)}) ${rpx(40)} ${rpx(80)}`,
+          padding: `calc(${HANDBOOK_HEADER_HEIGHT} + ${rpx(8)}) ${rpx(40)} calc(env(safe-area-inset-bottom) + ${rpx(56)})`,
         }}
       >
         <div style={{ textAlign: "center", marginBottom: rpx(28) }}>

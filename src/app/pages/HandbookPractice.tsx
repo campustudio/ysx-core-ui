@@ -1,25 +1,37 @@
 /**
- * HandbookPractice - 读后练习（图5-03）
+ * HandbookPractice - 读后练习 / 推荐练习（图5-03）
  *
- * 阅读走向践行。引导句 + 思考一问 + 1分钟自照练习（按当前章节内容针对性设计）。
- * 进入即标记本节完成；按钮：写下自照 / 继续下一节。
+ * 践行页：光感引导 + 思考一问 + 逐步练习 + 写下自照（本地）+ 底部操作坞。
  */
 
-import { useState, useEffect, useCallback } from "react";
-import { Sparkles } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { Sparkles, BookOpen } from "lucide-react";
 import {
   getV2VolumeById,
   getV2Chapter,
   markChapterComplete,
 } from "../config/handbook-v2-data";
-import { FONT_SERIF, rpx, HANDBOOK_BG } from "../config/styles";
+import {
+  FONT_SERIF,
+  rpx,
+  HANDBOOK_BG,
+  TEXT_ENGRAVED,
+  GENTLE_EASE_OUT,
+  GENTLE_EASE_IN,
+} from "../config/styles";
 import { Toast } from "../components/shared/Toast";
 import { useToast } from "../hooks/useToast";
+import { usePracticeJournal } from "../hooks/usePracticeJournal";
 import {
   HandbookHeader,
   HANDBOOK_HEADER_HEIGHT,
 } from "../components/shared/HandbookHeader";
 import { PrimaryButton } from "../components/shared/PrimaryButton";
+import { PracticeContentBox } from "../components/shared/handbook/PracticeContentBox";
+import { StepList } from "../components/shared/handbook/StepList";
+import { PracticeSectionTitle } from "../components/shared/handbook/PracticeSectionTitle";
+import { StaggerReveal } from "../components/shared/handbook/StaggerReveal";
+import { HandbookBottomDock } from "../components/shared/handbook/HandbookBottomDock";
 
 const GOLD = "#B8975A";
 const INK = "#1F1F1F";
@@ -31,7 +43,6 @@ interface HandbookPracticeProps {
   onBack?: () => void;
   onNextChapter?: (volumeId: string, chapterId: string) => void;
   onFinishVolume?: (volumeId: string) => void;
-  /** 模式：'reading' 读后练习（默认） | 'recommend' 推荐练习 */
   mode?: "reading" | "recommend";
 }
 
@@ -43,14 +54,19 @@ export function HandbookPractice({
   onFinishVolume,
   mode = "reading",
 }: HandbookPracticeProps) {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [reveal, setReveal] = useState(false);
+  const [journalOpen, setJournalOpen] = useState(false);
+  const [exiting, setExiting] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const followRafRef = useRef<number | null>(null);
   const toast = useToast();
   const volume = getV2VolumeById(volumeId);
   const chapter = getV2Chapter(volumeId, chapterId);
+  const { text: journalText, setText: setJournalText, hydrated } =
+    usePracticeJournal(volumeId, chapterId);
 
   const isRecommendMode = mode === "recommend";
 
-  // 下一章
   const idx = volume?.chapters.findIndex((c) => c.id === chapterId) ?? -1;
   const nextChapter =
     volume && idx >= 0 && idx < volume.chapters.length - 1
@@ -59,13 +75,55 @@ export function HandbookPractice({
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // 读后练习模式：进入即视为读完本节；推荐练习模式不标记
     if (!isRecommendMode) {
       markChapterComplete(chapterId);
     }
-    const timer = setTimeout(() => setIsLoaded(true), 60);
-    return () => clearTimeout(timer);
+    const id = requestAnimationFrame(() => setReveal(true));
+    return () => cancelAnimationFrame(id);
   }, [chapterId, isRecommendMode]);
+
+  useEffect(() => {
+    if (hydrated && journalText.trim()) {
+      setJournalOpen(true);
+    }
+  }, [hydrated, journalText]);
+
+  // 跟随「写下自照」展开动画，柔和地把滚动容器带到底部，
+  // 让输入框完整露出（不被底部两枚按钮遮挡），无需用户手动上滑。
+  const followToBottom = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (followRafRef.current) cancelAnimationFrame(followRafRef.current);
+    const start = performance.now();
+    const DURATION = 1200; // 略长于展开动画，持续跟随到位
+    const step = (now: number) => {
+      const target = el.scrollHeight - el.clientHeight;
+      el.scrollTop += (target - el.scrollTop) * 0.16; // 缓动跟随，避免突兀
+      if (now - start < DURATION) {
+        followRafRef.current = requestAnimationFrame(step);
+      } else {
+        el.scrollTop = el.scrollHeight - el.clientHeight;
+        followRafRef.current = null;
+      }
+    };
+    followRafRef.current = requestAnimationFrame(step);
+  }, []);
+
+  const handleToggleJournal = useCallback(() => {
+    setJournalOpen((open) => {
+      const next = !open;
+      // 仅在「展开」时跟随滚动；收起不滚动
+      if (next) requestAnimationFrame(() => followToBottom());
+      return next;
+    });
+  }, [followToBottom]);
+
+  useEffect(
+    () => () => {
+      if (followRafRef.current) cancelAnimationFrame(followRafRef.current);
+    },
+    []
+  );
 
   const handleNext = useCallback(() => {
     if (nextChapter) {
@@ -75,6 +133,11 @@ export function HandbookPractice({
       onFinishVolume?.(volumeId);
     }
   }, [nextChapter, volumeId, onNextChapter, onFinishVolume, toast]);
+
+  const handleRecommendComplete = useCallback(() => {
+    setExiting(true);
+    window.setTimeout(() => onBack?.(), 480);
+  }, [onBack]);
 
   if (!volume || !chapter) {
     return (
@@ -89,6 +152,9 @@ export function HandbookPractice({
   }
 
   const { practice } = chapter;
+  const contextLine = isRecommendMode
+    ? `《${volume.title}》· 路径推荐练习`
+    : `${volume.title} · ${chapter.subtitle}`;
 
   return (
     <div
@@ -99,193 +165,175 @@ export function HandbookPractice({
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        opacity: isLoaded ? 1 : 0,
-        transition: "opacity 0.5s ease",
+        opacity: exiting ? 0 : 1,
+        transform: exiting ? "translateY(8px)" : "translateY(0)",
+        transition: exiting
+          ? `opacity 0.48s ${GENTLE_EASE_IN}, transform 0.48s ${GENTLE_EASE_IN}`
+          : undefined,
       }}
     >
       <HandbookHeader
         onBack={onBack}
         title={isRecommendMode ? "推荐练习" : "读后练习"}
+        subtitle={
+          isRecommendMode
+            ? "来自你的阅读路径"
+            : `第${chapter.index}章 · ${chapter.title}`
+        }
       />
 
       <div
+        ref={scrollRef}
         style={{
           flex: 1,
           overflowY: "auto",
-          padding: `0 ${rpx(48)} ${rpx(220)}`,
+          padding: `calc(${HANDBOOK_HEADER_HEIGHT} + ${rpx(8)}) ${rpx(48)} ${rpx(280)}`,
         }}
       >
-        {/* 顶部光感图（代码绘制）+ 引导句 */}
-        <div
-          style={{
-            position: "relative",
-            margin: `0 ${rpx(-48)}`,
-            height: rpx(560),
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "flex-end",
-            paddingBottom: rpx(48),
-          }}
-        >
-          <PracticeGlow />
-          <h1
-            style={{
-              position: "relative",
-              fontFamily: FONT_SERIF,
-              fontSize: rpx(42),
-              fontWeight: 600,
-              color: INK,
-              letterSpacing: rpx(2),
-              lineHeight: 1.5,
-              margin: 0,
-              textAlign: "center",
-              textShadow: "0 1px 2px rgba(255,255,255,0.8)",
-            }}
-          >
-            {practice.intro}
-          </h1>
-        </div>
-
-        {/* 思考一问 */}
-        <div
-          style={{
-            marginTop: rpx(8),
-            background:
-              "linear-gradient(135deg, rgba(184,151,90,0.1), rgba(233,216,166,0.05))",
-            border: "1px solid rgba(184,151,90,0.2)",
-            borderRadius: rpx(36),
-            padding: `${rpx(40)} ${rpx(40)}`,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: rpx(10) }}>
-            <Sparkles size={16} color={GOLD} strokeWidth={1.8} />
-            <span
-              style={{
-                fontSize: rpx(24),
-                color: GOLD,
-                letterSpacing: rpx(2),
-                fontFamily: FONT_SERIF,
-              }}
-            >
-              思考一问
-            </span>
-          </div>
+        <StaggerReveal index={0} isVisible={reveal}>
           <p
             style={{
+              fontSize: rpx(22),
+              color: SUB,
+              margin: `0 0 ${rpx(12)}`,
+              letterSpacing: rpx(1),
               fontFamily: FONT_SERIF,
-              fontSize: rpx(30),
-              color: INK,
-              lineHeight: 1.8,
-              margin: `${rpx(20)} 0 0`,
+              textAlign: "center",
+              lineHeight: 1.6,
             }}
           >
-            {practice.question}
+            {contextLine}
           </p>
-        </div>
 
-        {/* 1分钟自照练习 */}
-        <h2
-          style={{
-            fontFamily: FONT_SERIF,
-            fontSize: rpx(28),
-            fontWeight: 600,
-            color: INK,
-            margin: `${rpx(52)} 0 ${rpx(24)}`,
-            letterSpacing: rpx(2),
-          }}
-        >
-          1 分钟自照练习
-        </h2>
-        <div
-          style={{
-            background: "rgba(255,255,255,0.85)",
-            border: "1px solid rgba(0,0,0,0.06)",
-            borderRadius: rpx(28),
-            padding: `${rpx(32)} ${rpx(36)}`,
-          }}
-        >
-          {practice.steps.map((step, i) => (
-            <div
-              key={i}
+          <div
+            style={{
+              position: "relative",
+              height: rpx(440),
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              paddingBottom: rpx(36),
+              background:
+                "radial-gradient(58% 50% at 50% 40%, rgba(255,236,184,0.5) 0%, rgba(233,216,166,0.15) 40%, rgba(247,245,241,0) 72%)",
+            }}
+          >
+            <PracticeGlow />
+            <h1
               style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: rpx(16),
-                marginBottom: i < practice.steps.length - 1 ? rpx(20) : 0,
+                position: "relative",
+                fontFamily: FONT_SERIF,
+                fontSize: rpx(38),
+                fontWeight: 600,
+                color: INK,
+                letterSpacing: rpx(2),
+                lineHeight: 1.55,
+                margin: 0,
+                textAlign: "center",
+                padding: `0 ${rpx(16)}`,
+                textShadow: TEXT_ENGRAVED,
               }}
             >
-              <span
-                style={{
-                  width: rpx(36),
-                  height: rpx(36),
-                  borderRadius: "50%",
-                  background: "rgba(184,151,90,0.14)",
-                  color: GOLD,
-                  fontFamily: FONT_SERIF,
-                  fontSize: rpx(20),
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                  marginTop: rpx(2),
-                }}
-              >
-                {i + 1}
-              </span>
-              <p
-                style={{
-                  flex: 1,
-                  fontSize: rpx(22),
-                  color: "#3A3A3A",
-                  lineHeight: 1.7,
-                  margin: 0,
-                }}
-              >
-                {step}
-              </p>
+              {practice.intro}
+            </h1>
+          </div>
+        </StaggerReveal>
+
+        <StaggerReveal index={1} isVisible={reveal}>
+          <div style={{ marginTop: rpx(36) }}>
+            <PracticeSectionTitle icon={Sparkles} label="思考一问" />
+            <PracticeContentBox>{practice.question}</PracticeContentBox>
+          </div>
+        </StaggerReveal>
+
+        <StaggerReveal index={2} isVisible={reveal}>
+          <div style={{ marginTop: rpx(44) }}>
+            <PracticeSectionTitle icon={BookOpen} label="1 分钟自照练习" />
+            <StepList steps={practice.steps} stepByStep />
+          </div>
+        </StaggerReveal>
+
+        {!isRecommendMode && (
+          <StaggerReveal index={3} isVisible={reveal}>
+            <div
+              style={{
+                marginTop: rpx(40),
+                display: "grid",
+                gridTemplateRows: journalOpen ? "1fr" : "0fr",
+                transition: journalOpen
+                  ? `grid-template-rows 1.1s ${GENTLE_EASE_OUT}, margin-top 0.5s ease`
+                  : `grid-template-rows 0.85s ${GENTLE_EASE_IN}`,
+              }}
+            >
+              <div style={{ overflow: "hidden", minHeight: 0 }}>
+                <div
+                  style={{
+                    paddingTop: rpx(8),
+                    opacity: journalOpen ? 1 : 0,
+                    transition: journalOpen
+                      ? "opacity 0.75s ease 0.1s"
+                      : "opacity 0.5s ease",
+                  }}
+                >
+                  <PracticeSectionTitle icon={Sparkles} label="写下自照" />
+                  <style>{`
+                    .hb-practice-journal::placeholder {
+                      color: rgba(96, 98, 102, 0.55);
+                      opacity: 1;
+                    }
+                  `}</style>
+                  <textarea
+                    className="hb-practice-journal"
+                    value={journalText}
+                    onChange={(e) => setJournalText(e.target.value)}
+                    placeholder="此刻，你想留下一句什么？"
+                    style={{
+                      width: "100%",
+                      minHeight: rpx(160),
+                      padding: rpx(24),
+                      borderRadius: rpx(24),
+                      border: "none",
+                      background: "rgba(255,255,255,0.7)",
+                      boxShadow: "0 2px 14px rgba(80,66,38,0.05)",
+                      fontFamily: FONT_SERIF,
+                      fontSize: rpx(26),
+                      lineHeight: 1.65,
+                      color: INK,
+                      resize: "vertical",
+                      outline: "none",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
+          </StaggerReveal>
+        )}
       </div>
 
-      {/* 底部按钮 */}
-      <div
-        style={{
-          position: "fixed",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          padding: `${rpx(28)} ${rpx(48)} calc(env(safe-area-inset-bottom) + ${rpx(40)})`,
-          display: "flex",
-          gap: rpx(20),
-        }}
-      >
+      <HandbookBottomDock>
         {isRecommendMode ? (
-          // 推荐练习模式：只显示完成按钮
           <PrimaryButton
-            title="完成练习"
+            title="回到阅读建议"
             variant="filled"
-            onClick={onBack}
-            style={{ flex: 1 }}
+            onClick={handleRecommendComplete}
           />
         ) : (
-          // 读后练习模式：写下自照 + 继续下一节
-          <>
+          <div style={{ display: "flex", gap: rpx(16) }}>
             <PrimaryButton
-              title="写下自照"
-              onClick={() => toast.show("「写下自照」即将开放")}
+              title={journalOpen ? "收起自照" : "写下自照"}
+              onClick={handleToggleJournal}
               style={{ flex: 1 }}
             />
             <PrimaryButton
               title={nextChapter ? "继续下一节" : "完成本卷"}
               variant="filled"
               onClick={handleNext}
-              style={{ flex: 1.4 }}
+              style={{ flex: 1.35 }}
             />
-          </>
+          </div>
         )}
-      </div>
+      </HandbookBottomDock>
 
       <Toast
         message={toast.message}
@@ -297,15 +345,11 @@ export function HandbookPractice({
   );
 }
 
-/**
- * PracticeGlow - 读后练习顶部光感图（纯代码绘制，替代背景图片）
- * 暖金光晕 + 同心涟漪 + 中心一株新芽，呼应「暂停、沉淀、向上生长」。
- */
 function PracticeGlow() {
   return (
     <svg
       viewBox="0 0 375 360"
-      preserveAspectRatio="xMidYMid slice"
+      preserveAspectRatio="xMidYMid meet"
       style={{
         position: "absolute",
         inset: 0,
@@ -315,14 +359,8 @@ function PracticeGlow() {
       }}
     >
       <defs>
-        <radialGradient id="pgGlow" cx="50%" cy="42%" r="55%">
-          <stop offset="0%" stopColor="rgba(255,236,184,0.95)" />
-          <stop offset="35%" stopColor="rgba(233,216,166,0.45)" />
-          <stop offset="70%" stopColor="rgba(245,244,241,0.05)" />
-          <stop offset="100%" stopColor="rgba(245,244,241,0)" />
-        </radialGradient>
         <radialGradient id="pgCore" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(255,248,222,1)" />
+          <stop offset="0%" stopColor="rgba(255,248,222,0.9)" />
           <stop offset="100%" stopColor="rgba(255,232,170,0)" />
         </radialGradient>
         <linearGradient id="pgGold" x1="0" y1="0" x2="0" y2="1">
@@ -330,11 +368,6 @@ function PracticeGlow() {
           <stop offset="1" stopColor="#B8975A" />
         </linearGradient>
       </defs>
-
-      {/* 整体光晕 */}
-      <rect x="0" y="0" width="375" height="360" fill="url(#pgGlow)" />
-
-      {/* 同心涟漪（椭圆，营造水面光波） */}
       {[
         { ry: 26, rx: 150, o: 0.1 },
         { ry: 18, rx: 110, o: 0.16 },
@@ -352,11 +385,7 @@ function PracticeGlow() {
           strokeWidth="1.2"
         />
       ))}
-
-      {/* 中心光点 */}
       <circle cx="187.5" cy="150" r="70" fill="url(#pgCore)" />
-
-      {/* 新芽（茎 + 双叶） */}
       <path
         d="M187.5 196 L187.5 150"
         stroke="url(#pgGold)"

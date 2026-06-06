@@ -41,14 +41,11 @@ export function HandbookVolume({
   onBack,
   onSelectChapter,
 }: HandbookVolumeProps) {
-  const [isLoaded, setIsLoaded] = useState(false);
   const toast = useToast();
   const volume = getV2VolumeById(volumeId);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const timer = setTimeout(() => setIsLoaded(true), 60);
-    return () => clearTimeout(timer);
   }, [volumeId]);
 
   if (!volume) {
@@ -69,8 +66,6 @@ export function HandbookVolume({
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        opacity: isLoaded ? 1 : 0,
-        transition: "opacity 0.5s ease",
       }}
     >
       {/* 卷封背景图（明亮·全宽·延伸至屏幕顶部） */}
@@ -116,7 +111,7 @@ export function HandbookVolume({
           overflowY: "auto",
           position: "relative",
           zIndex: 1,
-          padding: `0 ${rpx(48)} ${rpx(80)}`,
+          padding: `0 ${rpx(48)} calc(env(safe-area-inset-bottom) + ${rpx(56)})`,
         }}
       >
         {/* 卷封标题（叠在背景图上，深色阴刻文字） */}

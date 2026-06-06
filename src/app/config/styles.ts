@@ -129,3 +129,21 @@ export const TEXT_ENGRAVED_SOFT =
   "0px 1.5px 1.5px rgba(255,255,255,0.9), 0px -1px 1.5px rgba(0,0,0,0.12)";
 export const ICON_ENGRAVED =
   "drop-shadow(0px 1.5px 1.5px rgba(255,255,255,1)) drop-shadow(0px -1.5px 1.5px rgba(0,0,0,0.15))";
+
+// ─── 人类手册馆 · 统一边框与柔和动效 ─────────────────
+export const HANDBOOK_CARD_BORDER = "1.5px solid rgba(233,216,166,0.6)";
+
+export const GENTLE_EASE_OUT = "cubic-bezier(0.22, 1, 0.36, 1)";
+export const GENTLE_EASE_IN = "cubic-bezier(0.4, 0, 0.2, 1)";
+
+/**
+ * 柔和交叉淡化时长（ms）—— 统一供 `CrossFade` / `PageTransition` 使用。
+ * 任何「切换」（页面路由、页内视图切换等）都应走这套时长，保持气质一致。
+ */
+export const GENTLE_FADE_IN_MS = 620;
+export const GENTLE_FADE_OUT_MS = 540;
+
+/** 展开（宜慢于收起） */
+export const TRANSITION_EXPAND = `grid-template-rows 1.1s ${GENTLE_EASE_OUT}, opacity 0.8s ease 0.12s`;
+/** 收起 */
+export const TRANSITION_COLLAPSE = `grid-template-rows 0.85s ${GENTLE_EASE_IN}, opacity 0.6s ease`;

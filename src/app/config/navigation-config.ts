@@ -40,6 +40,46 @@ export const PAGE_NAV_CONFIG: Record<string, NavConfig> = {
     activeIndex: 2,
   },
 
+  // === 人类手册馆（v2）===
+  // 原则：能不加底部导航的页面就不加（占视线/占空间）。
+  // 仅在「模块落地页」保留导航（作为 Tab 落点，便于切换大模块，类比支付宝首页）；
+  // 进入子页后不再携带全局导航，返回用顶部返回键逐级后退。
+  // 子页若有固定底部按钮，会通过 BottomNavContext 自动落到视口底部（无导航占位）。
+  "handbook-home": {
+    showNav: true, // 模块落地页：保留导航（Tab 落点）
+    scrollHide: true,
+    activeIndex: 1,
+  },
+  "hb-shelf": {
+    showNav: false, // 书架子页
+    scrollHide: false,
+  },
+  "hb-volume": {
+    showNav: false, // 卷详情子页
+    scrollHide: false,
+  },
+  "hb-recommend": {
+    showNav: false, // 阅读建议子页
+    scrollHide: false,
+  },
+  "hb-entry": {
+    showNav: false, // 阅读入口子页（自带「生成阅读建议」按钮）
+    scrollHide: false,
+  },
+  "hb-daily": {
+    showNav: false, // 今日一段子页（自带「阅读原文」坞）
+    scrollHide: false,
+  },
+  // 沉浸/专注流程页：不显示全局导航（各自有底部工具栏/操作）
+  "hb-reader": {
+    showNav: false, // 长文阅读，自带底部工具栏，避免双层底部冲突
+    scrollHide: false,
+  },
+  "hb-practice": {
+    showNav: false, // 读后练习专注页，自带两枚底部按钮
+    scrollHide: false,
+  },
+
   // === 二级详情页 ===
   "volume-detail": {
     showNav: false, // 卷详情页专注阅读，不显示导航

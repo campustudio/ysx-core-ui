@@ -9,7 +9,7 @@ import { Bookmark, X, Trash2 } from "lucide-react";
 import { rpx, FONT_SERIF } from "../../config/styles";
 import type { Bookmark as BookmarkType } from "../../hooks/useReadingProgress";
 import { formatLastReadTime } from "../../hooks/useReadingProgress";
-import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
+import { BottomSheet } from "./BottomSheet";
 
 const GOLD = "#B8975A";
 const INK = "#1F1F1F";
@@ -30,35 +30,10 @@ export function HandbookBookmarksSheet({
   onNavigateToChapter,
   onRemoveBookmark,
 }: HandbookBookmarksSheetProps) {
-  useBodyScrollLock(visible);
-
-  if (!visible) return null;
-
   return (
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(0,0,0,0.4)",
-        zIndex: 50,
-        display: "flex",
-        alignItems: "flex-end",
-      }}
-    >
+    <BottomSheet visible={visible} onClose={onClose}>
+      {/* 标题栏 */}
       <div
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          width: "100%",
-          maxHeight: "70vh",
-          background: "#fff",
-          borderRadius: `${rpx(32)} ${rpx(32)} 0 0`,
-          padding: `${rpx(32)} ${rpx(40)} calc(env(safe-area-inset-bottom) + ${rpx(40)})`,
-          overflowY: "auto",
-        }}
-      >
-        {/* 标题栏 */}
-        <div
           style={{
             display: "flex",
             alignItems: "center",
@@ -172,7 +147,6 @@ export function HandbookBookmarksSheet({
             </div>
           ))
         )}
-      </div>
-    </div>
+    </BottomSheet>
   );
 }

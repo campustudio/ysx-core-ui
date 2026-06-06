@@ -71,7 +71,8 @@ export function BottomNavigation({
       style={{
         zIndex: "var(--z-navigation)",
         transform: hidden ? "translateY(100%)" : "translateY(0)",
-        transition: "transform 0.3s ease-out",
+        transition: "transform 0.34s cubic-bezier(0.22, 1, 0.36, 1)",
+        pointerEvents: hidden ? "none" : "auto",
       }}
     >
       <div

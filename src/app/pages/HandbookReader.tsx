@@ -27,9 +27,9 @@ import {
 } from "../config/handbook-v2-data";
 import { FONT_SERIF, rpx } from "../config/styles";
 import { Toast } from "../components/shared/Toast";
+import { BottomSheet } from "../components/shared/BottomSheet";
 import { useToast } from "../hooks/useToast";
 import { useReadingProgress } from "../hooks/useReadingProgress";
-import { useBodyScrollLock } from "../hooks/useBodyScrollLock";
 import { PrimaryButton } from "../components/shared/PrimaryButton";
 import {
   HandbookHeader,
@@ -99,15 +99,12 @@ export function HandbookReader({
     setMarked(isBookmarked(volumeId, chapterId));
     setPercent(getChapterScrollPercent(chapterId));
     setChromeVisible(true);
-    const timer = setTimeout(() => setIsLoaded(true), 60);
-    return () => clearTimeout(timer);
+    setIsLoaded(true);
   }, [volumeId, chapterId, getChapterProgress, isBookmarked]);
 
   useEffect(() => {
     setMarked(isBookmarked(volumeId, chapterId));
   }, [bookmarks, volumeId, chapterId, isBookmarked]);
-
-  useBodyScrollLock(showToc);
 
   useEffect(() => {
     if (volume && chapter) {
@@ -254,8 +251,7 @@ export function HandbookReader({
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        opacity: isLoaded ? 1 : 0,
-        transition: "opacity 0.4s ease, background 0.25s ease",
+        transition: "background 0.25s ease",
       }}
     >
       <HandbookHeader
@@ -579,29 +575,11 @@ export function HandbookReader({
         </div>
       </div>
 
-      {showToc && (
-        <div
-          onClick={() => setShowToc(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.4)",
-            zIndex: 50,
-            display: "flex",
-            alignItems: "flex-end",
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              width: "100%",
-              maxHeight: "70vh",
-              background: night ? "#1C1E22" : "#fff",
-              borderRadius: `${rpx(32)} ${rpx(32)} 0 0`,
-              padding: `${rpx(32)} ${rpx(40)} calc(env(safe-area-inset-bottom) + ${rpx(40)})`,
-              overflowY: "auto",
-            }}
-          >
+      <BottomSheet
+        visible={showToc}
+        onClose={() => setShowToc(false)}
+        background={night ? "#1C1E22" : "#fff"}
+      >
             <div
               style={{
                 display: "flex",
@@ -802,9 +780,7 @@ export function HandbookReader({
                 </div>
               );
             })}
-          </div>
-        </div>
-      )}
+      </BottomSheet>
 
       <Toast
         message={toast.message}

@@ -30,6 +30,7 @@ import {
   HandbookHeader,
   HANDBOOK_HEADER_HEIGHT,
 } from "../components/shared/HandbookHeader";
+import { useBottomNav } from "../components/navigation/BottomNavContext";
 
 const GOLD = "#B8975A";
 const INK = "#1F1F1F";
@@ -46,14 +47,12 @@ export function HandbookReadingEntry({
   onBack,
   onGenerate,
 }: HandbookReadingEntryProps) {
-  const [isLoaded, setIsLoaded] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const toast = useToast();
+  const navDock = useBottomNav();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const timer = setTimeout(() => setIsLoaded(true), 60);
-    return () => clearTimeout(timer);
   }, []);
 
   const handleGenerate = useCallback(() => {
@@ -69,8 +68,6 @@ export function HandbookReadingEntry({
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        opacity: isLoaded ? 1 : 0,
-        transition: "opacity 0.5s ease",
       }}
     >
       {/* 顶部背景图（占满屏幕） */}
@@ -183,19 +180,24 @@ export function HandbookReadingEntry({
         </div>
       </div>
 
-      {/* 底部主按钮 */}
+      {/* 底部主按钮（跟随全局底部导航升降） */}
       <div
         style={{
           position: "fixed",
           left: 0,
           right: 0,
-          bottom: 0,
+          bottom: navDock.present && !navDock.hidden ? navDock.height : "0px",
           zIndex: 5,
-          padding: `${rpx(24)} ${rpx(48)} calc(env(safe-area-inset-bottom) + ${rpx(32)})`,
+          padding: `${rpx(24)} ${rpx(48)} ${
+            navDock.present && !navDock.hidden
+              ? rpx(20)
+              : `calc(env(safe-area-inset-bottom) + ${rpx(20)})`
+          }`,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           gap: rpx(14),
+          transition: "bottom 0.34s cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         <PrimaryButton

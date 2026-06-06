@@ -22,6 +22,7 @@ import {
   HandbookHeader,
   HANDBOOK_HEADER_HEIGHT,
 } from "../components/shared/HandbookHeader";
+import { CrossFade } from "../components/shared/CrossFade";
 import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
 
 const GOLD = "#B8975A";
@@ -37,13 +38,10 @@ interface HandbookShelfProps {
 }
 
 export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
-  const [isLoaded, setIsLoaded] = useState(false);
   const [view, setView] = useState<ViewMode>("shelf");
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const timer = setTimeout(() => setIsLoaded(true), 60);
-    return () => clearTimeout(timer);
   }, []);
 
   const ToggleBtn = useCallback(
@@ -54,14 +52,18 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
         aria-label={label}
         aria-pressed={view === mode}
         style={{
-          background: view === mode ? "rgba(184,151,90,0.16)" : "transparent",
-          border: view === mode ? CARD_BORDER : "1.5px solid transparent",
-          borderRadius: rpx(16),
-          padding: rpx(12),
+          width: rpx(60),
+          height: rpx(60),
+          borderRadius: rpx(34),
+          background:
+            view === mode ? "rgba(184,151,90,0.18)" : "transparent",
+          border: "none",
+          padding: 0,
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          transition: "background 0.25s ease",
         }}
       >
         <Icon
@@ -75,6 +77,26 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
     [view],
   );
 
+  const ViewToggle = (
+    <div
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: rpx(8),
+        padding: rpx(6),
+        borderRadius: rpx(40),
+        background: "rgba(250,247,240,0.6)",
+        backdropFilter: "blur(12px) saturate(1.1)",
+        WebkitBackdropFilter: "blur(12px) saturate(1.1)",
+        border: "1px solid rgba(255,255,255,0.5)",
+        boxShadow: "0 2px 10px rgba(60,50,30,0.12)",
+      }}
+    >
+      {ToggleBtn("shelf", LayoutGrid, "书架视图")}
+      {ToggleBtn("list", List, "列表视图")}
+    </div>
+  );
+
   return (
     <div
       style={{
@@ -84,9 +106,6 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        opacity: isLoaded ? 1 : 0,
-        transform: isLoaded ? "translateY(0)" : "translateY(8px)",
-        transition: "opacity 0.5s ease, transform 0.5s ease",
       }}
     >
       <div
@@ -100,6 +119,7 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
           backgroundSize: "cover",
           backgroundPosition: "center",
           opacity: view === "list" ? 0.45 : 0.85,
+          transition: "opacity 0.55s ease",
           pointerEvents: "none",
         }}
       />
@@ -113,12 +133,8 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
             : "列表视图 · 卷简介与导言"
         }
         withBackground={view === "list"}
-        rightContent={
-          <div style={{ display: "flex", gap: rpx(8) }}>
-            {ToggleBtn("shelf", LayoutGrid, "书架视图")}
-            {ToggleBtn("list", List, "列表视图")}
-          </div>
-        }
+        rightRaw
+        rightContent={ViewToggle}
       />
 
       <div
@@ -127,10 +143,11 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
           overflowY: "auto",
           position: "relative",
           zIndex: 1,
-          padding: `calc(${HANDBOOK_HEADER_HEIGHT} + ${rpx(8)}) ${rpx(40)} ${rpx(80)}`,
+          padding: `calc(${HANDBOOK_HEADER_HEIGHT} + ${rpx(8)}) ${rpx(40)} calc(env(safe-area-inset-bottom) + ${rpx(56)})`,
         }}
       >
-        {view === "list" ? (
+        <CrossFade contentKey={view}>
+          {view === "list" ? (
           <div>
             {V2_VOLUMES.map((vol) => (
               <div
@@ -337,7 +354,8 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
             ))}
             <HandbookPlaceholderCard height={rpx(248)} />
           </div>
-        )}
+          )}
+        </CrossFade>
       </div>
     </div>
   );

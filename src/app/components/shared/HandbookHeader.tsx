@@ -25,6 +25,8 @@ interface HandbookHeaderProps {
   light?: boolean;
   /** 是否带吸顶背景色（用于需要滚动的页面） */
   withBackground?: boolean;
+  /** 右侧内容自带容器，不再包磨砂胶囊 / 不做克隆处理 */
+  rightRaw?: boolean;
 }
 
 /**
@@ -51,6 +53,7 @@ export function HandbookHeader({
   rightContent,
   light = false,
   withBackground = false,
+  rightRaw = false,
 }: HandbookHeaderProps) {
   const titleColor = light ? "rgba(255,255,255,0.96)" : "#5A4B33";
   const subColor = light ? "rgba(255,255,255,0.75)" : "#9A968C";
@@ -69,7 +72,6 @@ export function HandbookHeader({
         padding: `calc(env(safe-area-inset-top) + ${rpx(20)}) ${rpx(32)} ${rpx(20)}`,
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
         gap: rpx(16),
         ...(withBackground
           ? {
@@ -80,8 +82,15 @@ export function HandbookHeader({
           : {}),
       }}
     >
-      {/* 左：返回 */}
-      <div style={{ width: rpx(64), flexShrink: 0 }}>
+      {/* 左：返回（与右侧等宽，保证标题真正水平居中） */}
+      <div
+        style={{
+          flex: 1,
+          minWidth: rpx(64),
+          display: "flex",
+          justifyContent: "flex-start",
+        }}
+      >
         {onBack && (
           <button
             onClick={onBack}
@@ -117,7 +126,14 @@ export function HandbookHeader({
       </div>
 
       {/* 中：两行标题 */}
-      <div style={{ flex: 1, textAlign: "center", overflow: "hidden" }}>
+      <div
+        style={{
+          flexShrink: 0,
+          textAlign: "center",
+          overflow: "hidden",
+          maxWidth: "60%",
+        }}
+      >
         {title && (
           <div
             style={{
@@ -148,18 +164,20 @@ export function HandbookHeader({
         )}
       </div>
 
-      {/* 右：操作位 */}
+      {/* 右：操作位（与左侧等宽） */}
       <div
         style={{
+          flex: 1,
           minWidth: rpx(64),
-          flexShrink: 0,
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",
         }}
       >
         {rightContent &&
-          (withBackground ? (
+          (rightRaw ? (
+            rightContent
+          ) : withBackground ? (
             React.cloneElement(rightContent as React.ReactElement, {
               style: {
                 ...(rightContent as React.ReactElement).props.style,

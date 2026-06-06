@@ -15,49 +15,75 @@ interface UseScrollDirectionOptions {
   enabled?: boolean;
 }
 
+/** 从滚动事件目标读取 scrollTop（兼容 window 滚动与任意内层滚动容器） */
+function readScrollTop(target: EventTarget | null): number {
+  if (
+    !target ||
+    target === document ||
+    target === window ||
+    target === document.documentElement ||
+    target === document.body
+  ) {
+    return (
+      window.scrollY ||
+      document.documentElement?.scrollTop ||
+      document.body?.scrollTop ||
+      0
+    );
+  }
+  if (target instanceof HTMLElement) return target.scrollTop;
+  return window.scrollY;
+}
+
 export function useScrollDirection(options: UseScrollDirectionOptions = {}) {
   const { threshold = 10, enabled = true } = options;
   const [scrollDirection, setScrollDirection] = useState<ScrollDirection>(null);
   const [isAtTop, setIsAtTop] = useState(true);
   const lastScrollY = useRef(0);
+  const lastTarget = useRef<EventTarget | null>(null);
   const ticking = useRef(false);
 
   useEffect(() => {
     if (!enabled) return;
 
-    const updateScrollDirection = () => {
-      const scrollY = window.scrollY;
-
-      // 检测是否在顶部
+    const update = (target: EventTarget | null) => {
+      const scrollY = readScrollTop(target);
       setIsAtTop(scrollY < 10);
 
-      // 计算滚动差值
-      const diff = scrollY - lastScrollY.current;
+      // 切换了滚动容器（如换页面）→ 重置基线，本次不判定方向，避免误触
+      if (target !== lastTarget.current) {
+        lastTarget.current = target;
+        lastScrollY.current = scrollY;
+        ticking.current = false;
+        return;
+      }
 
-      // 只有超过阈值才更新方向
+      const diff = scrollY - lastScrollY.current;
       if (Math.abs(diff) >= threshold) {
         setScrollDirection(diff > 0 ? "down" : "up");
         lastScrollY.current = scrollY;
       }
-
       ticking.current = false;
     };
 
-    const onScroll = () => {
+    // capture:true → 即便滚动发生在内层容器（scroll 事件不冒泡），
+    // 挂在 window 上的捕获监听也能在捕获阶段收到，从而支持任意滚动区域。
+    const onScroll = (e: Event) => {
+      const target = e.target;
       if (!ticking.current) {
-        window.requestAnimationFrame(updateScrollDirection);
+        window.requestAnimationFrame(() => update(target));
         ticking.current = true;
       }
     };
 
-    // 初始化
     lastScrollY.current = window.scrollY;
     setIsAtTop(window.scrollY < 10);
 
-    window.addEventListener("scroll", onScroll, { passive: true });
+    const opts: AddEventListenerOptions = { passive: true, capture: true };
+    window.addEventListener("scroll", onScroll, opts);
 
     return () => {
-      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("scroll", onScroll, opts);
     };
   }, [threshold, enabled]);
 

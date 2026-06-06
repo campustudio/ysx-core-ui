@@ -113,17 +113,21 @@ export function PrimaryButton({
           style={{
             display: "flex",
             flexDirection: "column",
-            alignItems: "flex-start",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            flex: Icon ? undefined : 1,
+            minWidth: 0,
           }}
         >
           <span
             style={{
               fontFamily: "var(--font-serif)",
-              fontSize: rpx(22),
+              fontSize: rpx(24),
               fontWeight: 600,
               color: disabled ? "#B0AC9F" : isFilled ? "#2C2416" : "#4A3D22",
               letterSpacing: rpx(2),
-              lineHeight: 1.2,
+              lineHeight: 1.35,
               textShadow: disabled
                 ? "none"
                 : "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
@@ -134,9 +138,10 @@ export function PrimaryButton({
           {subtitle && (
             <span
               style={{
-                fontSize: rpx(14),
-                color: isFilled ? "rgba(44,36,22,0.7)" : "rgba(74,61,34,0.7)",
-                lineHeight: 1.2,
+                marginTop: rpx(4),
+                fontSize: rpx(18),
+                color: isFilled ? "rgba(44,36,22,0.75)" : "rgba(74,61,34,0.75)",
+                lineHeight: 1.35,
                 textShadow:
                   "0px 1.5px 1.5px rgba(255,255,255,0.9), 0px -1px 1.5px rgba(0,0,0,0.12)",
               }}

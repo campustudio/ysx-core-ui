@@ -36,6 +36,11 @@ import { LogoPreviewPage } from "./pages/LogoPreviewPage";
 import { PageTransition } from "./components/shared/PageTransition";
 import { Toast } from "./components/shared/Toast";
 import { useToast } from "./hooks/useToast";
+import { BottomNavigation } from "./components/navigation/BottomNavigation";
+import { BottomNavProvider } from "./components/navigation/BottomNavContext";
+import { getNavConfig } from "./config/navigation-config";
+import { useScrollDirection } from "./hooks/useScrollDirection";
+import { rpx } from "./config/styles";
 
 /** 用户信息（模拟） */
 interface UserInfo {
@@ -88,6 +93,23 @@ type PageRoute =
 
 /** 导航方向：用于决定转场动画 */
 type NavDirection = "forward" | "back";
+
+/**
+ * 由 App 统一托管底部导航的页面集合（本期：人类手册馆全部子页）。
+ * 这些页面让用户在任意层级一键直达各模块首页；是否显示/滚动隐藏由
+ * `navigation-config` 的 per-page 配置决定。沉浸页（reader/practice）配置
+ * showNav:false，导航会柔和滑下而非瞬间消失。
+ */
+const HANDBOOK_NAV_PAGES = new Set<string>([
+  "handbook-home",
+  "hb-shelf",
+  "hb-volume",
+  "hb-recommend",
+  "hb-entry",
+  "hb-daily",
+  "hb-reader",
+  "hb-practice",
+]);
 
 export default function App() {
   const toast = useToast();
@@ -538,17 +560,45 @@ export default function App() {
     }
   };
 
+  /**
+   * 全局底部导航（统一收口）：
+   * - 由 `navigation-config` 的 per-page 配置驱动（showNav / scrollHide / activeIndex）
+   * - 渲染在 PageTransition 之外 → 跨页持久存在，不随页面淡入淡出重播
+   * - 始终挂载，用 hidden 控制升降；进入沉浸页（showNav=false）时柔和滑下，
+   *   而非瞬间消失，符合「一切变化都要柔和」原则
+   * - 任意页面一键直达各模块首页（handleNavChange→resetTo 清栈到模块根）
+   */
+  const navConfig = getNavConfig(route.page);
+  const { shouldHideNav } = useScrollDirection();
+  const navHidden =
+    !navConfig.showNav || (navConfig.scrollHide && shouldHideNav);
+  // 本期由 App 统一托管底部导航的范围：人类手册馆各页。
+  // 其余模块（首页 / 新人生之路 等）暂仍各自渲染，待后续统一迁移到中央托管。
+  const usesGlobalNav = HANDBOOK_NAV_PAGES.has(route.page);
+  const navPresent = usesGlobalNav && navConfig.showNav;
+  // 导航占位高度（含安全区）：与 BottomNavigation 实际高度一致
+  const navHeight = `calc(env(safe-area-inset-bottom) + ${rpx(112)})`;
+
   return (
-    <>
-      <PageTransition key={routeKeyRef.current} direction={navDirection}>
+    <BottomNavProvider
+      value={{ present: navPresent, hidden: navHidden, height: navHeight }}
+    >
+      <PageTransition routeKey={routeKeyRef.current} direction={navDirection}>
         {renderPage()}
       </PageTransition>
+      {usesGlobalNav && (
+        <BottomNavigation
+          active={navConfig.activeIndex ?? 0}
+          onChange={handleNavChange}
+          hidden={navHidden}
+        />
+      )}
       <Toast
         message={toast.message}
         visible={toast.visible}
         duration={toast.duration}
         onDismiss={toast.dismiss}
       />
-    </>
+    </BottomNavProvider>
   );
 }

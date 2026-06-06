@@ -31,15 +31,14 @@ import {
   ICON_ENGRAVED,
   HANDBOOK_BG,
 } from "../config/styles";
-import { BottomNavigation } from "../components/navigation/BottomNavigation";
 import { Toast } from "../components/shared/Toast";
 import { PrimaryButton } from "../components/shared/PrimaryButton";
 import { VolumeBookCover } from "../components/shared/VolumeBookCover";
 import { HandbookPlaceholderCard } from "../components/shared/HandbookPlaceholderCard";
 import { useToast } from "../hooks/useToast";
-import { useNavigation } from "../hooks/useNavigation";
 import { useReadingProgress } from "../hooks/useReadingProgress";
 import { HandbookBookmarksSheet } from "../components/shared/HandbookBookmarksSheet";
+import { useBottomNav } from "../components/navigation/BottomNavContext";
 import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
 
 const GOLD = "#B8975A";
@@ -94,12 +93,10 @@ export function HandbookHome({
   onOpenVolume,
   onOpenPractice,
   onContinueReading,
-  onNavChange,
 }: HandbookHomeProps) {
-  const [isLoaded, setIsLoaded] = useState(false);
   const [showBookmarks, setShowBookmarks] = useState(false);
   const toast = useToast();
-  const { isHidden } = useNavigation("handbook");
+  const navDock = useBottomNav();
   const { lastProgress, hasProgress, bookmarks, removeBookmark } =
     useReadingProgress();
 
@@ -136,21 +133,7 @@ export function HandbookHome({
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    const timer = setTimeout(() => setIsLoaded(true), 60);
-    return () => clearTimeout(timer);
   }, []);
-
-  const handleNavChange = useCallback(
-    (index: number) => {
-      if (index === 1) return;
-      if (index === 3) {
-        toast.show("「明镜」正在精心筹备中，敬请期待");
-        return;
-      }
-      onNavChange?.(index);
-    },
-    [onNavChange, toast],
-  );
 
   const handleEntry = useCallback(
     (id: string) => {
@@ -178,8 +161,6 @@ export function HandbookHome({
         position: "relative",
         display: "flex",
         flexDirection: "column",
-        opacity: isLoaded ? 1 : 0,
-        transition: "opacity 0.5s ease",
       }}
     >
       <div
@@ -633,28 +614,24 @@ export function HandbookHome({
 
       {/*
         底部固定坞：继续阅读 + 进入完整书架
-        始终固定在视口底部；随底部菜单显隐切换 bottom 偏移：
-          - 菜单显示(isHidden=false)：上移到菜单上方，紧贴其顶部
-          - 菜单隐藏(isHidden=true)：落到视口最底部
-        仅过渡 bottom，避免文档流跳动。
+        「继续阅读」坞跟随全局底部导航升降：导航显示时上抬到其上方，
+        滚动隐藏时随之落回视口底部（见 BottomNavContext）。
       */}
       <div
         style={{
           position: "fixed",
           left: 0,
           right: 0,
-          bottom: isHidden
-            ? 0
-            : `calc(env(safe-area-inset-bottom) + ${rpx(94)})`,
+          bottom: navDock.present && !navDock.hidden ? navDock.height : "0px",
           zIndex: 40,
           background: "#FBFAF7",
           boxShadow: "0 -8px 24px rgba(60,50,30,0.10)",
           padding: `${rpx(20)} ${rpx(40)} ${
-            isHidden
-              ? `calc(env(safe-area-inset-bottom) + ${rpx(18)})`
-              : rpx(18)
+            navDock.present && !navDock.hidden
+              ? rpx(18)
+              : `calc(env(safe-area-inset-bottom) + ${rpx(18)})`
           }`,
-          transition: "bottom 0.3s ease-out",
+          transition: "bottom 0.34s cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
         {dockVolume && dockChapter && (
@@ -824,11 +801,6 @@ export function HandbookHome({
         </button>
       </div>
 
-      <BottomNavigation
-        active={1}
-        onChange={handleNavChange}
-        hidden={isHidden}
-      />
       <Toast
         message={toast.message}
         visible={toast.visible}
