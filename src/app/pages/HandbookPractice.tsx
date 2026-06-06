@@ -174,6 +174,7 @@ export function HandbookPractice({
     >
       <HandbookHeader
         onBack={onBack}
+        withBackground
         title={isRecommendMode ? "推荐练习" : "读后练习"}
         subtitle={
           isRecommendMode

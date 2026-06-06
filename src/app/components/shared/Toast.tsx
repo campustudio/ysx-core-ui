@@ -16,6 +16,7 @@
  */
 
 import { useEffect, useState, useRef } from "react";
+import { createPortal } from "react-dom";
 import { FONT_SERIF, rpx } from "../../config/styles";
 
 /** CSS 动画 — 淡入上浮 / 淡出下沉 */
@@ -90,9 +91,11 @@ export function Toast({
     };
   }, [visible, duration]);
 
-  if (!show) return null;
+  if (!show || typeof document === "undefined") return null;
 
-  return (
+  // Portal 到 body：保证 Toast 处于根堆叠上下文，永远浮于底部抽屉/转场层之上，
+  // 不会被页面转场的 opacity 动画或 BottomSheet 的 portal 困在下层。
+  return createPortal(
     <>
       <style>{TOAST_STYLES}</style>
       <div
@@ -137,6 +140,7 @@ export function Toast({
           </span>
         </div>
       </div>
-    </>
+    </>,
+    document.body,
   );
 }

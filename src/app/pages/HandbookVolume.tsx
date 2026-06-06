@@ -25,6 +25,7 @@ import {
   HandbookHeader,
   HANDBOOK_HEADER_ICON,
 } from "../components/shared/HandbookHeader";
+import { ShareQuoteSheet } from "../components/shared/handbook/ShareQuoteSheet";
 
 const GOLD = "#B8975A";
 const INK = "#1F1F1F";
@@ -42,6 +43,7 @@ export function HandbookVolume({
   onSelectChapter,
 }: HandbookVolumeProps) {
   const toast = useToast();
+  const [showShare, setShowShare] = useState(false);
   const volume = getV2VolumeById(volumeId);
 
   useEffect(() => {
@@ -91,7 +93,7 @@ export function HandbookVolume({
         onBack={onBack}
         rightContent={
           <button
-            onClick={() => toast.show("分享功能即将开放")}
+            onClick={() => setShowShare(true)}
             style={{
               background: "transparent",
               border: "none",
@@ -99,6 +101,7 @@ export function HandbookVolume({
               cursor: "pointer",
               display: "flex",
             }}
+            aria-label="分享本卷"
           >
             <Share2 size={20} color={HANDBOOK_HEADER_ICON} strokeWidth={1.6} />
           </button>
@@ -280,6 +283,14 @@ export function HandbookVolume({
           );
         })}
       </div>
+
+      <ShareQuoteSheet
+        visible={showShare}
+        onClose={() => setShowShare(false)}
+        quote={volume.oneLine}
+        source={`《${volume.title}》`}
+        onCopied={() => toast.show("已复制")}
+      />
 
       <Toast
         message={toast.message}

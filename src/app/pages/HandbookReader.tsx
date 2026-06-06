@@ -11,6 +11,7 @@ import {
   Moon,
   Sun,
   MoreHorizontal,
+  Share2,
   Bookmark,
   PenLine,
   List,
@@ -30,6 +31,15 @@ import { Toast } from "../components/shared/Toast";
 import { BottomSheet } from "../components/shared/BottomSheet";
 import { useToast } from "../hooks/useToast";
 import { useReadingProgress } from "../hooks/useReadingProgress";
+import {
+  useReaderPrefs,
+  READER_FONT_SCALES,
+  READER_LINE_HEIGHTS,
+} from "../hooks/useReaderPrefs";
+import { ReaderSettingsSheet } from "../components/shared/handbook/ReaderSettingsSheet";
+import { ChapterNoteSheet } from "../components/shared/handbook/NoteSheets";
+import { useChapterNote } from "../hooks/useChapterNote";
+import { ShareQuoteSheet } from "../components/shared/handbook/ShareQuoteSheet";
 import { PrimaryButton } from "../components/shared/PrimaryButton";
 import {
   HandbookHeader,
@@ -38,8 +48,6 @@ import {
 
 const GOLD = "#B8975A";
 
-/** 正文三档字号：对齐规范 16pt 基准（rpx 32） */
-const FONT_SCALES = [28, 32, 36] as const;
 const CONTENT_MAX_WIDTH = rpx(620);
 const SCROLL_CHROME_HIDE_MS = 720;
 
@@ -63,14 +71,18 @@ export function HandbookReader({
   onGoShelf,
 }: HandbookReaderProps) {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [night, setNight] = useState(false);
-  const [fontIdx, setFontIdx] = useState(1);
+  const { prefs, update: updatePrefs } = useReaderPrefs();
+  const night = prefs.theme === "night";
   const [showToc, setShowToc] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [percent, setPercent] = useState(0);
   const [chromeVisible, setChromeVisible] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollIdleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const toast = useToast();
+  const { getNote, hasNote, saveNote } = useChapterNote();
   const {
     saveProgress,
     addBookmark,
@@ -171,7 +183,15 @@ export function HandbookReader({
       clearTimeout(t2);
       ro.disconnect();
     };
-  }, [volumeId, chapterId, isLoaded, fontIdx, syncScrollProgress]);
+  }, [
+    volumeId,
+    chapterId,
+    isLoaded,
+    prefs.fontIdx,
+    prefs.lineIdx,
+    prefs.serifBody,
+    syncScrollProgress,
+  ]);
 
   const handleBookmark = useCallback(() => {
     if (marked) {
@@ -217,11 +237,36 @@ export function HandbookReader({
     );
   }
 
-  const bg = night ? "#16181C" : "#F7F5F0";
-  const ink = night ? "rgba(255,255,255,0.86)" : "#1F1F1F";
-  const sub = night ? "rgba(255,255,255,0.5)" : "#606266";
-  const barBg = night ? "rgba(22,24,28,0.96)" : "rgba(247,245,240,0.96)";
-  const fontSize = FONT_SCALES[fontIdx];
+  const chapterNote = getNote(volumeId, chapterId);
+  const noted = hasNote(volumeId, chapterId);
+
+  const palette = {
+    day: {
+      bg: "#F7F5F0",
+      ink: "#1F1F1F",
+      sub: "#606266",
+      barBg: "rgba(247,245,240,0.96)",
+    },
+    sepia: {
+      bg: "#F3E9D6",
+      ink: "#43381F",
+      sub: "#6B5D44",
+      barBg: "rgba(243,233,214,0.96)",
+    },
+    night: {
+      bg: "#16181C",
+      ink: "rgba(255,255,255,0.86)",
+      sub: "rgba(255,255,255,0.5)",
+      barBg: "rgba(22,24,28,0.96)",
+    },
+  }[prefs.theme];
+  const bg = palette.bg;
+  const ink = palette.ink;
+  const sub = palette.sub;
+  const barBg = palette.barBg;
+  const fontSize = READER_FONT_SCALES[prefs.fontIdx];
+  const bodyLineHeight = READER_LINE_HEIGHTS[prefs.lineIdx];
+  const bodyFont = prefs.serifBody ? FONT_SERIF : "inherit";
 
   const chapterLabel = (() => {
     const chineseNumbers = [
@@ -261,7 +306,24 @@ export function HandbookReader({
         rightContent={
           <div style={{ display: "flex", alignItems: "center", gap: rpx(16) }}>
             <button
-              onClick={() => setFontIdx((i) => (i + 1) % FONT_SCALES.length)}
+              onClick={() => setShareOpen(true)}
+              style={{
+                background: "transparent",
+                border: "none",
+                padding: rpx(8),
+                cursor: "pointer",
+                display: "flex",
+              }}
+              aria-label="分享本章"
+            >
+              <Share2 size={19} color={ink} strokeWidth={1.5} />
+            </button>
+            <button
+              onClick={() =>
+                updatePrefs({
+                  fontIdx: (prefs.fontIdx + 1) % READER_FONT_SCALES.length,
+                })
+              }
               style={{
                 background: "transparent",
                 border: "none",
@@ -274,7 +336,9 @@ export function HandbookReader({
               <Type size={19} color={ink} strokeWidth={1.5} />
             </button>
             <button
-              onClick={() => setNight((n) => !n)}
+              onClick={() =>
+                updatePrefs({ theme: night ? "day" : "night" })
+              }
               style={{
                 background: "transparent",
                 border: "none",
@@ -291,7 +355,7 @@ export function HandbookReader({
               )}
             </button>
             <button
-              onClick={() => toast.show("更多设置即将开放")}
+              onClick={() => setShowSettings(true)}
               style={{
                 background: "transparent",
                 border: "none",
@@ -299,7 +363,7 @@ export function HandbookReader({
                 cursor: "pointer",
                 display: "flex",
               }}
-              aria-label="更多"
+              aria-label="阅读设置"
             >
               <MoreHorizontal size={19} color={ink} strokeWidth={1.5} />
             </button>
@@ -413,8 +477,9 @@ export function HandbookReader({
               key={i}
               style={{
                 fontSize: rpx(fontSize),
+                fontFamily: bodyFont,
                 color: ink,
-                lineHeight: 1.6,
+                lineHeight: bodyLineHeight,
                 margin: `0 0 ${rpx(32)}`,
                 letterSpacing: rpx(0.5),
               }}
@@ -467,7 +532,8 @@ export function HandbookReader({
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
           transform: chromeVisible ? "translateY(0)" : "translateY(100%)",
           opacity: chromeVisible ? 1 : 0,
-          transition: "transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease",
+          transition:
+            "transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.32s ease",
           pointerEvents: chromeVisible ? "auto" : "none",
         }}
       >
@@ -529,16 +595,18 @@ export function HandbookReader({
         >
           {[
             { id: "fav", icon: Bookmark, label: "收藏", disabled: false },
-            { id: "note", icon: PenLine, label: "笔记", disabled: true },
+            { id: "note", icon: PenLine, label: "笔记", disabled: false },
             { id: "toc", icon: List, label: "目录", disabled: false },
             { id: "ask", icon: MessageCircle, label: "问答", disabled: true },
           ].map((a) => {
             const Icon = a.icon;
+            const active =
+              (a.id === "fav" && marked) || (a.id === "note" && noted);
             const color = a.disabled
               ? night
                 ? "rgba(255,255,255,0.22)"
                 : "#C8C4BA"
-              : a.id === "fav" && marked
+              : active
                 ? GOLD
                 : ink;
             return (
@@ -548,6 +616,7 @@ export function HandbookReader({
                   if (a.disabled) return;
                   if (a.id === "fav") handleBookmark();
                   else if (a.id === "toc") setShowToc(true);
+                  else if (a.id === "note") setShowNotes(true);
                 }}
                 disabled={a.disabled}
                 style={{
@@ -560,14 +629,38 @@ export function HandbookReader({
                   cursor: a.disabled ? "default" : "pointer",
                   opacity: a.disabled ? 0.55 : 1,
                 }}
-                aria-label={a.disabled ? `${a.label}（即将开放）` : a.label}
+                aria-label={
+                  a.disabled
+                    ? `${a.label}（即将开放）`
+                    : a.id === "note" && noted
+                      ? "笔记（已记）"
+                      : a.label
+                }
               >
-                <Icon
-                  size={20}
-                  color={color}
-                  strokeWidth={1.5}
-                  fill={a.id === "fav" && marked ? GOLD : "none"}
-                />
+                <span style={{ position: "relative", display: "flex" }}>
+                  <Icon
+                    size={20}
+                    color={color}
+                    strokeWidth={1.5}
+                    fill={a.id === "fav" && marked ? GOLD : "none"}
+                  />
+                  {a.id === "note" && noted && (
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: rpx(-3),
+                        right: rpx(-5),
+                        width: rpx(10),
+                        height: rpx(10),
+                        borderRadius: "50%",
+                        background: GOLD,
+                        boxShadow: night
+                          ? "0 0 0 2px #1C1E22"
+                          : "0 0 0 2px rgba(247,245,240,0.96)",
+                      }}
+                    />
+                  )}
+                </span>
                 <span style={{ fontSize: rpx(18), color }}>{a.label}</span>
               </button>
             );
@@ -781,6 +874,35 @@ export function HandbookReader({
               );
             })}
       </BottomSheet>
+
+      <ReaderSettingsSheet
+        visible={showSettings}
+        onClose={() => setShowSettings(false)}
+        prefs={prefs}
+        onChange={updatePrefs}
+        night={night}
+      />
+
+      <ShareQuoteSheet
+        visible={shareOpen}
+        onClose={() => setShareOpen(false)}
+        quote={chapter.guide || chapter.subtitle || chapter.title}
+        source={`《${volume.title}》· ${chapter.title}`}
+        onCopied={() => toast.show("已复制")}
+      />
+
+      <ChapterNoteSheet
+        visible={showNotes}
+        onClose={() => setShowNotes(false)}
+        chapterTitle={chapter.title}
+        initialText={chapterNote?.text ?? ""}
+        updatedAt={chapterNote?.updatedAt}
+        night={night}
+        onSave={(text) => {
+          saveNote(volumeId, chapterId, text);
+          toast.show(text.trim() ? "笔记已保存" : "已清空笔记");
+        }}
+      />
 
       <Toast
         message={toast.message}

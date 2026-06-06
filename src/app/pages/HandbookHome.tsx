@@ -38,6 +38,7 @@ import { HandbookPlaceholderCard } from "../components/shared/HandbookPlaceholde
 import { useToast } from "../hooks/useToast";
 import { useReadingProgress } from "../hooks/useReadingProgress";
 import { HandbookBookmarksSheet } from "../components/shared/HandbookBookmarksSheet";
+import { ComingSoonSheet } from "../components/shared/handbook/ComingSoonSheet";
 import { useBottomNav } from "../components/navigation/BottomNavContext";
 import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
 
@@ -95,6 +96,7 @@ export function HandbookHome({
   onContinueReading,
 }: HandbookHomeProps) {
   const [showBookmarks, setShowBookmarks] = useState(false);
+  const [showGuideNote, setShowGuideNote] = useState(false);
   const toast = useToast();
   const navDock = useBottomNav();
   const { lastProgress, hasProgress, bookmarks, removeBookmark } =
@@ -464,7 +466,6 @@ export function HandbookHome({
               </div>
             ))}
             <HandbookPlaceholderCard
-              onClick={() => toast.show("更多内容敬请期待")}
               width={rpx(184)}
               height={rpx(248)}
               fixedHeight
@@ -497,7 +498,7 @@ export function HandbookHome({
             <div style={{ display: "flex", gap: rpx(20), marginTop: rpx(28) }}>
               {/* 手册导读（即将开放·液态玻璃·偏冷银灰） */}
               <div
-                onClick={() => toast.show("「手册导读」即将开放，敬请期待")}
+                onClick={() => setShowGuideNote(true)}
                 style={{
                   flex: 1,
                   height: rpx(176),
@@ -634,36 +635,35 @@ export function HandbookHome({
           transition: "bottom 0.34s cubic-bezier(0.22, 1, 0.36, 1)",
         }}
       >
+        {/* 顶部柔和渐隐：让上方滚动内容（如「阅读陪伴」）在触达坞之前先淡出，
+            从视觉上把固定坞与上方内容明确分开，避免「阅读陪伴」被误读为坞的标题 */}
+        <div
+          aria-hidden
+          style={{
+            position: "absolute",
+            left: 0,
+            right: 0,
+            top: rpx(-48),
+            height: rpx(48),
+            background:
+              "linear-gradient(to top, #FBFAF7 20%, rgba(251,250,247,0))",
+            pointerEvents: "none",
+          }}
+        />
         {dockVolume && dockChapter && (
           <>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                gap: rpx(16),
-                marginBottom: rpx(14),
-              }}
-            >
-              <h2
+            {!isNewUser && (
+              <p
                 style={{
-                  fontFamily: FONT_SERIF,
-                  fontSize: rpx(30),
-                  fontWeight: 600,
-                  color: INK,
-                  margin: 0,
-                  letterSpacing: rpx(2),
+                  fontSize: rpx(18),
+                  color: SUB,
+                  margin: `0 0 ${rpx(10)} ${rpx(4)}`,
+                  letterSpacing: rpx(1),
                 }}
               >
-                {isNewUser ? "开始阅读" : "继续阅读"}
-              </h2>
-              <span style={{ fontSize: rpx(20), color: SUB }}>
-                {isNewUser
-                  ? "从第一卷开始"
-                  : nextVolume
-                    ? "开启下一卷"
-                    : "你的上次阅读进度"}
-              </span>
-            </div>
+                {nextVolume ? "开启下一卷" : "你的上次阅读进度"}
+              </p>
+            )}
             <div
               onClick={() => onContinueReading?.(dockVolume.id, dockChapter.id)}
               style={{
@@ -717,28 +717,7 @@ export function HandbookHome({
                 >
                   第{dockChapter.index}章 · {dockChapter.title}
                 </p>
-                <div style={{ margin: `${rpx(12)} 0 0` }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "baseline",
-                      justifyContent: "space-between",
-                      marginBottom: rpx(8),
-                    }}
-                  >
-                    <span style={{ fontSize: rpx(18), color: SUB }}>
-                      卷进度
-                    </span>
-                    <span
-                      style={{
-                        fontSize: rpx(18),
-                        color: GOLD,
-                        fontFamily: FONT_SERIF,
-                      }}
-                    >
-                      {isNewUser ? "0%" : `已读 ${dockPercent}%`}
-                    </span>
-                  </div>
+                <div style={{ margin: `${rpx(16)} 0 0` }}>
                   <div
                     style={{
                       height: rpx(6),
@@ -818,6 +797,13 @@ export function HandbookHome({
           removeBookmark(id);
           toast.show("已删除收藏");
         }}
+      />
+      <ComingSoonSheet
+        visible={showGuideNote}
+        onClose={() => setShowGuideNote(false)}
+        title="手册导读"
+        phase="第二阶段开放"
+        message="手册导读会在这套书与练习稳稳落地之后再上线——它将基于十卷母本，陪你把读到的东西照见、内化。先慢慢读，不急。"
       />
     </div>
   );

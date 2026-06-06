@@ -28,8 +28,6 @@ import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
 const GOLD = "#B8975A";
 const INK = "#1F1F1F";
 const SUB = "#606266";
-const CARD_BORDER = "1.5px solid rgba(233,216,166,0.6)";
-
 type ViewMode = "list" | "shelf";
 
 interface HandbookShelfProps {
@@ -291,7 +289,6 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
                 onClick={() => onOpenVolume?.(vol.id)}
                 style={{
                   ...LIQUID_GLASS,
-                  border: CARD_BORDER,
                   borderRadius: rpx(24),
                   padding: `${rpx(24)} ${rpx(20)}`,
                   minHeight: rpx(248),

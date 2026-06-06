@@ -168,7 +168,8 @@
     --z-navigation: 20;
     --z-header: 30;
     --z-modal: 40;
-    --z-toast: 50;
+    /* Toast 必须高于底部抽屉/弹层（BottomSheet 默认 z-index:50），否则会被刚弹出的面板盖住 */
+    --z-toast: 60;
   }
 
   /* 大屏幕上限制最大宽度 */

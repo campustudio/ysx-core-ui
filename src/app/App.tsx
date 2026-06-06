@@ -577,7 +577,8 @@ export default function App() {
   const usesGlobalNav = HANDBOOK_NAV_PAGES.has(route.page);
   const navPresent = usesGlobalNav && navConfig.showNav;
   // 导航占位高度（含安全区）：与 BottomNavigation 实际高度一致
-  const navHeight = `calc(env(safe-area-inset-bottom) + ${rpx(112)})`;
+  // （按钮最小高度 72rpx + 上下内边距各 6rpx = 84rpx）
+  const navHeight = `calc(env(safe-area-inset-bottom) + ${rpx(84)})`;
 
   return (
     <BottomNavProvider

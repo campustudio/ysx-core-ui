@@ -47,17 +47,17 @@ interface BottomNavigationProps {
 }
 
 const ICON_SIZE = {
-  width: "calc(var(--rpx) * 48)",
-  height: "calc(var(--rpx) * 48)",
+  width: "calc(var(--rpx) * 40)",
+  height: "calc(var(--rpx) * 40)",
 };
 
 /**
  * 最小触摸区域尺寸
- * 88rpx ≈ 44px — 符合 Apple/Google 移动端触摸目标规范
+ * 76rpx ≈ 38px — 在保证可清晰点按的前提下，尽量收窄底栏占用空间
  */
 const MIN_TAP_SIZE = {
-  minWidth: "calc(var(--rpx) * 88)",
-  minHeight: "calc(var(--rpx) * 88)",
+  minWidth: "calc(var(--rpx) * 76)",
+  minHeight: "calc(var(--rpx) * 72)",
 };
 
 export function BottomNavigation({
@@ -84,7 +84,7 @@ export function BottomNavigation({
         <div
           className="flex justify-around items-center"
           style={{
-            padding: `calc(var(--rpx) * 12) calc(var(--rpx) * 48) calc(var(--rpx) * 12)`,
+            padding: `calc(var(--rpx) * 6) calc(var(--rpx) * 48) calc(var(--rpx) * 6)`,
           }}
         >
           {NAV_ITEMS.map((item, index) => {
@@ -100,7 +100,7 @@ export function BottomNavigation({
                 }`}
                 style={{
                   ...MIN_TAP_SIZE,
-                  gap: "calc(var(--rpx) * 4)",
+                  gap: "calc(var(--rpx) * 3)",
                   WebkitFontSmoothing: "antialiased",
                 }}
                 aria-label={item.label}
@@ -114,7 +114,7 @@ export function BottomNavigation({
                 />
                 <span
                   style={{
-                    fontSize: "calc(var(--rpx) * 18)",
+                    fontSize: "calc(var(--rpx) * 16)",
                     lineHeight: 1,
                     opacity: isActive ? 1 : 0.7,
                     textShadow: TEXT_ENGRAVED,

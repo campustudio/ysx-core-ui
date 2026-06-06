@@ -38,7 +38,10 @@ export function HandbookPlaceholderCard({
   containerStyle,
 }: HandbookPlaceholderCardProps) {
   return (
-    <div onClick={onClick} style={{ cursor: "pointer", ...containerStyle }}>
+    <div
+      onClick={onClick}
+      style={{ cursor: onClick ? "pointer" : "default", ...containerStyle }}
+    >
       <div
         style={{
           ...LIQUID_GLASS,
@@ -78,7 +81,7 @@ export function HandbookPlaceholderCard({
             textShadow: TEXT_ENGRAVED_SOFT,
           }}
         >
-          更多内容敬请期待
+          第六至十卷筹备中
         </span>
       </div>
     </div>
