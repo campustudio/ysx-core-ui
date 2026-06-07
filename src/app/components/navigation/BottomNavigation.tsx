@@ -10,7 +10,8 @@
  *   - 使用 env(safe-area-inset-bottom) 适配全面屏
  *   - 使用 rpx 单位（非原始 vw）确保大屏上限
  *   - 触摸区域 ≥ 88rpx（≈44px），符合移动端最小触摸目标
- *   - 不使用 backdrop-filter（小程序兼容）
+ *   - 毛玻璃（backdrop-filter）：本期为 H5（微信内置浏览器 / Safari，均为 WebKit，支持良好），
+ *     用半透明深色 + 背景模糊，把身后滚动内容柔化成一层安静的底，避免「透出杂乱」
  *
  * Props:
  * - active: 当前激活项索引
@@ -77,7 +78,9 @@ export function BottomNavigation({
     >
       <div
         style={{
-          background: "rgba(50, 43, 32, 0.55)",
+          background: "rgba(46, 39, 29, 0.66)",
+          backdropFilter: "blur(20px) saturate(140%)",
+          WebkitBackdropFilter: "blur(20px) saturate(140%)",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
         }}
       >

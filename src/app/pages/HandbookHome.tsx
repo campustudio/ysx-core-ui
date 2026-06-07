@@ -357,7 +357,7 @@ export function HandbookHome({
             background: "#FBFAF7",
             borderRadius: `${rpx(48)} ${rpx(48)} 0 0`,
             padding: `${rpx(48)} ${rpx(40)} ${
-              hasProgress ? rpx(540) : rpx(320)
+              hasProgress ? rpx(360) : rpx(300)
             }`,
             boxShadow: "0 -10px 30px rgba(60,50,30,0.06)",
             minHeight: rpx(800),
@@ -614,25 +614,31 @@ export function HandbookHome({
       </div>
 
       {/*
-        底部固定坞：继续阅读 + 进入完整书架
-        「继续阅读」坞跟随全局底部导航升降：导航显示时上抬到其上方，
-        滚动隐藏时随之落回视口底部（见 BottomNavContext）。
+        底部固定坞：仅「继续阅读」。
+        与底部导航同步升降：刚进入/上滑时显示，向下滚动时连同导航一起柔和滑出视口，
+        避免长内容（如「阅读陪伴」）被固定坞遮挡而无法继续浏览（见 BottomNavContext）。
       */}
       <div
         style={{
           position: "fixed",
           left: 0,
           right: 0,
-          bottom: navDock.present && !navDock.hidden ? navDock.height : "0px",
+          bottom: navDock.present ? navDock.height : "0px",
           zIndex: 40,
           background: "#FBFAF7",
           boxShadow: "0 -8px 24px rgba(60,50,30,0.10)",
           padding: `${rpx(20)} ${rpx(40)} ${
-            navDock.present && !navDock.hidden
+            navDock.present
               ? rpx(18)
               : `calc(env(safe-area-inset-bottom) + ${rpx(18)})`
           }`,
-          transition: "bottom 0.34s cubic-bezier(0.22, 1, 0.36, 1)",
+          transform: navDock.hidden
+            ? `translateY(calc(100% + ${navDock.height}))`
+            : "translateY(0)",
+          opacity: navDock.hidden ? 0 : 1,
+          transition:
+            "transform 0.34s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.3s ease",
+          pointerEvents: navDock.hidden ? "none" : "auto",
         }}
       >
         {/* 顶部柔和渐隐：让上方滚动内容（如「阅读陪伴」）在触达坞之前先淡出，
@@ -676,7 +682,6 @@ export function HandbookHome({
                 border: "1.5px solid rgba(233,216,166,0.6)",
                 borderRadius: rpx(24),
                 cursor: "pointer",
-                marginBottom: rpx(16),
               }}
             >
               {/* 封面缩略（黑书风格小封面） */}
@@ -759,25 +764,6 @@ export function HandbookHome({
             </div>
           </>
         )}
-
-        <button
-          type="button"
-          onClick={onOpenShelf}
-          style={{
-            width: "100%",
-            marginTop: rpx(4),
-            padding: `${rpx(12)} 0`,
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            fontSize: rpx(22),
-            color: GOLD,
-            fontFamily: FONT_SERIF,
-            letterSpacing: rpx(2),
-          }}
-        >
-          浏览完整书架 →
-        </button>
       </div>
 
       <Toast
