@@ -70,6 +70,18 @@ export const PAGE_NAV_CONFIG: Record<string, NavConfig> = {
     showNav: false, // 今日一段子页（自带「阅读原文」坞）
     scrollHide: false,
   },
+  "hb-mypath": {
+    // 路径概览页：保留全局导航，提供「一键直达模块首页/其他模块」的逃生入口，
+    // 避免反复进出只能回退到「生成阅读建议」页（见设计文档 §7.2）
+    showNav: true,
+    scrollHide: true,
+    activeIndex: 1,
+  },
+  "hb-fullpath": {
+    showNav: true, // 同上：完整路径为概览页，保留导航逃生入口
+    scrollHide: true,
+    activeIndex: 1,
+  },
   // 沉浸/专注流程页：不显示全局导航（各自有底部工具栏/操作）
   "hb-reader": {
     showNav: false, // 长文阅读，自带底部工具栏，避免双层底部冲突

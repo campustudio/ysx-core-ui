@@ -8,6 +8,7 @@
 import { useState, useEffect } from "react";
 import { BookOpen, Target, BookMarked, ChevronDown } from "lucide-react";
 import { getRecommendation, VOLUME_CN } from "../config/handbook-v2-data";
+import { useReadingPath } from "../hooks/useReadingPath";
 import {
   FONT_SERIF,
   LIQUID_GLASS,
@@ -33,6 +34,10 @@ interface HandbookRecommendProps {
   onStartReading?: (volumeId: string, chapterId?: string) => void;
   onOpenVolume?: (volumeId: string) => void;
   onOpenPractice?: (volumeId: string, chapterId: string) => void;
+  /** 查看完整路径（十卷全景） */
+  onOpenFullPath?: (highlightVolumeId?: string) => void;
+  /** 进入我的路径（个人路线） */
+  onOpenMyPath?: () => void;
 }
 
 export function HandbookRecommend({
@@ -41,13 +46,21 @@ export function HandbookRecommend({
   onStartReading,
   onOpenVolume,
   onOpenPractice,
+  onOpenFullPath,
+  onOpenMyPath,
 }: HandbookRecommendProps) {
   const [pathExpanded, setPathExpanded] = useState(false);
   const rec = getRecommendation(optionId);
+  const { savePath } = useReadingPath();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // 生成阅读建议即存为「我的路径」（可在我的路径中查看与调整）
+  useEffect(() => {
+    if (getRecommendation(optionId)) savePath(optionId);
+  }, [optionId, savePath]);
 
   if (!rec) {
     return (
@@ -247,12 +260,27 @@ export function HandbookRecommend({
               </p>
             </div>
 
-            <div style={{ margin: `${rpx(40)} 0 0` }}>
-              <PrimaryButton
-                title="开始阅读"
-                variant="filled"
-                onClick={() => onStartReading?.(rec.volumeId)}
-              />
+            <div
+              style={{
+                display: "flex",
+                gap: rpx(20),
+                margin: `${rpx(40)} 0 0`,
+              }}
+            >
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <PrimaryButton
+                  title="开始阅读"
+                  variant="filled"
+                  onClick={() => onStartReading?.(rec.volumeId)}
+                />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <PrimaryButton
+                  title="查看完整路径"
+                  variant="outline"
+                  onClick={() => onOpenFullPath?.(rec.volumeId)}
+                />
+              </div>
             </div>
 
             <button
@@ -398,7 +426,17 @@ export function HandbookRecommend({
             lineHeight: 1.7,
           }}
         >
-          这是根据你的选择整理的路径建议，你随时可以换卷阅读
+          已存入
+          <span
+            onClick={onOpenMyPath}
+            style={{
+              color: onOpenMyPath ? GOLD : "#A8A498",
+              cursor: onOpenMyPath ? "pointer" : "default",
+            }}
+          >
+            「我的路径」
+          </span>
+          ，随时可在其中调整
         </p>
       </div>
     </div>

@@ -134,6 +134,9 @@ export function HandbookPractice({
     }
   }, [nextChapter, volumeId, onNextChapter, onFinishVolume, toast]);
 
+  // 推荐练习是路径上的「叶子」，无「下一节」。完成即柔和淡出并返回来源页
+  // （阅读建议或我的路径，均为同一条路径），与左上角返回去向一致——
+  // 故文案用与来源无关的「完成练习」，避免写死「回到阅读建议」造成歧义。
   const handleRecommendComplete = useCallback(() => {
     setExiting(true);
     window.setTimeout(() => onBack?.(), 480);
@@ -315,7 +318,7 @@ export function HandbookPractice({
       <HandbookBottomDock>
         {isRecommendMode ? (
           <PrimaryButton
-            title="回到阅读建议"
+            title="完成练习"
             variant="filled"
             onClick={handleRecommendComplete}
           />

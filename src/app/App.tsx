@@ -18,6 +18,8 @@ import { HandbookVolume } from "./pages/HandbookVolume";
 import { HandbookReader } from "./pages/HandbookReader";
 import { HandbookPractice } from "./pages/HandbookPractice";
 import { HandbookDaily } from "./pages/HandbookDaily";
+import { HandbookMyPath } from "./pages/HandbookMyPath";
+import { HandbookFullPath } from "./pages/HandbookFullPath";
 import { NewLifePath } from "./pages/NewLifePath";
 import { PathLayerDetail } from "./pages/PathLayerDetail";
 import { DimensionDetail } from "./pages/DimensionDetail";
@@ -66,6 +68,8 @@ type PageRoute =
       mode?: "reading" | "recommend";
     }
   | { page: "hb-daily" }
+  | { page: "hb-mypath" }
+  | { page: "hb-fullpath"; highlightVolumeId?: string }
   | { page: "volume-detail"; volumeId: string }
   | { page: "chapter-detail"; volumeId: string; chapterId: string }
   | { page: "book-detail"; bookId: string }
@@ -107,6 +111,8 @@ const HANDBOOK_NAV_PAGES = new Set<string>([
   "hb-recommend",
   "hb-entry",
   "hb-daily",
+  "hb-mypath",
+  "hb-fullpath",
   "hb-reader",
   "hb-practice",
 ]);
@@ -456,6 +462,7 @@ export default function App() {
             onContinueReading={(volumeId, chapterId) =>
               navigateForward({ page: "hb-reader", volumeId, chapterId })
             }
+            onOpenMyPath={() => navigateForward({ page: "hb-mypath" })}
           />
         );
       case "hb-shelf":
@@ -497,6 +504,48 @@ export default function App() {
                 mode: "recommend",
               })
             }
+            onOpenFullPath={(highlightVolumeId) =>
+              navigateForward({ page: "hb-fullpath", highlightVolumeId })
+            }
+            onOpenMyPath={() => navigateForward({ page: "hb-mypath" })}
+          />
+        );
+      case "hb-mypath":
+        return (
+          <HandbookMyPath
+            onBack={goBack}
+            onStartReading={(volumeId, chapterId) =>
+              chapterId
+                ? navigateForward({ page: "hb-reader", volumeId, chapterId })
+                : navigateForward({ page: "hb-volume", volumeId })
+            }
+            onOpenVolume={(volumeId) =>
+              navigateForward({ page: "hb-volume", volumeId })
+            }
+            onOpenPractice={(volumeId, chapterId) =>
+              navigateForward({
+                page: "hb-practice",
+                volumeId,
+                chapterId,
+                mode: "recommend",
+              })
+            }
+            onOpenFullPath={(highlightVolumeId) =>
+              navigateForward({ page: "hb-fullpath", highlightVolumeId })
+            }
+            onReselect={() => navigateForward({ page: "hb-entry" })}
+            onOpenShelf={() => navigateForward({ page: "hb-shelf" })}
+          />
+        );
+      case "hb-fullpath":
+        return (
+          <HandbookFullPath
+            highlightVolumeId={route.highlightVolumeId}
+            onBack={goBack}
+            onOpenVolume={(volumeId) =>
+              navigateForward({ page: "hb-volume", volumeId })
+            }
+            onOpenShelf={() => navigateForward({ page: "hb-shelf" })}
           />
         );
       case "hb-volume":

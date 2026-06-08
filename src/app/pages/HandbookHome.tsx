@@ -37,6 +37,7 @@ import { VolumeBookCover } from "../components/shared/VolumeBookCover";
 import { HandbookPlaceholderCard } from "../components/shared/HandbookPlaceholderCard";
 import { useToast } from "../hooks/useToast";
 import { useReadingProgress } from "../hooks/useReadingProgress";
+import { useReadingPath } from "../hooks/useReadingPath";
 import { HandbookBookmarksSheet } from "../components/shared/HandbookBookmarksSheet";
 import { ComingSoonSheet } from "../components/shared/handbook/ComingSoonSheet";
 import { useBottomNav } from "../components/navigation/BottomNavContext";
@@ -53,6 +54,7 @@ interface HandbookHomeProps {
   onOpenVolume?: (volumeId: string) => void;
   onOpenPractice?: (volumeId: string, chapterId: string) => void;
   onContinueReading?: (volumeId: string, chapterId: string) => void;
+  onOpenMyPath?: () => void;
   onNavChange?: (index: number) => void;
 }
 
@@ -94,6 +96,7 @@ export function HandbookHome({
   onOpenVolume,
   onOpenPractice,
   onContinueReading,
+  onOpenMyPath,
 }: HandbookHomeProps) {
   const [showBookmarks, setShowBookmarks] = useState(false);
   const [showGuideNote, setShowGuideNote] = useState(false);
@@ -101,6 +104,7 @@ export function HandbookHome({
   const navDock = useBottomNav();
   const { lastProgress, hasProgress, bookmarks, removeBookmark } =
     useReadingProgress();
+  const { hasPath } = useReadingPath();
 
   // 继续阅读详情（卷名/章名/进度百分比）
   // 新用户case：无进度时显示第一卷第一章
@@ -658,17 +662,52 @@ export function HandbookHome({
         />
         {dockVolume && dockChapter && (
           <>
-            {!isNewUser && (
-              <p
+            {(!isNewUser || hasPath) && (
+              <div
                 style={{
-                  fontSize: rpx(18),
-                  color: SUB,
-                  margin: `0 0 ${rpx(10)} ${rpx(4)}`,
-                  letterSpacing: rpx(1),
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: rpx(16),
+                  margin: `0 0 ${rpx(10)}`,
+                  padding: `0 ${rpx(4)}`,
                 }}
               >
-                {nextVolume ? "开启下一卷" : "你的上次阅读进度"}
-              </p>
+                <span
+                  style={{
+                    fontSize: rpx(18),
+                    color: SUB,
+                    letterSpacing: rpx(1),
+                  }}
+                >
+                  {!isNewUser
+                    ? nextVolume
+                      ? "开启下一卷"
+                      : "你的上次阅读进度"
+                    : ""}
+                </span>
+                {hasPath && (
+                  <button
+                    onClick={onOpenMyPath}
+                    style={{
+                      background: "transparent",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: rpx(4),
+                      fontSize: rpx(20),
+                      color: GOLD,
+                      fontFamily: FONT_SERIF,
+                      letterSpacing: rpx(1),
+                    }}
+                  >
+                    我的路径
+                    <ChevronRight size={14} color={GOLD} strokeWidth={1.8} />
+                  </button>
+                )}
+              </div>
             )}
             <div
               onClick={() => onContinueReading?.(dockVolume.id, dockChapter.id)}
