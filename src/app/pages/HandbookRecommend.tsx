@@ -56,6 +56,7 @@ export function HandbookRecommend({
           onBack={onBack}
           title="阅读建议"
           subtitle="根据你的选择整理的路径"
+          withBackground={true}
         />
         暂无建议，请返回重新选择。
       </div>
@@ -309,79 +310,79 @@ export function HandbookRecommend({
                       : "opacity 0.6s ease",
                   }}
                 >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: rpx(20),
-                    margin: `${rpx(16)} 0 ${rpx(24)}`,
-                  }}
-                >
-                  <span
+                  <div
                     style={{
-                      flex: 1,
-                      height: 1,
-                      background: "rgba(184,151,90,0.25)",
-                    }}
-                  />
-                  <span
-                    style={{
-                      fontFamily: FONT_SERIF,
-                      fontSize: rpx(24),
-                      color: INK,
-                      letterSpacing: rpx(2),
+                      display: "flex",
+                      alignItems: "center",
+                      gap: rpx(20),
+                      margin: `${rpx(16)} 0 ${rpx(24)}`,
                     }}
                   >
-                    阅读路径
-                  </span>
-                  <span
+                    <span
+                      style={{
+                        flex: 1,
+                        height: 1,
+                        background: "rgba(184,151,90,0.25)",
+                      }}
+                    />
+                    <span
+                      style={{
+                        fontFamily: FONT_SERIF,
+                        fontSize: rpx(24),
+                        color: INK,
+                        letterSpacing: rpx(2),
+                      }}
+                    >
+                      阅读路径
+                    </span>
+                    <span
+                      style={{
+                        flex: 1,
+                        height: 1,
+                        background: "rgba(184,151,90,0.25)",
+                      }}
+                    />
+                  </div>
+
+                  {sectionTitle(BookOpen, "核心阅读章节")}
+                  <div
                     style={{
-                      flex: 1,
-                      height: 1,
-                      background: "rgba(184,151,90,0.25)",
+                      display: "flex",
+                      flexDirection: "column",
+                      margin: `0 0 ${rpx(28)} ${rpx(30)}`,
                     }}
-                  />
-                </div>
+                  >
+                    {rec.coreChapters.map((c) =>
+                      entryRow(c.label, () =>
+                        onStartReading?.(c.volumeId, c.chapterId),
+                      ),
+                    )}
+                  </div>
 
-                {sectionTitle(BookOpen, "核心阅读章节")}
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    margin: `0 0 ${rpx(28)} ${rpx(30)}`,
-                  }}
-                >
-                  {rec.coreChapters.map((c) =>
-                    entryRow(c.label, () =>
-                      onStartReading?.(c.volumeId, c.chapterId),
-                    ),
-                  )}
-                </div>
+                  {sectionTitle(Target, "推荐练习")}
+                  <div style={{ margin: `0 0 ${rpx(28)} ${rpx(30)}` }}>
+                    {entryRow(rec.practices.join(" · "), () => {
+                      if (rec.coreChapters.length > 0 && onOpenPractice) {
+                        onOpenPractice(
+                          rec.coreChapters[0].volumeId,
+                          rec.coreChapters[0].chapterId,
+                        );
+                      }
+                    })}
+                  </div>
 
-                {sectionTitle(Target, "推荐练习")}
-                <div style={{ margin: `0 0 ${rpx(28)} ${rpx(30)}` }}>
-                  {entryRow(rec.practices.join(" · "), () => {
-                    if (rec.coreChapters.length > 0 && onOpenPractice) {
-                      onOpenPractice(
-                        rec.coreChapters[0].volumeId,
-                        rec.coreChapters[0].chapterId,
-                      );
-                    }
-                  })}
-                </div>
-
-                {sectionTitle(BookMarked, "延伸阅读")}
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    margin: `0 0 0 ${rpx(30)}`,
-                  }}
-                >
-                  {rec.extendedReading.map((e) =>
-                    entryRow(e.label, () => onOpenVolume?.(e.volumeId)),
-                  )}
-                </div>
+                  {sectionTitle(BookMarked, "延伸阅读")}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      margin: `0 0 0 ${rpx(30)}`,
+                    }}
+                  >
+                    {rec.extendedReading.map((e) =>
+                      entryRow(e.label, () => onOpenVolume?.(e.volumeId)),
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
