@@ -4,7 +4,9 @@ import { useToast } from "../hooks/useToast";
 import { Toast } from "../components/shared/Toast";
 import { Code } from "lucide-react";
 import bgLayer1 from "@/assets/images/home/1-menqian.webp";
-import bgLayer2 from "@/assets/images/home/2-dingqi.webp";
+// 第二层背景图（2026-06-09 更换）：原「2-dingqi.webp」金色光芒过重、频率过高，
+// 换用更柔和的新图；原图保留未删除，HandbookRecommend 仍在使用。
+import bgLayer2 from "@/assets/images/home/home-2-layer-v2.webp";
 import bgLayer3 from "@/assets/images/home/3-neidan.webp";
 import iconBook from "@/assets/images/home/icon-book.webp";
 import iconPath from "@/assets/images/home/icon-path.webp";
