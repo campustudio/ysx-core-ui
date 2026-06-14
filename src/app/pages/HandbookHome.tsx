@@ -70,22 +70,22 @@ const ENTRIES: {
     id: "shelf",
     icon: Book,
     iconImg: null,
-    title: "开始读十卷母本",
-    desc: "从根本理解生命与感知的规律",
+    title: "系统阅读十卷母本",
+    desc: "从第一卷开始，完整理解人类与感知",
   },
   {
     id: "entry",
     icon: Map,
     iconImg: null,
-    title: "找到我的阅读入口",
-    desc: "从当下感知出发，找到适合的路径",
+    title: "生成我的阅读路径",
+    desc: "根据你此刻状态，找到最适合的入口",
   },
   {
     id: "daily",
     icon: Sun,
     iconImg: null,
     title: "今日一段",
-    desc: "一天一段文字，滋养你的感知",
+    desc: "每天一段文字，一次回到感知的练习",
   },
 ];
 

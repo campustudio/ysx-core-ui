@@ -213,7 +213,7 @@ export function HandbookMyPath({
             </p>
             <div style={{ width: rpx(420), maxWidth: "100%" }}>
               <PrimaryButton
-                title="找到我的阅读入口"
+                title="生成我的阅读路径"
                 variant="filled"
                 onClick={onReselect}
               />
