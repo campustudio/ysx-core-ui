@@ -19,6 +19,7 @@ import { HandbookReader } from "./pages/HandbookReader";
 import { HandbookPractice } from "./pages/HandbookPractice";
 import { HandbookDaily } from "./pages/HandbookDaily";
 import { HandbookMyPath } from "./pages/HandbookMyPath";
+import { HandbookSearch } from "./pages/HandbookSearch";
 import { HandbookFullPath } from "./pages/HandbookFullPath";
 import { NewLifePath } from "./pages/NewLifePath";
 import { PathLayerDetail } from "./pages/PathLayerDetail";
@@ -68,6 +69,7 @@ type PageRoute =
       mode?: "reading" | "recommend";
     }
   | { page: "hb-daily" }
+  | { page: "hb-search"; query?: string }
   | { page: "hb-mypath" }
   | { page: "hb-fullpath"; highlightVolumeId?: string }
   | { page: "volume-detail"; volumeId: string }
@@ -463,6 +465,19 @@ export default function App() {
               navigateForward({ page: "hb-reader", volumeId, chapterId })
             }
             onOpenMyPath={() => navigateForward({ page: "hb-mypath" })}
+            onOpenSearch={(query) =>
+              navigateForward({ page: "hb-search", query })
+            }
+          />
+        );
+      case "hb-search":
+        return (
+          <HandbookSearch
+            initialQuery={route.query}
+            onBack={goBack}
+            onOpenShelf={() => navigateForward({ page: "hb-shelf" })}
+            onOpenReadingEntry={() => navigateForward({ page: "hb-entry" })}
+            onOpenDaily={() => navigateForward({ page: "hb-daily" })}
           />
         );
       case "hb-shelf":

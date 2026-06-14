@@ -70,6 +70,10 @@ export const PAGE_NAV_CONFIG: Record<string, NavConfig> = {
     showNav: false, // 今日一段子页（自带「阅读原文」坞）
     scrollHide: false,
   },
+  "hb-search": {
+    showNav: false, // 搜索/问手册：专注的提问页，顶部自带返回
+    scrollHide: false,
+  },
   "hb-mypath": {
     // 路径概览页：保留全局导航，提供「一键直达模块首页/其他模块」的逃生入口，
     // 避免反复进出只能回退到「生成阅读建议」页（见设计文档 §7.2）

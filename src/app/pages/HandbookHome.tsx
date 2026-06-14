@@ -13,6 +13,8 @@ import {
   Book,
   Map,
   Bookmark,
+  Search,
+  Sparkles,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -55,6 +57,7 @@ interface HandbookHomeProps {
   onOpenPractice?: (volumeId: string, chapterId: string) => void;
   onContinueReading?: (volumeId: string, chapterId: string) => void;
   onOpenMyPath?: () => void;
+  onOpenSearch?: (query?: string) => void;
   onNavChange?: (index: number) => void;
 }
 
@@ -97,6 +100,7 @@ export function HandbookHome({
   onOpenPractice,
   onContinueReading,
   onOpenMyPath,
+  onOpenSearch,
 }: HandbookHomeProps) {
   const [showBookmarks, setShowBookmarks] = useState(false);
   const [showGuideNote, setShowGuideNote] = useState(false);
@@ -248,6 +252,126 @@ export function HandbookHome({
           >
             这里不是书库，而是一条回到感知的路。
           </p>
+        </div>
+
+        {/* 搜索 / 问手册：统一入口（可见可点，进入结果页骨架；语义检索后端分阶段接入） */}
+        <div style={{ padding: `${rpx(44)} ${rpx(40)} 0` }}>
+          <button
+            onClick={() => onOpenSearch?.()}
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              gap: rpx(16),
+              height: rpx(84),
+              padding: `0 ${rpx(14)} 0 ${rpx(28)}`,
+              borderRadius: rpx(42),
+              // 通透玻璃药丸：更亮的珠光白 + 清晰高光边（加 0.5px 内描边让边缘锐利不糊，收紧外影）
+              background:
+                "linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.6) 100%)",
+              backdropFilter: "blur(14px) saturate(1.4)",
+              WebkitBackdropFilter: "blur(14px) saturate(1.4)",
+              border: "1px solid rgba(255,255,255,1)",
+              boxShadow:
+                "inset 0 1.5px 1.5px rgba(255,255,255,1), inset 0 0 0 0.5px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(150,125,75,0.10), 0 4px 14px rgba(60,50,30,0.08)",
+              cursor: "pointer",
+            }}
+          >
+            <Search
+              size={19}
+              color={GOLD}
+              strokeWidth={2}
+              style={{ flexShrink: 0 }}
+            />
+            <span
+              style={{
+                flex: 1,
+                minWidth: 0,
+                textAlign: "left",
+                fontSize: rpx(27),
+                color: "#7B7264",
+                fontFamily: FONT_SERIF,
+                letterSpacing: rpx(1),
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              搜索 / 问手册
+            </span>
+            {/* 金色宝珠 ✦：立体高光 + 微凸星标，明确「问 AI 伴读」入口 */}
+            <span
+              aria-hidden
+              style={{
+                position: "relative",
+                flexShrink: 0,
+                width: rpx(60),
+                height: rpx(60),
+                borderRadius: "50%",
+                // 通透金宝珠：更亮高光中心 + 清晰边缘（1px 亮描边 + 0.5px 内环），收紧外影避免糊边
+                background:
+                  "radial-gradient(circle at 34% 27%, #FFF8E2 0%, #EFD7A0 30%, #CCA860 62%, #A8853F 100%)",
+                border: "1px solid rgba(255,255,255,0.9)",
+                boxShadow:
+                  "inset 0 2px 3px rgba(255,255,255,0.9), inset 0 0 0 0.5px rgba(255,255,255,0.55), inset 0 -3px 5px rgba(110,82,35,0.5), 0 2px 6px rgba(150,115,55,0.4)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {/* 镜面高光点：增强通透/透亮的立体感 */}
+              <span
+                style={{
+                  position: "absolute",
+                  top: "14%",
+                  left: "20%",
+                  width: "34%",
+                  height: "30%",
+                  borderRadius: "50%",
+                  background:
+                    "radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 72%)",
+                }}
+              />
+              <Sparkles
+                size={18}
+                color="#FFF7E6"
+                strokeWidth={1.6}
+                style={{
+                  position: "relative",
+                  filter: "drop-shadow(0 1px 1px rgba(120,90,40,0.5))",
+                }}
+              />
+            </span>
+          </button>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: rpx(14),
+              marginTop: rpx(20),
+            }}
+          >
+            {["我很焦虑怎么办", "感知是什么", "从哪里开始读"].map((s) => (
+              <button
+                key={s}
+                onClick={() => onOpenSearch?.(s)}
+                style={{
+                  background: "rgba(255,255,255,0.5)",
+                  border: "1px solid rgba(184,151,90,0.28)",
+                  borderRadius: rpx(40),
+                  padding: `${rpx(10)} ${rpx(22)}`,
+                  fontSize: rpx(22),
+                  color: "#6F665A",
+                  fontFamily: FONT_SERIF,
+                  letterSpacing: rpx(1),
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* 三大入口（液态玻璃·三列） */}
