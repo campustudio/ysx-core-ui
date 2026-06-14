@@ -18,14 +18,90 @@ interface HomeProps {
   onToggleMode?: () => void;
 }
 
+/**
+ * 按钮上下的发光光条：用一条柔和的白色光缝模拟参考图中的「光感按钮」。
+ * 不是传统按钮边框，而是上下各一道渐隐的光线 + 高斯光晕，
+ * 让用户感知到「这是可点的入口」，同时保持柔和、克制的氛围。
+ * strong=true 用于下方光条，比上方略亮，形成上下呼吸的层次。
+ */
+function ButtonLightBar({ strong = false }: { strong?: boolean }) {
+  return (
+    <div
+      style={{
+        position: "relative",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "180px",
+        height: "12px",
+        pointerEvents: "none",
+      }}
+    >
+      {/* 柔和光晕 */}
+      <div
+        style={{
+          position: "absolute",
+          width: "180px",
+          height: "9px",
+          background: `radial-gradient(ellipse at center, rgba(255,255,255,${
+            strong ? 0.6 : 0.42
+          }) 0%, rgba(255,255,255,0) 72%)`,
+          filter: "blur(5px)",
+        }}
+      />
+      {/* 锐利光缝 */}
+      <div
+        style={{
+          position: "relative",
+          width: "150px",
+          height: "1.5px",
+          borderRadius: "2px",
+          background: `linear-gradient(90deg, transparent 0%, rgba(255,255,255,${
+            strong ? 1 : 0.9
+          }) 50%, transparent 100%)`,
+          boxShadow: `0 0 ${strong ? "10px" : "7px"} rgba(255,255,255,${
+            strong ? 0.85 : 0.6
+          })`,
+        }}
+      />
+    </div>
+  );
+}
+
+// 跨重挂载保留「所在层」：
+// 路由切换时 CrossFade 会把旧页面冻结为「淡出快照」并重新挂载一次 Home，
+// 若每次都从初始 layer=1 开始，淡出瞬间就会闪现第一层背景。
+// 用模块级变量记住「最后所在层」与「是否已首次进入」，重挂载/重新进入时
+// 直接还原到该层并跳过入场动画，消除闪烁。仅 App 生命周期内的第一次挂载
+// 播放完整入场动画。
+let persistedLayer: 1 | 2 | 3 = 1;
+let hasEnteredOnce = false;
+
 export function Home({ onNavChange, onToggleMode }: HomeProps) {
   const toast = useToast();
 
   // ================= 视图层逻辑 =================
-  const [layer, setLayer] = useState<1 | 2 | 3>(1);
-  const [phase1, setPhase1] = useState(0);
-  const [phase2, setPhase2] = useState(0);
-  const [phase3, setPhase3] = useState(0);
+  // 非首次挂载（CrossFade 淡出快照重挂载 / Tab 重新进入）直接还原到上次所在层，
+  // 并把对应层的相位置为「已完成」，避免重播入场动画或闪现第一层。
+  const restoring = hasEnteredOnce;
+  const [layer, setLayer] = useState<1 | 2 | 3>(persistedLayer);
+  const [phase1, setPhase1] = useState(
+    restoring && persistedLayer === 1 ? 2 : 0,
+  );
+  const [phase2, setPhase2] = useState(
+    restoring && persistedLayer === 2 ? 2 : 0,
+  );
+  const [phase3, setPhase3] = useState(
+    restoring && persistedLayer === 3 ? 1 : 0,
+  );
+
+  // 记住最后所在层 + 标记已首次进入
+  useEffect(() => {
+    persistedLayer = layer;
+  }, [layer]);
+  useEffect(() => {
+    hasEnteredOnce = true;
+  }, []);
 
   useEffect(() => {
     if (layer === 1) {
@@ -106,26 +182,45 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
           transform: layer === 1 ? "scale(1)" : "scale(1.05)",
         }}
       />
-      <img
-        src={bgLayer2}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover transition-all duration-[3000ms] ease-out pointer-events-none"
-        style={{
-          opacity: layer === 2 ? 1 : 0,
-          filter:
-            layer === 2
-              ? "blur(0px) saturate(1.1) brightness(1.0)"
-              : layer === 1
-                ? "blur(12px) saturate(1)"
-                : "blur(10px) saturate(1.1)",
-          transform:
-            layer === 2
-              ? "scale(1)"
-              : layer === 1
-                ? "scale(0.95)"
-                : "scale(1.05)",
-        }}
-      />
+      {/* 第二层背景整体：补色细条 + 背景图作为「一个视觉整体」一起淡入淡出。
+          淡入的 opacity 过渡放在外层容器上，内部两元素都保持不透明，
+          从根上杜绝「细条或图片单独先出现」的关联问题。*/}
+      <div
+        className="absolute inset-0 pointer-events-none transition-opacity duration-[3000ms] ease-out"
+        style={{ opacity: layer === 2 ? 1 : 0 }}
+      >
+        {/* 顶部补色细条：承接背景图下移后顶部的空隙，颜色接住图片顶边采样色 #a5aacc */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: 0,
+            left: 0,
+            right: 0,
+            height: "12vh",
+            background:
+              "linear-gradient(180deg, #b0b4d4 0%, #a5aacc 50%, #a5aacc 100%)",
+          }}
+        />
+        {/* 背景图：保持原比例、不放大（两边内容不丢失），恒定向下平移让门下移；
+            顶边做柔化(mask)过渡，融进上方补色细条，接缝不可见。
+            只对 filter 做过渡（聚焦淡入），transform 恒定 => 过渡时无任何位移/缩放。*/}
+        <img
+          src={bgLayer2}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover transition-[filter] duration-[3000ms] ease-out"
+          style={{
+            filter:
+              layer === 2
+                ? "blur(0px) saturate(1.1) brightness(1.0)"
+                : "blur(12px) saturate(1)",
+            objectPosition: "50% 0%",
+            maskImage: "linear-gradient(to bottom, transparent 0%, #000 5%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, #000 5%)",
+            transform: "translateY(5vh)",
+          }}
+        />
+      </div>
       {/* Layer 3：模糊光源图（与纯代码版完全一致） */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -188,25 +283,25 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
             }}
           />
 
-          <div style={{ height: "30vh" }} />
+          <div style={{ height: "20vh" }} />
           <div
             style={{
-              height: "40vh",
+              flex: 1,
               display: "flex",
               flexDirection: "column",
-              justifyContent: "center",
+              justifyContent: "flex-start",
               alignItems: "center",
               position: "relative",
-              top: "-2vh",
+              paddingTop: "2vh",
             }}
           >
             {/* 文字背光：椭圆柔和白光净化背景 */}
             <div
               style={{
                 position: "absolute",
-                top: "50%",
+                top: "26%",
                 left: "50%",
-                transform: "translate(-50%, -55%)",
+                transform: "translate(-50%, -50%)",
                 width: "60vw",
                 height: "30vh",
                 background:
@@ -215,44 +310,100 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
                 pointerEvents: "none",
               }}
             />
-            <h1
+            {/* 标题组：元感知 + Meta-Awareness */}
+            <div
               style={{
-                fontFamily: FONT_SERIF,
-                fontSize: "clamp(3.5rem, 12vw, 5rem)",
-                fontWeight: 500,
-                color: "#1A1A1A",
-                letterSpacing: "0.2em",
-                margin: 0,
-                marginBottom: "4rem",
-                opacity: phase1 >= 1 ? 1 : 0,
-                filter: phase1 >= 1 ? "blur(0px)" : "blur(12px)",
-                transform: phase1 >= 1 ? "scale(1)" : "scale(1.02)",
-                transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
-                textShadow:
-                  "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
               }}
             >
-              元感知
-            </h1>
-            <p
+              <h1
+                style={{
+                  fontFamily: FONT_SERIF,
+                  fontSize: "clamp(3.5rem, 12vw, 5rem)",
+                  fontWeight: 500,
+                  color: "#1A1A1A",
+                  letterSpacing: "0.2em",
+                  margin: 0,
+                  marginBottom: "0.45rem",
+                  marginLeft: "0.2em",
+                  opacity: phase1 >= 1 ? 1 : 0,
+                  filter: phase1 >= 1 ? "blur(0px)" : "blur(12px)",
+                  transform: phase1 >= 1 ? "scale(1)" : "scale(1.02)",
+                  transition: "all 3s cubic-bezier(0.16, 1, 0.3, 1)",
+                  textShadow:
+                    "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
+                }}
+              >
+                元感知
+              </h1>
+              <p
+                style={{
+                  fontFamily: FONT_SERIF,
+                  fontSize: "clamp(0.95rem, 2.8vw, 1.2rem)",
+                  fontWeight: 400,
+                  color: "#6E6A62",
+                  letterSpacing: "0.32em",
+                  margin: 0,
+                  marginLeft: "0.32em",
+                  opacity: phase1 >= 1 ? 1 : 0,
+                  filter: phase1 >= 1 ? "blur(0px)" : "blur(8px)",
+                  transition: "all 3.2s cubic-bezier(0.16, 1, 0.3, 1) 0.3s",
+                  textShadow: "0px 1px 1px rgba(255,255,255,0.9)",
+                }}
+              >
+                Meta-Awareness
+              </p>
+            </div>
+            {/* 标语组：与标题组拉开间距 */}
+            <div
               style={{
-                fontFamily: FONT_SERIF,
-                fontSize: "clamp(1.2rem, 3.5vw, 1.6rem)",
-                fontWeight: 500,
-                color: "#1A1A1A",
-                letterSpacing: "0.3em",
-                margin: 0,
-                opacity: phase1 >= 1 ? 1 : 0,
-                filter: phase1 >= 1 ? "blur(0px)" : "blur(8px)",
-                transition: "all 3.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s",
-                textShadow:
-                  "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
-                textAlign: "center",
-                padding: "0 1rem",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                marginTop: "2.6rem",
               }}
             >
-              为人类留下一条清明之路。
-            </p>
+              <p
+                style={{
+                  fontFamily: FONT_SERIF,
+                  fontSize: "clamp(1.2rem, 3.5vw, 1.6rem)",
+                  fontWeight: 500,
+                  color: "#1A1A1A",
+                  letterSpacing: "0.3em",
+                  margin: 0,
+                  marginLeft: "0.3em",
+                  opacity: phase1 >= 1 ? 1 : 0,
+                  filter: phase1 >= 1 ? "blur(0px)" : "blur(8px)",
+                  transition: "all 3.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s",
+                  textShadow:
+                    "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
+                  textAlign: "center",
+                  padding: "0 1rem",
+                }}
+              >
+                为人类留下一条清明之路。
+              </p>
+              <p
+                style={{
+                  fontFamily: FONT_SERIF,
+                  fontSize: "clamp(0.8rem, 2.2vw, 1rem)",
+                  fontWeight: 400,
+                  color: "#7A766E",
+                  letterSpacing: "0.12em",
+                  margin: "0.45rem 0 0",
+                  opacity: phase1 >= 1 ? 1 : 0,
+                  filter: phase1 >= 1 ? "blur(0px)" : "blur(8px)",
+                  transition: "all 3.5s cubic-bezier(0.16, 1, 0.3, 1) 0.7s",
+                  textShadow: "0px 1px 1px rgba(255,255,255,0.85)",
+                  textAlign: "center",
+                  padding: "0 1rem",
+                }}
+              >
+                A clear path for humanity.
+              </p>
+            </div>
           </div>
           <div
             style={{
@@ -260,24 +411,49 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              paddingBottom: "7vh",
             }}
           >
-            <span
+            <div
               onClick={handleEnterLayer2}
               style={{
-                fontFamily: "system-ui",
-                fontSize: "1.1rem",
-                color: "#444",
-                letterSpacing: "0.4em",
-                textShadow:
-                  "0 1px 1px rgba(255,255,255,1), 0 -1px 1px rgba(0,0,0,0.15)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.35rem",
                 cursor: "pointer",
                 opacity: phase1 >= 2 ? 1 : 0,
                 transition: "opacity 2s ease",
               }}
             >
-              开启
-            </span>
+              <ButtonLightBar />
+              <span
+                style={{
+                  fontFamily: "system-ui",
+                  fontSize: "1.1rem",
+                  color: "#444",
+                  letterSpacing: "0.4em",
+                  marginLeft: "0.4em",
+                  textShadow:
+                    "0 1px 1px rgba(255,255,255,1), 0 -1px 1px rgba(0,0,0,0.15)",
+                }}
+              >
+                开启
+              </span>
+              <span
+                style={{
+                  fontFamily: "system-ui",
+                  fontSize: "0.8rem",
+                  color: "#8A867E",
+                  letterSpacing: "0.25em",
+                  marginLeft: "0.25em",
+                  textShadow: "0 1px 1px rgba(255,255,255,0.8)",
+                }}
+              >
+                Begin
+              </span>
+              <ButtonLightBar strong />
+            </div>
           </div>
         </div>
       )}
@@ -302,13 +478,17 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
             }}
           /> */}
 
+          {/* 第二层文字位置与第一层一致（共享 20vh 顶部锚点）；
+              门不被挡到改由背景图下移解决（见上方 bgLayer2：以顶部为锚点放大下移）。*/}
+          <div style={{ height: "20vh" }} />
           <div
             style={{
-              height: "70vh",
+              flex: 1,
               display: "flex",
-              justifyContent: "center",
+              flexDirection: "column",
+              justifyContent: "flex-start",
               alignItems: "center",
-              padding: "0 2rem",
+              padding: "2vh 2rem 0",
               position: "relative",
             }}
           >
@@ -336,7 +516,7 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
                 letterSpacing: "0.2em",
                 margin: 0,
                 textAlign: "center",
-                lineHeight: 2,
+                lineHeight: 1.5,
                 opacity: phase2 >= 1 ? 1 : 0,
                 transform: phase2 >= 1 ? "scale(1)" : "scale(0.98)",
                 filter: phase2 >= 1 ? "blur(0px)" : "blur(12px)",
@@ -365,6 +545,23 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
               </span>
               高于一切。
             </h2>
+            <p
+              style={{
+                fontFamily: FONT_SERIF,
+                fontSize: "clamp(0.85rem, 2.4vw, 1.05rem)",
+                fontWeight: 400,
+                color: "#6E6A62",
+                letterSpacing: "0.1em",
+                margin: "0.9rem 0 0",
+                textAlign: "center",
+                opacity: phase2 >= 1 ? 1 : 0,
+                filter: phase2 >= 1 ? "blur(0px)" : "blur(8px)",
+                transition: "all 3.2s cubic-bezier(0.16, 1, 0.3, 1) 0.4s",
+                textShadow: "0px 1px 1px rgba(255,255,255,0.85)",
+              }}
+            >
+              Here, truth comes before all else.
+            </p>
           </div>
           <div
             style={{
@@ -372,24 +569,48 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              paddingBottom: "7vh",
             }}
           >
-            <span
+            <div
               onClick={handleEnterLayer3}
               style={{
-                fontFamily: "system-ui",
-                fontSize: "1.1rem",
-                color: "#444",
-                letterSpacing: "0.4em",
-                textShadow:
-                  "0 1px 1px rgba(255,255,255,1), 0 -1px 1px rgba(0,0,0,0.15)",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "0.35rem",
                 cursor: "pointer",
                 opacity: phase2 >= 2 ? 1 : 0,
                 transition: "opacity 2s ease",
               }}
             >
-              继续
-            </span>
+              <span
+                style={{
+                  fontFamily: "system-ui",
+                  fontSize: "1.1rem",
+                  color: "#444",
+                  letterSpacing: "0.4em",
+                  marginLeft: "0.4em",
+                  textShadow:
+                    "0 1px 1px rgba(255,255,255,1), 0 -1px 1px rgba(0,0,0,0.15)",
+                }}
+              >
+                继续
+              </span>
+              <ButtonLightBar strong />
+              <span
+                style={{
+                  fontFamily: "system-ui",
+                  fontSize: "0.8rem",
+                  color: "#8A867E",
+                  letterSpacing: "0.25em",
+                  marginLeft: "0.25em",
+                  textShadow: "0 1px 1px rgba(255,255,255,0.8)",
+                }}
+              >
+                Continue
+              </span>
+            </div>
           </div>
         </div>
       )}
