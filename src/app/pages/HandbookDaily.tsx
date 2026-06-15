@@ -73,7 +73,7 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
           backgroundImage: `url(${bgLayer1})`,
           backgroundSize: "cover",
           backgroundPosition: "center top",
-          opacity: 0.35,
+          opacity: 0.28,
           maskImage:
             "linear-gradient(to bottom, #000 0%, #000 40%, transparent 100%)",
           WebkitMaskImage:

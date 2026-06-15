@@ -418,7 +418,8 @@ export function HandbookReader({
             <p
               style={{
                 fontSize: rpx(24),
-                color: night ? "rgba(255,255,255,0.66)" : "#8A7B55",
+                // 导读位于浅金背景上，正文加深以保证长时间阅读清晰（P0-5 对比度）
+                color: night ? "rgba(255,255,255,0.74)" : "#6B5C36",
                 margin: 0,
                 lineHeight: 1.6,
               }}
@@ -450,7 +451,7 @@ export function HandbookReader({
               style={{
                 fontFamily: FONT_SERIF,
                 fontSize: rpx(52),
-                fontWeight: 600,
+                fontWeight: 700,
                 color: ink,
                 margin: `${rpx(14)} 0 0`,
                 letterSpacing: rpx(4),

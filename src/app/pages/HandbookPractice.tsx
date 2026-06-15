@@ -218,8 +218,9 @@ export function HandbookPractice({
               alignItems: "center",
               justifyContent: "flex-end",
               paddingBottom: rpx(36),
+              // P0-5：压低背景光晕强度，避免光效压过正文（封面可发光，阅读须安静）
               background:
-                "radial-gradient(58% 50% at 50% 40%, rgba(255,236,184,0.5) 0%, rgba(233,216,166,0.15) 40%, rgba(247,245,241,0) 72%)",
+                "radial-gradient(58% 50% at 50% 40%, rgba(255,236,184,0.34) 0%, rgba(233,216,166,0.1) 40%, rgba(247,245,241,0) 72%)",
             }}
           >
             <PracticeGlow />
@@ -364,7 +365,7 @@ function PracticeGlow() {
     >
       <defs>
         <radialGradient id="pgCore" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="rgba(255,248,222,0.9)" />
+          <stop offset="0%" stopColor="rgba(255,248,222,0.68)" />
           <stop offset="100%" stopColor="rgba(255,232,170,0)" />
         </radialGradient>
         <linearGradient id="pgGold" x1="0" y1="0" x2="0" y2="1">
