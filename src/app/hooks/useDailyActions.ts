@@ -4,10 +4,13 @@
  * 对齐《人类手册模块UI进一步优化》§2.3 与「感知高于数据」原则：
  *   - 收藏（这句话我想留下）：按【段落身份】持久保存**整段文字与出处**，可随时取消，
  *     长期保留，并在首页「我的收藏」抽屉里统一查看；
- *   - 已练习（今天我完成了）：按【当天日期】记录，气质是「今天，我回来了一次」，
- *     **不是打卡/积分/排行**，仅给用户一个温和的「今天回来过」的确认，次日自然归零。
+ *   - 已练习（今天我完成了）：按【段落身份】**持久记录练习日期**，可撤销；
+ *     气质是「今天，我回来了一次」。日后回看同一段时仍能确认「练过 + 哪天练的」。
  *
- * 故意不做：连续天数、完成率、排行榜——避免制造焦虑。
+ * 「感知高于数据」的边界（见 human-manual-module.md §15.4 / 第八卷 / §18.1）：
+ *   禁止的是**会制造焦虑的数据**——连续打卡天数、完成率百分比、倒计时、排行积分。
+ *   而「我练过这一段 / 哪天练的」是**用户需要、且不制造焦虑**的记录，应当持久保留。
+ *   故此处只存「是否练过 + 练习时间」，**不做**天数/完成率/排行。
  */
 
 import { useState, useEffect, useCallback } from "react";
@@ -30,14 +33,23 @@ export interface DailyFavorite {
 /** 收藏一段所需的最小信息（id 由 volumeId:chapterId 推导） */
 export type DailyFavoriteInput = Omit<DailyFavorite, "id" | "savedAt">;
 
-/** 本地日期键（YYYY-M-D，按本地时区，跨天自然失效） */
-function todayKey(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+/** 一条练习记录（持久；仅「是否练过 + 何时练的」，无天数/完成率） */
+export interface PracticeRecord {
+  /** 段落身份：`${volumeId}:${chapterId}` */
+  id: string;
+  practicedAt: number;
 }
 
 function favIdOf(volumeId: string, chapterId: string) {
   return `${volumeId}:${chapterId}`;
+}
+
+/** 练习日期的轻量展示：「6月15日」（同年省略年份，跨年才带上） */
+export function formatPracticedDate(ts: number): string {
+  const d = new Date(ts);
+  const now = new Date();
+  const md = `${d.getMonth() + 1}月${d.getDate()}日`;
+  return d.getFullYear() === now.getFullYear() ? md : `${d.getFullYear()}年${md}`;
 }
 
 function loadFavorites(): DailyFavorite[] {
@@ -62,17 +74,20 @@ function saveFavorites(list: DailyFavorite[]) {
   }
 }
 
-function loadPracticed(): string[] {
+function loadPracticed(): PracticeRecord[] {
   try {
     const raw = localStorage.getItem(PRACTICED_KEY);
     const arr = raw ? (JSON.parse(raw) as unknown) : [];
-    return Array.isArray(arr) ? (arr as string[]) : [];
+    if (!Array.isArray(arr)) return [];
+    return (arr as PracticeRecord[]).filter(
+      (r) => r && typeof r.id === "string" && typeof r.practicedAt === "number",
+    );
   } catch {
     return [];
   }
 }
 
-function savePracticed(list: string[]) {
+function savePracticed(list: PracticeRecord[]) {
   try {
     localStorage.setItem(PRACTICED_KEY, JSON.stringify(list));
   } catch {
@@ -87,51 +102,50 @@ function savePracticed(list: string[]) {
 export function useDailyActions(input: DailyFavoriteInput) {
   const passageId = favIdOf(input.volumeId, input.chapterId);
   const [favorites, setFavorites] = useState<DailyFavorite[]>([]);
-  const [practicedKeys, setPracticedKeys] = useState<string[]>([]);
+  const [practiced, setPracticed] = useState<PracticeRecord[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setFavorites(loadFavorites());
-    setPracticedKeys(loadPracticed());
+    setPracticed(loadPracticed());
     setHydrated(true);
   }, []);
 
   const favorited = favorites.some((f) => f.id === passageId);
-  const practiceMark = `${todayKey()}:${passageId}`;
-  const practicedToday = practicedKeys.includes(practiceMark);
+  const practicedRecord = practiced.find((r) => r.id === passageId);
+  const isPracticed = !!practicedRecord;
+  const practicedAt = practicedRecord?.practicedAt;
 
   const toggleFavorite = useCallback(() => {
     setFavorites((prev) => {
       const exists = prev.some((f) => f.id === passageId);
       const next = exists
         ? prev.filter((f) => f.id !== passageId)
-        : [
-            { ...input, id: passageId, savedAt: Date.now() },
-            ...prev,
-          ];
+        : [{ ...input, id: passageId, savedAt: Date.now() }, ...prev];
       saveFavorites(next);
       return next;
     });
   }, [passageId, input]);
 
-  const togglePracticedToday = useCallback(() => {
-    setPracticedKeys((prev) => {
-      const exists = prev.includes(practiceMark);
-      // 仅保留近 30 条，避免长期累积膨胀（无需历史统计）
+  // 持久切换「已练习」：记录练习时间，可撤销（无天数/完成率，仅留下「练过 + 何时」）
+  const togglePracticed = useCallback(() => {
+    setPracticed((prev) => {
+      const exists = prev.some((r) => r.id === passageId);
       const next = exists
-        ? prev.filter((k) => k !== practiceMark)
-        : [...prev, practiceMark].slice(-30);
+        ? prev.filter((r) => r.id !== passageId)
+        : [{ id: passageId, practicedAt: Date.now() }, ...prev];
       savePracticed(next);
       return next;
     });
-  }, [practiceMark]);
+  }, [passageId]);
 
   return {
     hydrated,
     favorited,
     toggleFavorite,
-    practicedToday,
-    togglePracticedToday,
+    isPracticed,
+    practicedAt,
+    togglePracticed,
   };
 }
 

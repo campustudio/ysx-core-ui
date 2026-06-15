@@ -37,7 +37,7 @@ import { HandbookBottomDock } from "../components/shared/handbook/HandbookBottom
 import { ShareQuoteSheet } from "../components/shared/handbook/ShareQuoteSheet";
 import { Toast } from "../components/shared/Toast";
 import { useToast } from "../hooks/useToast";
-import { useDailyActions } from "../hooks/useDailyActions";
+import { useDailyActions, formatPracticedDate } from "../hooks/useDailyActions";
 import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
 
 const GOLD = "#B8975A";
@@ -62,8 +62,9 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
   const {
     favorited,
     toggleFavorite,
-    practicedToday,
-    togglePracticedToday,
+    isPracticed,
+    practicedAt,
+    togglePracticed,
   } = useDailyActions({
     passage: t.passage,
     volumeId: t.volumeId,
@@ -84,8 +85,8 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
   };
 
   const handlePracticed = () => {
-    togglePracticedToday();
-    toast.show(practicedToday ? "已撤销" : "今天，我回来了一次");
+    togglePracticed();
+    toast.show(isPracticed ? "已撤销练习记录" : "今天，我回来了一次");
   };
 
   return (
@@ -214,8 +215,8 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
               />
               <DailyAction
                 icon={Check}
-                label={practicedToday ? "今天来过" : "已练习"}
-                active={practicedToday}
+                label={isPracticed ? "已练习" : "练一次"}
+                active={isPracticed}
                 onClick={handlePracticed}
               />
               <DailyAction
@@ -224,6 +225,23 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
                 onClick={() => setShareOpen(true)}
               />
             </div>
+
+            {/* 持久练习记录：随时可确认「练过 + 哪天练的」，无天数/完成率 */}
+            {isPracticed && practicedAt && (
+              <p
+                style={{
+                  fontFamily: FONT_SERIF,
+                  fontSize: rpx(19),
+                  color: GOLD,
+                  textAlign: "center",
+                  margin: `${rpx(16)} 0 0`,
+                  letterSpacing: rpx(1),
+                  opacity: 0.85,
+                }}
+              >
+                已于 {formatPracticedDate(practicedAt)} 练习过这一段
+              </p>
+            )}
           </div>
         </StaggerReveal>
 
