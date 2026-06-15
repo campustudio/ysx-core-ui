@@ -82,10 +82,9 @@ export function VolumeBookCover({
           inset: 0,
           borderRadius: rpx(10),
           background: LEATHER_BACK,
-          // 柔和接触投影：低不透明 + 大模糊 + 负扩散，使书"落"在桌面而非被硬裁成矩形，
-          // 同时负扩散避免横向外溢与相邻书连成一片
+          // 柔和接触投影：进一步降低不透明度与深度，避免多书横向堆叠形成生硬黑条
           boxShadow:
-            "0 18px 30px -14px rgba(20,12,4,0.42), 0 7px 14px -8px rgba(20,12,4,0.26)",
+            "0 14px 24px -12px rgba(20,12,4,0.22), 0 5px 10px -7px rgba(20,12,4,0.12)",
         }}
       />
 

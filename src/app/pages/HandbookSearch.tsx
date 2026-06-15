@@ -19,6 +19,7 @@ import {
   LIQUID_GLASS,
   HANDBOOK_BG,
   TEXT_ENGRAVED_SOFT,
+  SUGGEST_CHIP,
 } from "../config/styles";
 
 const GOLD = "#B8975A";
@@ -160,14 +161,14 @@ export function HandbookSearch({
             height: rpx(72),
             padding: `0 ${rpx(8)} 0 ${rpx(24)}`,
             borderRadius: rpx(40),
-            // 通透玻璃：更亮珠光白 + 清晰高光边（0.5px 内描边锐化边缘，收紧外影）
+            // 通透玻璃：更亮珠光白 + 极淡、柔和的高光边（弱化硬质白色边缘）
             background:
-              "linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.6) 100%)",
+              "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.55) 100%)",
             backdropFilter: "blur(14px) saturate(1.4)",
             WebkitBackdropFilter: "blur(14px) saturate(1.4)",
-            border: "1px solid rgba(255,255,255,1)",
+            border: "1px solid rgba(255,255,255,0.45)",
             boxShadow:
-              "inset 0 1.5px 1.5px rgba(255,255,255,1), inset 0 0 0 0.5px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(150,125,75,0.10), 0 4px 14px rgba(60,50,30,0.08)",
+              "inset 0 1px 1px rgba(255,255,255,0.6), inset 0 -1.5px 3px rgba(150,125,75,0.06), 0 3px 10px rgba(60,50,30,0.05)",
           }}
         >
           <Search size={18} color={GOLD} strokeWidth={2} />
@@ -189,52 +190,71 @@ export function HandbookSearch({
               letterSpacing: rpx(1),
             }}
           />
-          {/* 可见的「提问/搜索」按钮：移动端点它即发起搜索（回车亦可） */}
-          <button
-            type="submit"
-            aria-label="提问"
+          {/* 龙珠外圈柔和渐变发光环：提供从内到外的渐变淡化、光感与层次感 */}
+          <span
+            aria-hidden
             style={{
               position: "relative",
               flexShrink: 0,
-              width: rpx(58),
-              height: rpx(58),
+              width: rpx(60),
+              height: rpx(60),
               borderRadius: "50%",
-              border: "1px solid rgba(255,255,255,0.9)",
-              cursor: "pointer",
-              padding: 0,
-              // 通透金宝珠：更亮高光中心 + 清晰边缘（亮描边 + 0.5px 内环），收紧外影避免糊边
               background:
-                "radial-gradient(circle at 34% 27%, #FFF8E2 0%, #EFD7A0 30%, #CCA860 62%, #A8853F 100%)",
+                "radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.25) 60%, rgba(255,255,255,0) 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              boxShadow:
-                "inset 0 2px 3px rgba(255,255,255,0.9), inset 0 0 0 0.5px rgba(255,255,255,0.55), inset 0 -3px 5px rgba(110,82,35,0.5), 0 2px 6px rgba(150,115,55,0.4)",
+              boxShadow: "0 0 10px rgba(255,255,255,0.5)",
             }}
           >
-            {/* 镜面高光点：增强通透/透亮立体感 */}
-            <span
-              style={{
-                position: "absolute",
-                top: "14%",
-                left: "20%",
-                width: "34%",
-                height: "30%",
-                borderRadius: "50%",
-                background:
-                  "radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 72%)",
-              }}
-            />
-            <Sparkles
-              size={18}
-              color="#FFF7E6"
-              strokeWidth={1.6}
+            {/* 可见的「提问/搜索」按钮：移动端点它即发起搜索（回车亦可） */}
+            <button
+              type="submit"
+              aria-label="提问"
               style={{
                 position: "relative",
-                filter: "drop-shadow(0 1px 1px rgba(120,90,40,0.5))",
+                width: rpx(50),
+                height: rpx(50),
+                borderRadius: "50%",
+                cursor: "pointer",
+                padding: 0,
+                border: "none",
+                // 通透金宝珠：更亮高光中心 + 清晰边缘（亮描边 + 0.5px 内环），收紧外影避免糊边
+                background:
+                  "radial-gradient(circle at 32% 25%, #FFFBF0 0%, #F5DFAC 28%, #D4B069 60%, #9E7A35 100%)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                boxShadow:
+                  "inset 0 1.5px 2px rgba(255,255,255,0.95), inset 0 -2px 4px rgba(90,65,25,0.45), 0 1.5px 3px rgba(130,100,45,0.25)",
               }}
-            />
-          </button>
+            >
+              {/* 镜面高光点：增强通透/透亮立体感 */}
+              <span
+                style={{
+                  position: "absolute",
+                  top: "14%",
+                  left: "20%",
+                  width: "34%",
+                  height: "30%",
+                  borderRadius: "50%",
+                  background:
+                    "radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 72%)",
+                }}
+              />
+              <Sparkles
+                size={16}
+                color="#FFF7E6"
+                strokeWidth={1.6}
+                style={{
+                  position: "relative",
+                  // 金色宝珠上的「刻进去」效果：顶部暗压 + 底部微亮，使星标像凹刻进金面
+                  filter:
+                    "drop-shadow(0 -1px 1px rgba(110,80,30,0.6)) drop-shadow(0 1px 1px rgba(255,250,235,0.55))",
+                }}
+              />
+            </button>
+          </span>
         </form>
       </div>
 
@@ -259,18 +279,7 @@ export function HandbookSearch({
                 setQuery(s);
                 submit(s);
               }}
-              style={{
-                ...LIQUID_GLASS,
-                border: "1px solid rgba(184,151,90,0.3)",
-                borderRadius: rpx(40),
-                padding: `${rpx(14)} ${rpx(26)}`,
-                fontSize: rpx(24),
-                color: "#5A4F3C",
-                fontFamily: FONT_SERIF,
-                letterSpacing: rpx(1),
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-              }}
+              style={{ ...SUGGEST_CHIP }}
             >
               {s}
             </button>

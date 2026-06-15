@@ -14,6 +14,8 @@ import {
   Bookmark,
   Search,
   Sparkles,
+  MoveHorizontal,
+  RotateCw,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -33,6 +35,7 @@ import {
   TEXT_ENGRAVED_SOFT,
   ICON_ENGRAVED,
   HANDBOOK_BG,
+  SUGGEST_CHIP,
 } from "../config/styles";
 import { Toast } from "../components/shared/Toast";
 import { PrimaryButton } from "../components/shared/PrimaryButton";
@@ -101,6 +104,21 @@ const PRACTICE_STEPS: { title: string; hint: string }[] = [
   { title: "写下自照", hint: "留下真实的一句" },
 ];
 
+/**
+ * 快捷提问胶囊池（3组，每组3个，点击右侧刷新按钮循环切换）
+ */
+const SUGGESTION_POOL = [
+  "我很焦虑怎么办",
+  "感知是什么",
+  "从哪里开始读",
+  "什么是元感知",
+  "亲密关系很痛苦",
+  "如何面对死亡",
+  "怎么开始练习",
+  "总是分心怎么办",
+  "写下自照有什么用",
+];
+
 export function HandbookHome({
   onOpenShelf,
   onOpenReadingEntry,
@@ -118,6 +136,31 @@ export function HandbookHome({
   const { lastProgress, hasProgress, bookmarks, removeBookmark } =
     useReadingProgress();
   const { hasPath } = useReadingPath();
+
+  // 快捷提问胶囊换一换逻辑
+  const [suggestionIndex, setSuggestionIndex] = useState(0);
+  // 累加式旋转角度：每次点击 +360，始终顺时针前进、绝不反向回退
+  const [refreshSpin, setRefreshSpin] = useState(0);
+  // 胶囊淡入淡出可见态：换组时先淡出旧的、再淡入新的，符合平台柔和气质
+  const [chipsVisible, setChipsVisible] = useState(true);
+
+  const handleRefreshSuggestions = useCallback(() => {
+    setRefreshSpin((prev) => prev + 360);
+    // 先柔和淡出，待旧胶囊隐去后切换内容并淡入新胶囊
+    setChipsVisible(false);
+    setTimeout(() => {
+      setSuggestionIndex((prev) => (prev + 1) % 3);
+      setChipsVisible(true);
+    }, 560);
+  }, []);
+
+  const visibleSuggestions = SUGGESTION_POOL.slice(
+    suggestionIndex * 3,
+    (suggestionIndex + 1) * 3
+  );
+
+  // 横滑指示条比例
+  const [scrollRatio, setScrollRatio] = useState(0);
 
   // 继续阅读详情（卷名/章名/进度百分比）
   // 新用户case：无进度时显示第一卷第一章
@@ -260,7 +303,12 @@ export function HandbookHome({
               alignItems: "center",
             }}
           >
-            <Bookmark size={20} color={GOLD} strokeWidth={1.5} />
+            <Bookmark
+              size={20}
+              color={GOLD}
+              strokeWidth={1.5}
+              style={{ filter: ICON_ENGRAVED }}
+            />
           </button>
 
           <h1
@@ -303,14 +351,14 @@ export function HandbookHome({
               height: rpx(84),
               padding: `0 ${rpx(14)} 0 ${rpx(28)}`,
               borderRadius: rpx(42),
-              // 通透玻璃药丸：更亮的珠光白 + 清晰高光边（加 0.5px 内描边让边缘锐利不糊，收紧外影）
+              // 通透玻璃药丸：更亮的珠光白 + 极淡、柔和的高光边（弱化硬质白色边缘）
               background:
-                "linear-gradient(180deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.6) 100%)",
+                "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.55) 100%)",
               backdropFilter: "blur(14px) saturate(1.4)",
               WebkitBackdropFilter: "blur(14px) saturate(1.4)",
-              border: "1px solid rgba(255,255,255,1)",
+              border: "1px solid rgba(255,255,255,0.45)",
               boxShadow:
-                "inset 0 1.5px 1.5px rgba(255,255,255,1), inset 0 0 0 0.5px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(150,125,75,0.10), 0 4px 14px rgba(60,50,30,0.08)",
+                "inset 0 1px 1px rgba(255,255,255,0.6), inset 0 -1.5px 3px rgba(150,125,75,0.06), 0 3px 10px rgba(60,50,30,0.05)",
               cursor: "pointer",
             }}
           >
@@ -336,78 +384,151 @@ export function HandbookHome({
             >
               搜索 / 问手册
             </span>
-            {/* 金色宝珠 ✦：立体高光 + 微凸星标，明确「问 AI 伴读」入口 */}
+            {/* 龙珠外圈柔和渐变发光环：提供从内到外的渐变淡化、光感与层次感 */}
             <span
               aria-hidden
               style={{
                 position: "relative",
                 flexShrink: 0,
-                width: rpx(60),
-                height: rpx(60),
+                width: rpx(62),
+                height: rpx(62),
                 borderRadius: "50%",
-                // 通透金宝珠：更亮高光中心 + 清晰边缘（1px 亮描边 + 0.5px 内环），收紧外影避免糊边
                 background:
-                  "radial-gradient(circle at 34% 27%, #FFF8E2 0%, #EFD7A0 30%, #CCA860 62%, #A8853F 100%)",
-                border: "1px solid rgba(255,255,255,0.9)",
-                boxShadow:
-                  "inset 0 2px 3px rgba(255,255,255,0.9), inset 0 0 0 0.5px rgba(255,255,255,0.55), inset 0 -3px 5px rgba(110,82,35,0.5), 0 2px 6px rgba(150,115,55,0.4)",
+                  "radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.25) 60%, rgba(255,255,255,0) 100%)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
+                boxShadow: "0 0 10px rgba(255,255,255,0.5)",
               }}
             >
-              {/* 镜面高光点：增强通透/透亮的立体感 */}
+              {/* 金色宝珠 ✦：立体高光 + 微凸星标，明确「问 AI 伴读」入口 */}
               <span
                 style={{
-                  position: "absolute",
-                  top: "14%",
-                  left: "20%",
-                  width: "34%",
-                  height: "30%",
-                  borderRadius: "50%",
-                  background:
-                    "radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 72%)",
-                }}
-              />
-              <Sparkles
-                size={18}
-                color="#FFF7E6"
-                strokeWidth={1.6}
-                style={{
                   position: "relative",
-                  filter: "drop-shadow(0 1px 1px rgba(120,90,40,0.5))",
+                  width: rpx(52),
+                  height: rpx(52),
+                  borderRadius: "50%",
+                  // 通透金宝珠：更亮高光中心 + 清晰边缘（亮描边 + 0.5px 内环），收紧外影避免糊边
+                  background:
+                    "radial-gradient(circle at 32% 25%, #FFFBF0 0%, #F5DFAC 28%, #D4B069 60%, #9E7A35 100%)",
+                  boxShadow:
+                    "inset 0 1.5px 2px rgba(255,255,255,0.95), inset 0 -2px 4px rgba(90,65,25,0.45), 0 1.5px 3px rgba(130,100,45,0.25)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
-              />
+              >
+                {/* 镜面高光点：增强通透/透亮的立体感 */}
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "14%",
+                    left: "20%",
+                    width: "34%",
+                    height: "30%",
+                    borderRadius: "50%",
+                    background:
+                      "radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 72%)",
+                  }}
+                />
+                <Sparkles
+                  size={16}
+                  color="#FFF7E6"
+                  strokeWidth={1.6}
+                  style={{
+                    position: "relative",
+                    // 金色宝珠上的「刻进去」效果：顶部暗压 + 底部微亮，使星标像凹刻进金面
+                    filter:
+                      "drop-shadow(0 -1px 1px rgba(110,80,30,0.6)) drop-shadow(0 1px 1px rgba(255,250,235,0.55))",
+                  }}
+                />
+              </span>
             </span>
           </button>
           <div
             style={{
               display: "flex",
-              flexWrap: "wrap",
-              gap: rpx(14),
+              alignItems: "center",
+              gap: rpx(16),
               marginTop: rpx(20),
+              width: "100%",
             }}
           >
-            {["我很焦虑怎么办", "感知是什么", "从哪里开始读"].map((s) => (
-              <button
-                key={s}
-                onClick={() => onOpenSearch?.(s)}
-                style={{
-                  background: "rgba(255,255,255,0.5)",
-                  border: "1px solid rgba(184,151,90,0.28)",
-                  borderRadius: rpx(40),
-                  padding: `${rpx(10)} ${rpx(22)}`,
-                  fontSize: rpx(22),
-                  color: "#6F665A",
-                  fontFamily: FONT_SERIF,
-                  letterSpacing: rpx(1),
-                  cursor: "pointer",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {s}
-              </button>
-            ))}
+            {/* 优雅单行横滑容器：通过横滑（不换行）完美解决多行高度过高的问题，同时用 mask-image 制造右侧渐变淡出，暗示可继续滑动 */}
+            <div
+              className="no-scrollbar"
+              style={{
+                display: "flex",
+                gap: rpx(14),
+                flex: 1,
+                overflowX: "auto",
+                whiteSpace: "nowrap",
+                WebkitOverflowScrolling: "touch",
+                paddingBottom: rpx(6), // 预留一点微弱投影空间
+                WebkitMaskImage: "linear-gradient(to right, #000 0%, #000 82%, transparent 100%)",
+                // 换组时柔和淡入淡出，呼应平台「柔和、柔软」的整体气质
+                opacity: chipsVisible ? 1 : 0,
+                transition: "opacity 1s ease",
+              }}
+            >
+              {visibleSuggestions.map((s) => (
+                <button
+                  key={s}
+                  onClick={() => onOpenSearch?.(s)}
+                  style={{
+                    ...SUGGEST_CHIP,
+                    display: "inline-block",
+                    flexShrink: 0,
+                  }}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+            {/* 旋转刷新按钮：采用精致圆形液态玻璃效果，弱化生硬白边，增强立体过渡感 */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRefreshSuggestions();
+              }}
+              aria-label="换一换"
+              style={{
+                // 用径向渐变玻璃底（从内向外逐渐淡化），保证整圆完整可见、不会出现某侧边缘像缺了一块
+                background:
+                  "radial-gradient(circle at 38% 32%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.42) 62%, rgba(255,255,255,0.32) 100%)",
+                backdropFilter: "blur(10px) saturate(1.15)",
+                WebkitBackdropFilter: "blur(10px) saturate(1.15)",
+                // 彻底去除生硬的 1px border，改用多层渐变内阴影（类似龙珠）来实现边缘的自然淡化与过渡；
+                // 末尾加一道极淡的外缘发丝线，柔和地勾勒完整圆形轮廓（不刺眼、无硬白边）
+                border: "none",
+                boxShadow:
+                  "inset 0 2.5px 3px rgba(255,255,255,0.85), inset 0 -2.5px 3.5px rgba(110,95,65,0.15), inset 0 0 0 0.75px rgba(255,255,255,0.35), 0 3px 8px rgba(70,55,30,0.05), 0 0 0 0.5px rgba(120,105,70,0.07)",
+                cursor: "pointer",
+                width: rpx(54),
+                height: rpx(54),
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "50%",
+                color: "rgba(184,151,90,0.8)",
+                flexShrink: 0,
+                transition:
+                  "transform 0.7s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease",
+                transform: `rotate(${refreshSpin}deg)`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "#B8975A";
+                e.currentTarget.style.background =
+                  "radial-gradient(circle at 38% 32%, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.58) 62%, rgba(255,255,255,0.45) 100%)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "rgba(184,151,90,0.8)";
+                e.currentTarget.style.background =
+                  "radial-gradient(circle at 38% 32%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.42) 62%, rgba(255,255,255,0.32) 100%)";
+              }}
+            >
+              <RotateCw size={15} strokeWidth={2} style={{ filter: ICON_ENGRAVED }} />
+            </button>
           </div>
         </div>
 
@@ -442,7 +563,12 @@ export function HandbookHome({
                 >
                   今日一段
                 </span>
-                <Sparkles size={15} color={GOLD} strokeWidth={1.6} />
+                <Sparkles
+                  size={15}
+                  color={GOLD}
+                  strokeWidth={1.6}
+                  style={{ filter: ICON_ENGRAVED }}
+                />
               </div>
 
               <div
@@ -460,11 +586,18 @@ export function HandbookHome({
                     fontWeight: 600,
                     color: INK,
                     letterSpacing: rpx(2),
+                    textShadow: TEXT_ENGRAVED,
                   }}
                 >
                   {dailyMonth} / {dailyDay}
                 </span>
-                <span style={{ fontSize: rpx(21), color: SUB }}>
+                <span
+                  style={{
+                    fontSize: rpx(21),
+                    color: SUB,
+                    textShadow: TEXT_ENGRAVED_SOFT,
+                  }}
+                >
                   {dailyWeekday}
                 </span>
               </div>
@@ -674,6 +807,13 @@ export function HandbookHome({
           </div>
 
           <div
+            onScroll={(e) => {
+              const target = e.currentTarget;
+              const maxScroll = target.scrollWidth - target.clientWidth;
+              if (maxScroll > 0) {
+                setScrollRatio(target.scrollLeft / maxScroll);
+              }
+            }}
             style={{
               display: "flex",
               gap: rpx(20),
@@ -718,6 +858,41 @@ export function HandbookHome({
                 scrollSnapAlign: "start",
               }}
             />
+          </div>
+
+          {/* 极简横滑指示条：替代多余的文字提示，用现代高档的滑动轨迹，优雅提示可左右滑动 */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: rpx(4),
+              paddingBottom: rpx(24),
+            }}
+          >
+            <div
+              style={{
+                position: "relative",
+                width: rpx(72),
+                height: rpx(3),
+                borderRadius: rpx(1.5),
+                background: "rgba(184,151,90,0.12)",
+                overflow: "hidden",
+              }}
+            >
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: rpx(24),
+                  height: "100%",
+                  borderRadius: rpx(1.5),
+                  background: "rgba(184,151,90,0.65)",
+                  transform: `translateX(calc(${scrollRatio} * ${rpx(72 - 24)}))`,
+                  transition: "transform 0.15s cubic-bezier(0.25, 1, 0.5, 1)",
+                }}
+              />
+            </div>
           </div>
 
           {/* 阅读陪伴（标题+副标题，左右两卡带背景图） */}

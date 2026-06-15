@@ -68,15 +68,16 @@ export const GLASS_GRADIENTS = {
  */
 export const LIQUID_GLASS = {
   background:
-    "linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 40%, rgba(255,255,255,0.01) 100%)",
+    "linear-gradient(135deg, rgba(255,255,255,0.01) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.02) 100%)",
   backdropFilter: "blur(18px) saturate(1.15)",
   WebkitBackdropFilter: "blur(18px) saturate(1.15)",
-  borderTop: "1px solid rgba(255, 255, 255, 0.8)",
-  borderLeft: "1px solid rgba(255, 255, 255, 0.5)",
-  borderRight: "1px solid rgba(255, 255, 255, 0.2)",
-  borderBottom: "1px solid rgba(255, 255, 255, 0.3)",
+  // 弱化硬质白色描边，改为极淡、柔和过渡的半透明白（消除死板白边，与首页第三层一致）
+  borderTop: "1px solid rgba(255, 255, 255, 0.45)",
+  borderLeft: "1px solid rgba(255, 255, 255, 0.3)",
+  borderRight: "1px solid rgba(255, 255, 255, 0.12)",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.18)",
   boxShadow:
-    "inset 2px 2px 4px rgba(255,255,255,0.4), inset -3px -3px 6px rgba(0,0,0,0.06), inset 0 0 20px rgba(255,255,255,0.15), 0 15px 35px rgba(0,0,0,0.06), 0 3px 10px rgba(0,0,0,0.05)",
+    "inset 1.5px 1.5px 3px rgba(255,255,255,0.35), inset -2px -2px 4px rgba(0,0,0,0.04), inset 0 0 20px rgba(255,255,255,0.1), 0 12px 28px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.03)",
 } as const;
 
 // ─── 宋体字族 ─────────────────────────────────────────
@@ -147,3 +148,24 @@ export const GENTLE_FADE_OUT_MS = 540;
 export const TRANSITION_EXPAND = `grid-template-rows 1.1s ${GENTLE_EASE_OUT}, opacity 0.8s ease 0.12s`;
 /** 收起 */
 export const TRANSITION_COLLAPSE = `grid-template-rows 0.85s ${GENTLE_EASE_IN}, opacity 0.6s ease`;
+
+// ─── 可点击「快捷提问」胶囊（首页 & 搜索页统一） ──────────
+/**
+ * 统一的快捷提问胶囊样式：去掉金色描边，仅用极淡玻璃底 + 柔和投影，
+ * 保持通透简约。首页与搜索页共用，确保风格一致。
+ */
+export const SUGGEST_CHIP = {
+  background: "rgba(255,255,255,0.5)",
+  border: "none",
+  borderRadius: rpx(40),
+  padding: `${rpx(12)} ${rpx(26)}`,
+  fontSize: rpx(23),
+  color: "#6F665A",
+  fontFamily: FONT_SERIF,
+  letterSpacing: rpx(1),
+  backdropFilter: "blur(6px) saturate(1.05)",
+  WebkitBackdropFilter: "blur(6px) saturate(1.05)",
+  boxShadow: "0 2px 8px rgba(70,55,30,0.06)",
+  cursor: "pointer",
+  whiteSpace: "nowrap" as const,
+} as const;

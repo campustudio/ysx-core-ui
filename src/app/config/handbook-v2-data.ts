@@ -83,7 +83,7 @@ export const V2_VOLUMES: V2Volume[] = [
     intro:
       "本卷引导你穿越层层幻象，回到真相的源头。感知是宇宙诞生的源头，维度不是地方而是频率。通过观察、辨识与内观，建立看见真相的能力，从而选择真实的生活。",
     keywords: ["感知本源", "维度真相", "幻象系统", "五大剧场"],
-    cover: coverPlaceholder,
+    cover: crystalCoverBg,
     chapters: [
       {
         id: "v1-c1",

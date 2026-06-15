@@ -115,10 +115,10 @@ export function VolumeGlassCover({
               "linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0.05) 70%, rgba(255,255,255,0.12) 100%)",
           backdropFilter: imageUrl ? "none" : "blur(1.5px) saturate(1.02)",
           WebkitBackdropFilter: imageUrl ? "none" : "blur(1.5px) saturate(1.02)",
-          // 图片模式：加一层更轻、更柔、偏冷灰的接触投影，使水晶书与黑皮书一样"落"在桌面，落地感一致；
+          // 图片模式：加一层极轻、极柔、偏冷灰的接触投影（大幅弱化阴影深度，避免多书横向堆叠形成黑条），落地感自然；
           // 否则用 inset shadow 模拟水晶斜面
           boxShadow: imageUrl
-            ? "0 18px 30px -14px rgba(86,84,78,0.3), 0 7px 14px -8px rgba(86,84,78,0.18)"
+            ? "0 14px 24px -12px rgba(86,84,78,0.15), 0 5px 10px -7px rgba(86,84,78,0.08)"
             : "inset 0 0 0 1px rgba(255,255,255,0.45), inset 0 2px 3px rgba(255,255,255,0.8), inset 2px 0 3px rgba(255,255,255,0.6), inset 0 -5px 10px rgba(0,0,0,0.03), inset -4px -2px 8px rgba(0,0,0,0.03), inset 0 0 20px rgba(255,255,255,0.15)",
         }}
       >
