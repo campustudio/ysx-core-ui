@@ -142,11 +142,15 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
     setTimeout(() => setLayer(3), 1500);
   };
 
-  const handleNavClick = (navIndex: number, title: string) => {
+  const handleNavClick = (navIndex: number, _title: string) => {
     if (navIndex === 1 || navIndex === 2) {
       onNavChange?.(navIndex);
+    } else if (navIndex === 3) {
+      // 明镜入口气质（§2.8 · 源频明镜九）：不是聊天机器人，而是照见当下、回到真实
+      toast.show("明镜即将开放 · 照见当下，回到真实");
     } else {
-      toast.show(`「${title}」正在精心筹备中，敬请期待`);
+      // 共感网络弱化为「逐步开放」，避免被误读为社群/组织平台
+      toast.show("共感网络逐步开放中 · 先走好脚下的路");
     }
   };
 
@@ -684,7 +688,7 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
                 {
                   id: 3,
                   title: "明镜源频AI",
-                  subtitle: "与你共振，照见真实的自己。",
+                  subtitle: "照见当下，回到真实。",
                   iconSrc: iconMirror,
                   iconScaleX: 1.0,
                   iconScaleY: 1.0,
@@ -695,7 +699,7 @@ export function Home({ onNavChange, onToggleMode }: HomeProps) {
                 {
                   id: 4,
                   title: "共感网络",
-                  subtitle: "更多入口，持续通往感知文明。",
+                  subtitle: "回到感知的路，逐步铺开。",
                   iconSrc: iconGrid,
                   iconScaleX: 0.9,
                   iconScaleY: 0.9,

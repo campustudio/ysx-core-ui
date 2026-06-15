@@ -26,10 +26,34 @@ import {
   HANDBOOK_HEADER_ICON,
 } from "../components/shared/HandbookHeader";
 import { ShareQuoteSheet } from "../components/shared/handbook/ShareQuoteSheet";
+import { PaperVersionSheet } from "../components/shared/handbook/PaperVersionSheet";
 
 const GOLD = "#B8975A";
 const INK = "#1F1F1F";
 const SUB = "#606266";
+
+/** 纸质版引导：每卷至多温和提示一次（读完整卷后），避免重复打扰 */
+const PAPER_SEEN_KEY = "ysx_handbook_paper_seen";
+function paperSeen(volumeId: string): boolean {
+  try {
+    const raw = localStorage.getItem(PAPER_SEEN_KEY);
+    const arr = raw ? (JSON.parse(raw) as string[]) : [];
+    return Array.isArray(arr) && arr.includes(volumeId);
+  } catch {
+    return false;
+  }
+}
+function markPaperSeen(volumeId: string) {
+  try {
+    const raw = localStorage.getItem(PAPER_SEEN_KEY);
+    const arr = raw ? (JSON.parse(raw) as string[]) : [];
+    const next = Array.isArray(arr) ? arr : [];
+    if (!next.includes(volumeId)) next.push(volumeId);
+    localStorage.setItem(PAPER_SEEN_KEY, JSON.stringify(next));
+  } catch {
+    /* 忽略持久化失败 */
+  }
+}
 
 interface HandbookVolumeProps {
   volumeId: string;
@@ -44,11 +68,27 @@ export function HandbookVolume({
 }: HandbookVolumeProps) {
   const toast = useToast();
   const [showShare, setShowShare] = useState(false);
+  const [showPaper, setShowPaper] = useState(false);
   const volume = getV2VolumeById(volumeId);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [volumeId]);
+
+  // 读完整卷后的「回」时刻：温和引导纸质版（每卷至多一次，不推销）
+  useEffect(() => {
+    if (!volume) return;
+    const allDone = volume.chapters.every(
+      (ch) => getChapterProgressLabel(ch.id) === "已完成",
+    );
+    if (allDone && !paperSeen(volumeId)) {
+      const id = window.setTimeout(() => {
+        markPaperSeen(volumeId);
+        setShowPaper(true);
+      }, 900); // 稍作停留再轻柔浮现，不抢「读完」的当下
+      return () => clearTimeout(id);
+    }
+  }, [volume, volumeId]);
 
   if (!volume) {
     return (
@@ -290,6 +330,13 @@ export function HandbookVolume({
         quote={volume.oneLine}
         source={`《${volume.title}》`}
         onCopied={() => toast.show("已复制")}
+      />
+
+      <PaperVersionSheet
+        visible={showPaper}
+        onClose={() => setShowPaper(false)}
+        volumeTitle={volume.title}
+        onLearnMore={() => toast.show("纸质版通道即将开放")}
       />
 
       <Toast

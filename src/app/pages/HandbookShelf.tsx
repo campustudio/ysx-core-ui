@@ -6,7 +6,11 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { List, LayoutGrid, ChevronRight, Plus } from "lucide-react";
-import { V2_VOLUMES, VOLUME_CN } from "../config/handbook-v2-data";
+import {
+  V2_VOLUMES,
+  VOLUME_CN,
+  VOLUME_COVER_PLACEHOLDER,
+} from "../config/handbook-v2-data";
 import {
   FONT_SERIF,
   rpx,
@@ -17,7 +21,7 @@ import {
   HANDBOOK_BG,
 } from "../config/styles";
 import { HandbookPlaceholderCard } from "../components/shared/HandbookPlaceholderCard";
-import { VolumeBookCover } from "../components/shared/VolumeBookCover";
+import { VolumeGlassCover } from "../components/shared/VolumeGlassCover";
 import {
   HandbookHeader,
   HANDBOOK_HEADER_HEIGHT,
@@ -173,11 +177,18 @@ export function HandbookShelf({ onBack, onOpenVolume }: HandbookShelfProps) {
                         justifyContent: "center",
                       }}
                     >
-                      <VolumeBookCover
+                      <VolumeGlassCover
                         volumeNumber={vol.volumeNumber}
                         volumeCn={VOLUME_CN[vol.volumeNumber - 1]}
+                        title={vol.title}
+                        subtitle={vol.subtitle}
                         height={rpx(140)}
                         compact
+                        imageUrl={
+                          vol.cover !== VOLUME_COVER_PLACEHOLDER
+                            ? vol.cover
+                            : undefined
+                        }
                       />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
