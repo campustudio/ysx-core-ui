@@ -793,6 +793,8 @@ export const ENTRY_OPTIONS: EntryOption[] = [
   { id: "q-system", label: "我想系统读完整十卷" },
   { id: "q-practice", label: "我想边读边练" },
   { id: "q-daily", label: "我想每天读一点" },
+  // 接住完全迷茫、第一次进来的人——无需选对，从今天开始即可
+  { id: "q-unsure", label: "我不知道，从今天开始就好" },
 ];
 
 /** 推荐解锁项 */
@@ -908,6 +910,21 @@ export const ENTRY_RECOMMENDATIONS: Record<string, Recommendation> = {
     extendedReading: [
       { volumeId: "vol-4", label: "第四卷《感知新文明问答录》" },
       { volumeId: "vol-3", label: "第三卷《感知科学全书》" },
+    ],
+  },
+  // 完全迷茫者的轻入口：不强求系统计划，先从「今日一段」与第一卷起步
+  "q-unsure": {
+    volumeId: "vol-1",
+    volumeNumber: 1,
+    volumeTitle: "真相启示录",
+    reason:
+      "不用选对，只要从此刻开始。先从『今日一段』读起，或翻开第一卷的第一节——一句一段，慢慢就有了自己的路。",
+    coreChapters: [
+      { volumeId: "vol-1", chapterId: "v1-c1", label: "1.1 感知即存在" },
+    ],
+    practices: ["从今日一段开始", "一分钟自照练习"],
+    extendedReading: [
+      { volumeId: "vol-1", label: "第一卷《真相启示录》" },
     ],
   },
 };

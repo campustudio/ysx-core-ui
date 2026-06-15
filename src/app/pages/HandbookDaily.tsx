@@ -5,7 +5,15 @@
  */
 
 import { useState, useEffect } from "react";
-import { Sun, Quote, Sparkles, BookOpen } from "lucide-react";
+import {
+  Sun,
+  Quote,
+  Sparkles,
+  BookOpen,
+  Bookmark,
+  Check,
+  Share2,
+} from "lucide-react";
 import { TODAY_PASSAGE } from "../config/handbook-v2-data";
 import {
   FONT_SERIF,
@@ -26,6 +34,10 @@ import { StepList } from "../components/shared/handbook/StepList";
 import { PracticeSectionTitle } from "../components/shared/handbook/PracticeSectionTitle";
 import { StaggerReveal } from "../components/shared/handbook/StaggerReveal";
 import { HandbookBottomDock } from "../components/shared/handbook/HandbookBottomDock";
+import { ShareQuoteSheet } from "../components/shared/handbook/ShareQuoteSheet";
+import { Toast } from "../components/shared/Toast";
+import { useToast } from "../hooks/useToast";
+import { useDailyActions } from "../hooks/useDailyActions";
 import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
 
 const GOLD = "#B8975A";
@@ -44,13 +56,37 @@ function todayLabel(): string {
 
 export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
   const [reveal, setReveal] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const t = TODAY_PASSAGE;
+  const toast = useToast();
+  const {
+    favorited,
+    toggleFavorite,
+    practicedToday,
+    togglePracticedToday,
+  } = useDailyActions({
+    passage: t.passage,
+    volumeId: t.volumeId,
+    chapterId: t.chapterId,
+    volumeTitle: t.volumeTitle,
+    chapterTitle: t.chapterTitle,
+  });
 
   useEffect(() => {
     window.scrollTo(0, 0);
     const id = requestAnimationFrame(() => setReveal(true));
     return () => cancelAnimationFrame(id);
   }, []);
+
+  const handleFavorite = () => {
+    toggleFavorite();
+    toast.show(favorited ? "已取消收藏" : "已留下这句话");
+  };
+
+  const handlePracticed = () => {
+    togglePracticedToday();
+    toast.show(practicedToday ? "已撤销" : "今天，我回来了一次");
+  };
 
   return (
     <div
@@ -156,6 +192,38 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
             >
               — 《{t.volumeTitle}》· {t.chapterTitle}
             </p>
+
+            {/* 三个轻功能：收藏 / 已练习 / 分享卡片。
+                克制、无打卡焦虑——气质是「今天，我回来了一次」 */}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: rpx(12),
+                marginTop: rpx(32),
+                paddingTop: rpx(26),
+                borderTop: "1px solid rgba(138,123,85,0.14)",
+              }}
+            >
+              <DailyAction
+                icon={Bookmark}
+                label={favorited ? "已收藏" : "收藏"}
+                active={favorited}
+                fillWhenActive
+                onClick={handleFavorite}
+              />
+              <DailyAction
+                icon={Check}
+                label={practicedToday ? "今天来过" : "已练习"}
+                active={practicedToday}
+                onClick={handlePracticed}
+              />
+              <DailyAction
+                icon={Share2}
+                label="分享"
+                onClick={() => setShareOpen(true)}
+              />
+            </div>
           </div>
         </StaggerReveal>
 
@@ -188,6 +256,79 @@ export function HandbookDaily({ onBack, onReadChapter }: HandbookDailyProps) {
           onClick={() => onReadChapter?.(t.volumeId, t.chapterId)}
         />
       </HandbookBottomDock>
+
+      <ShareQuoteSheet
+        visible={shareOpen}
+        onClose={() => setShareOpen(false)}
+        quote={t.passage}
+        source={`《${t.volumeTitle}》· ${t.chapterTitle}`}
+        onCopied={() => toast.show("已复制")}
+        onSaved={() => toast.show("卡片已生成")}
+      />
+
+      <Toast
+        message={toast.message}
+        visible={toast.visible}
+        duration={2200}
+        onDismiss={toast.dismiss}
+      />
     </div>
+  );
+}
+
+interface DailyActionProps {
+  icon: typeof Bookmark;
+  label: string;
+  active?: boolean;
+  /** 激活时是否给图标填充金色（收藏用） */
+  fillWhenActive?: boolean;
+  onClick: () => void;
+}
+
+/** 今日一段的轻功能按钮：极简文字链气质，激活转柔金，无打卡感 */
+function DailyAction({
+  icon: Icon,
+  label,
+  active = false,
+  fillWhenActive = false,
+  onClick,
+}: DailyActionProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: rpx(8),
+        padding: `${rpx(8)} ${rpx(4)}`,
+        background: "transparent",
+        border: "none",
+        cursor: "pointer",
+        flex: 1,
+        justifyContent: "center",
+      }}
+      aria-pressed={active}
+      aria-label={label}
+    >
+      <Icon
+        size={17}
+        color={active ? GOLD : SUB}
+        strokeWidth={1.7}
+        fill={fillWhenActive && active ? GOLD : "none"}
+        style={{ filter: ICON_ENGRAVED }}
+      />
+      <span
+        style={{
+          fontFamily: FONT_SERIF,
+          fontSize: rpx(22),
+          color: active ? GOLD : SUB,
+          letterSpacing: rpx(1),
+          textShadow: TEXT_ENGRAVED_SOFT,
+        }}
+      >
+        {label}
+      </span>
+    </button>
   );
 }

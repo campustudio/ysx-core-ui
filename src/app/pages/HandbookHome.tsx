@@ -45,6 +45,7 @@ import { useToast } from "../hooks/useToast";
 import { useReadingProgress } from "../hooks/useReadingProgress";
 import { useReadingPath } from "../hooks/useReadingPath";
 import { HandbookBookmarksSheet } from "../components/shared/HandbookBookmarksSheet";
+import { useDailyFavorites } from "../hooks/useDailyActions";
 import { ComingSoonSheet } from "../components/shared/handbook/ComingSoonSheet";
 import { useBottomNav } from "../components/navigation/BottomNavContext";
 import bgLayer1 from "@/assets/images/human-manual/home-top.webp";
@@ -135,6 +136,8 @@ export function HandbookHome({
   const navDock = useBottomNav();
   const { lastProgress, hasProgress, bookmarks, removeBookmark } =
     useReadingProgress();
+  const { favorites: favPassages, removeFavorite, reload: reloadFavorites } =
+    useDailyFavorites();
   const { hasPath } = useReadingPath();
 
   // 快捷提问胶囊换一换逻辑
@@ -290,7 +293,10 @@ export function HandbookHome({
         >
           {/* 右上角收藏入口 */}
           <button
-            onClick={() => setShowBookmarks(true)}
+            onClick={() => {
+              reloadFavorites();
+              setShowBookmarks(true);
+            }}
             style={{
               position: "absolute",
               right: rpx(48),
@@ -1319,12 +1325,17 @@ export function HandbookHome({
       <HandbookBookmarksSheet
         visible={showBookmarks}
         bookmarks={bookmarks}
+        passages={favPassages}
         onClose={() => setShowBookmarks(false)}
         onNavigateToChapter={(volumeId, chapterId) =>
           onContinueReading?.(volumeId, chapterId)
         }
         onRemoveBookmark={(id) => {
           removeBookmark(id);
+          toast.show("已删除收藏");
+        }}
+        onRemovePassage={(id) => {
+          removeFavorite(id);
           toast.show("已删除收藏");
         }}
       />

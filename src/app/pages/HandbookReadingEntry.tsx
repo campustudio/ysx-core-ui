@@ -12,6 +12,7 @@ import {
   Layers,
   PencilLine,
   CalendarDays,
+  Sunrise,
 } from "lucide-react";
 import { ENTRY_OPTIONS } from "../config/handbook-v2-data";
 import {
@@ -36,7 +37,14 @@ const GOLD = "#B8975A";
 const INK = "#1F1F1F";
 const SUB = "#606266";
 
-const OPTION_ICONS = [BookOpen, HeartCrack, Layers, PencilLine, CalendarDays];
+const OPTION_ICONS = [
+  BookOpen,
+  HeartCrack,
+  Layers,
+  PencilLine,
+  CalendarDays,
+  Sunrise,
+];
 
 interface HandbookReadingEntryProps {
   onBack?: () => void;
@@ -118,9 +126,24 @@ export function HandbookReadingEntry({
           你现在最需要什么？
         </h1>
 
+        {/* 降低选择压力：不用选对，只要从此刻开始 */}
+        <p
+          style={{
+            fontFamily: FONT_SERIF,
+            fontSize: rpx(24),
+            color: SUB,
+            letterSpacing: rpx(1.5),
+            margin: `${rpx(18)} 0 0`,
+            lineHeight: 1.6,
+            textAlign: "center",
+          }}
+        >
+          不用选对，只要从此刻开始。
+        </p>
+
         <div
           style={{
-            marginTop: rpx(48),
+            marginTop: rpx(44),
             display: "flex",
             flexDirection: "column",
             gap: rpx(22),
