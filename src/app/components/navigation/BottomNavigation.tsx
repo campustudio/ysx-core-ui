@@ -22,6 +22,9 @@ import { Home, BookOpen, Compass, Sparkles } from "lucide-react";
 import type { LucideProps } from "lucide-react";
 import { ICON_ENGRAVED, TEXT_ENGRAVED } from "../../config/styles";
 
+/** 激活态金色（与人类手册馆金色点缀一致） */
+const GOLD = "#B8975A";
+
 // ─── 导航项配置 ──────────────────────────────────────
 
 interface NavItem {
@@ -78,9 +81,13 @@ export function BottomNavigation({
     >
       <div
         style={{
-          background: "rgba(46, 39, 29, 0.66)",
+          // 浅色液态玻璃：与首页其他玻璃元素一致的通透珠光白，金色为激活点缀
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.66) 100%)",
           backdropFilter: "blur(20px) saturate(140%)",
           WebkitBackdropFilter: "blur(20px) saturate(140%)",
+          borderTop: "1px solid rgba(255,255,255,0.7)",
+          boxShadow: "0 -6px 20px rgba(60,50,30,0.06)",
           paddingBottom: "env(safe-area-inset-bottom, 0px)",
         }}
       >
@@ -98,13 +105,12 @@ export function BottomNavigation({
               <button
                 key={item.label}
                 onClick={() => onChange?.(index)}
-                className={`flex flex-col items-center justify-center transition-all duration-200 ${
-                  isActive ? "text-white" : "text-white/60"
-                }`}
+                className="flex flex-col items-center justify-center transition-all duration-200"
                 style={{
                   ...MIN_TAP_SIZE,
                   gap: "calc(var(--rpx) * 3)",
                   WebkitFontSmoothing: "antialiased",
+                  color: isActive ? GOLD : "rgba(74,68,58,0.5)",
                 }}
                 aria-label={item.label}
               >
@@ -119,7 +125,6 @@ export function BottomNavigation({
                   style={{
                     fontSize: "calc(var(--rpx) * 16)",
                     lineHeight: 1,
-                    opacity: isActive ? 1 : 0.7,
                     textShadow: TEXT_ENGRAVED,
                   }}
                 >

@@ -8,7 +8,6 @@
 import { useState, useCallback, useEffect } from "react";
 import {
   ChevronRight,
-  Sun,
   Lock,
   Book,
   Map,
@@ -23,6 +22,8 @@ import {
   getV2VolumeById,
   getV2Chapter,
   getVolumeProgressPercent,
+  TODAY_PASSAGE,
+  VOLUME_COVER_PLACEHOLDER,
 } from "../config/handbook-v2-data";
 import {
   FONT_SERIF,
@@ -35,7 +36,7 @@ import {
 } from "../config/styles";
 import { Toast } from "../components/shared/Toast";
 import { PrimaryButton } from "../components/shared/PrimaryButton";
-import { VolumeBookCover } from "../components/shared/VolumeBookCover";
+import { VolumeGlassCover } from "../components/shared/VolumeGlassCover";
 import { HandbookPlaceholderCard } from "../components/shared/HandbookPlaceholderCard";
 import { useToast } from "../hooks/useToast";
 import { useReadingProgress } from "../hooks/useReadingProgress";
@@ -61,7 +62,10 @@ interface HandbookHomeProps {
   onNavChange?: (index: number) => void;
 }
 
-/** 三大入口（图标：内层页面统一使用 lucide 图标，遵循简约原则） */
+/**
+ * 两大入口（图标统一 lucide，遵循简约原则）。
+ * 「今日一段」已抽出为首页顶部单独大卡（见 DailyHeroCard），此处只保留系统阅读与生成路径。
+ */
 const ENTRIES: {
   id: string;
   icon: LucideIcon | null;
@@ -83,13 +87,18 @@ const ENTRIES: {
     title: "生成我的阅读路径",
     desc: "根据你此刻状态，找到最适合的入口",
   },
-  {
-    id: "daily",
-    icon: Sun,
-    iconImg: null,
-    title: "今日一段",
-    desc: "每天一段文字，一次回到感知的练习",
-  },
+];
+
+/**
+ * 读后练习（简版）首页大卡的三步预览。
+ * 内容**以现有 `HandbookPractice` 页为准**：思考一问 / 1 分钟自照练习 / 写下自照。
+ * 首页仅作「大致体现里面有什么」的预览（不在此输入、不放序号/图标），
+ * 点击整卡进入现有完整练习流程去操作。
+ */
+const PRACTICE_STEPS: { title: string; hint: string }[] = [
+  { title: "思考一问", hint: "带一个问题回看" },
+  { title: "1 分钟自照练习", hint: "跟着引导做一次" },
+  { title: "写下自照", hint: "留下真实的一句" },
 ];
 
 export function HandbookHome({
@@ -161,6 +170,34 @@ export function HandbookHome({
       toast.show("先开始阅读一节，再来做读后练习吧");
     }
   }, [hasProgress, lastProgress, onOpenPractice, toast]);
+
+  // 首页练习区显示规则（§2.6）：有进度 → 指向「上次所读章节」的读后练习入口；
+  // 无进度 → 轻引导（不强行塞输入框到首页）。简版始终开放，不置灰。
+  const lastReadChapter =
+    hasProgress && lastProgress
+      ? getV2Chapter(lastProgress.volumeId, lastProgress.chapterId)
+      : null;
+  const practiceHint = lastReadChapter
+    ? `为「第${lastReadChapter.index}章」做一次读后练习`
+    : "先读一节，再回来做一次读后练习";
+
+  // 今日一段大卡数据：当日日期（月/日 + 星期）+ 当日引文 + 出处卷名
+  const dailyVolume = getV2VolumeById(TODAY_PASSAGE.volumeId);
+  const dailyVolumeCn = dailyVolume
+    ? VOLUME_CN[dailyVolume.volumeNumber - 1]
+    : "一";
+  const today = new Date();
+  const dailyMonth = String(today.getMonth() + 1).padStart(2, "0");
+  const dailyDay = String(today.getDate()).padStart(2, "0");
+  const dailyWeekday = [
+    "星期日",
+    "星期一",
+    "星期二",
+    "星期三",
+    "星期四",
+    "星期五",
+    "星期六",
+  ][today.getDay()];
 
   return (
     <div
@@ -374,12 +411,118 @@ export function HandbookHome({
           </div>
         </div>
 
-        {/* 三大入口（液态玻璃·三列） */}
+        {/* 今日一段 · 当日核心大卡（整卡可点；入口用极简文字链而非按钮）
+            配色与其他液态玻璃一致：不另加暖黄底色，玻璃通透感由页面背景透出。 */}
+        <div style={{ padding: `${rpx(40)} ${rpx(40)} 0` }}>
+          <div
+            onClick={() => onOpenDaily?.()}
+            style={{
+              ...LIQUID_GLASS,
+              position: "relative",
+              overflow: "hidden",
+              borderRadius: rpx(32),
+              padding: `${rpx(28)} ${rpx(34)} ${rpx(26)}`,
+              cursor: "pointer",
+            }}
+          >
+            <OrbitGlow />
+            <div style={{ position: "relative", maxWidth: "74%" }}>
+              <div
+                style={{ display: "flex", alignItems: "center", gap: rpx(10) }}
+              >
+                <span
+                  style={{
+                    fontFamily: FONT_SERIF,
+                    fontSize: rpx(28),
+                    fontWeight: 600,
+                    color: "#6B5526",
+                    letterSpacing: rpx(2),
+                    textShadow: TEXT_ENGRAVED,
+                  }}
+                >
+                  今日一段
+                </span>
+                <Sparkles size={15} color={GOLD} strokeWidth={1.6} />
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "baseline",
+                  gap: rpx(14),
+                  margin: `${rpx(14)} 0 0`,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: FONT_SERIF,
+                    fontSize: rpx(46),
+                    fontWeight: 600,
+                    color: INK,
+                    letterSpacing: rpx(2),
+                  }}
+                >
+                  {dailyMonth} / {dailyDay}
+                </span>
+                <span style={{ fontSize: rpx(21), color: SUB }}>
+                  {dailyWeekday}
+                </span>
+              </div>
+
+              <p
+                style={{
+                  fontFamily: FONT_SERIF,
+                  fontSize: rpx(26),
+                  lineHeight: 1.6,
+                  color: "#33302A",
+                  margin: `${rpx(14)} 0 0`,
+                  textShadow: TEXT_ENGRAVED_SOFT,
+                }}
+              >
+                {TODAY_PASSAGE.passage}
+              </p>
+              <p
+                style={{
+                  fontFamily: FONT_SERIF,
+                  fontSize: rpx(20),
+                  color: SUB,
+                  margin: `${rpx(10)} 0 0`,
+                  letterSpacing: rpx(1),
+                }}
+              >
+                ——《人类手册 · 卷{dailyVolumeCn}》
+              </p>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: rpx(6),
+                  margin: `${rpx(18)} 0 0`,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: FONT_SERIF,
+                    fontSize: rpx(23),
+                    color: GOLD,
+                    letterSpacing: rpx(1),
+                  }}
+                >
+                  进入今日一段
+                </span>
+                <ChevronRight size={15} color={GOLD} strokeWidth={2} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 两大入口（系统阅读 / 生成路径）：横向卡片，图标在左、文案在右 */}
         <div
           style={{
             display: "flex",
             gap: rpx(20),
-            padding: `${rpx(48)} ${rpx(40)} 0`,
+            padding: `${rpx(28)} ${rpx(40)} 0`,
           }}
         >
           {ENTRIES.map((e) => {
@@ -393,11 +536,11 @@ export function HandbookHome({
                   flex: 1,
                   minWidth: 0,
                   borderRadius: rpx(28),
-                  padding: `${rpx(36)} ${rpx(16)} ${rpx(32)}`,
+                  padding: `${rpx(28)} ${rpx(26)}`,
                   display: "flex",
-                  flexDirection: "column",
                   alignItems: "center",
-                  textAlign: "center",
+                  gap: rpx(18),
+                  textAlign: "left",
                   cursor: "pointer",
                   transition: "transform 0.18s ease",
                 }}
@@ -413,66 +556,55 @@ export function HandbookHome({
               >
                 <div
                   style={{
-                    height: rpx(40),
+                    width: rpx(48),
+                    height: rpx(48),
+                    flexShrink: 0,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    marginBottom: rpx(16),
                   }}
                 >
-                  {e.iconImg ? (
-                    <img
-                      src={e.iconImg}
-                      alt=""
+                  {Icon && (
+                    <Icon
+                      size={24}
+                      strokeWidth={1.4}
+                      color={GOLD}
                       style={{
-                        width: rpx(40),
-                        height: rpx(40),
-                        objectFit: "contain",
-                        opacity: 0.55,
+                        filter:
+                          "drop-shadow(0px 1.5px 1.5px rgba(255,255,255,1)) drop-shadow(0px -1.5px 1.5px rgba(0,0,0,0.15))",
                       }}
                     />
-                  ) : (
-                    Icon && (
-                      <Icon
-                        size={22}
-                        strokeWidth={1.4}
-                        color={GOLD}
-                        style={{
-                          filter:
-                            "drop-shadow(0px 1.5px 1.5px rgba(255,255,255,1)) drop-shadow(0px -1.5px 1.5px rgba(0,0,0,0.15))",
-                        }}
-                      />
-                    )
                   )}
                 </div>
-                <p
-                  style={{
-                    fontFamily: FONT_SERIF,
-                    fontSize: rpx(26),
-                    fontWeight: 700,
-                    color: "#23201A",
-                    margin: 0,
-                    letterSpacing: rpx(1),
-                    lineHeight: 1.3,
-                    minHeight: rpx(68),
-                    textShadow:
-                      "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
-                  }}
-                >
-                  {e.title}
-                </p>
-                <p
-                  style={{
-                    fontSize: rpx(18),
-                    color: "#6F665A",
-                    margin: `${rpx(12)} 0 0`,
-                    textShadow:
-                      "0px 1.5px 1.5px rgba(255,255,255,0.9), 0px -1px 1.5px rgba(0,0,0,0.12)",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  {e.desc}
-                </p>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p
+                    style={{
+                      fontFamily: FONT_SERIF,
+                      fontSize: rpx(26),
+                      fontWeight: 700,
+                      color: "#23201A",
+                      margin: 0,
+                      letterSpacing: rpx(1),
+                      lineHeight: 1.35,
+                      textShadow:
+                        "0px 1px 1px rgba(255,255,255,1), 0px -1px 1px rgba(0,0,0,0.1)",
+                    }}
+                  >
+                    {e.title}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: rpx(18),
+                      color: "#6F665A",
+                      margin: `${rpx(8)} 0 0`,
+                      textShadow:
+                        "0px 1.5px 1.5px rgba(255,255,255,0.9), 0px -1px 1.5px rgba(0,0,0,0.12)",
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    {e.desc}
+                  </p>
+                </div>
               </button>
             );
           })}
@@ -547,7 +679,10 @@ export function HandbookHome({
               gap: rpx(20),
               overflowX: "auto",
               marginTop: rpx(24),
-              paddingBottom: rpx(8),
+              // 横滑容器 overflow-x:auto 会令 overflow-y 也变 auto，从而裁切封面投影；
+              // 预留足够的上下内边距，让柔和的接触阴影完整显示而不被硬裁成矩形
+              paddingTop: rpx(6),
+              paddingBottom: rpx(40),
               scrollSnapType: "x mandatory",
               WebkitOverflowScrolling: "touch",
             }}
@@ -563,39 +698,20 @@ export function HandbookHome({
                   cursor: "pointer",
                 }}
               >
-                <VolumeBookCover
+                {/* 通透水晶玻璃封面（卷号/徽记/卷名均在封面内，呼应参考图） */}
+                <VolumeGlassCover
                   volumeNumber={vol.volumeNumber}
                   volumeCn={VOLUME_CN[vol.volumeNumber - 1]}
+                  title={vol.title}
                   subtitle={vol.subtitle}
+                  height={rpx(290)}
+                  imageUrl={vol.cover !== VOLUME_COVER_PLACEHOLDER ? vol.cover : undefined}
                 />
-                <p
-                  style={{
-                    fontSize: rpx(18),
-                    color: GOLD,
-                    margin: `${rpx(14)} 0 0`,
-                    textAlign: "center",
-                    letterSpacing: rpx(1),
-                  }}
-                >
-                  卷{VOLUME_CN[vol.volumeNumber - 1]}
-                </p>
-                <p
-                  style={{
-                    fontFamily: FONT_SERIF,
-                    fontSize: rpx(22),
-                    color: INK,
-                    margin: `${rpx(4)} 0 0`,
-                    textAlign: "center",
-                    fontWeight: 500,
-                  }}
-                >
-                  {vol.title}
-                </p>
               </div>
             ))}
             <HandbookPlaceholderCard
               width={rpx(184)}
-              height={rpx(248)}
+              height={rpx(290)}
               fixedHeight
               containerStyle={{
                 flexShrink: 0,
@@ -623,119 +739,208 @@ export function HandbookHome({
             >
               在阅读路上，陪你走得更稳更远
             </p>
-            <div style={{ display: "flex", gap: rpx(20), marginTop: rpx(28) }}>
-              {/* 手册导读（即将开放·液态玻璃·偏冷银灰） */}
+            {/* 读后练习（简版）· 整行大卡：与小卡相比，仅多「把页内三步大致显出来」。
+                配色同其他液态玻璃（不另加暖色底）；不放输入框/序号/逐格图标，保持简约。 */}
+            <div
+              onClick={handlePractice}
+              style={{
+                ...LIQUID_GLASS,
+                marginTop: rpx(28),
+                position: "relative",
+                overflow: "hidden",
+                borderRadius: rpx(28),
+                padding: `${rpx(26)} ${rpx(28)} ${rpx(24)}`,
+                cursor: "pointer",
+              }}
+            >
+              {/* 头部：标题 + 已开放标识 */}
               <div
-                onClick={() => setShowGuideNote(true)}
                 style={{
-                  flex: 1,
-                  height: rpx(176),
-                  borderRadius: rpx(28),
-                  ...LIQUID_GLASS,
-                  background:
-                    "linear-gradient(135deg, rgba(199,205,211,0.55), rgba(216,212,203,0.32))",
-                  position: "relative",
-                  overflow: "hidden",
-                  cursor: "pointer",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between",
                   gap: rpx(12),
-                  padding: `${rpx(26)} ${rpx(26)}`,
                 }}
               >
-                <span
-                  style={{
-                    position: "absolute",
-                    top: rpx(14),
-                    right: rpx(14),
-                    fontSize: rpx(15),
-                    color: "#6E6A62",
-                    background: "rgba(255,255,255,0.5)",
-                    padding: `${rpx(3)} ${rpx(10)}`,
-                    borderRadius: rpx(16),
-                    display: "flex",
-                    alignItems: "center",
-                    gap: rpx(4),
-                  }}
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: rpx(10) }}
                 >
-                  <Lock size={11} strokeWidth={2} /> 即将开放
-                </span>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p
-                    style={{
-                      fontFamily: FONT_SERIF,
-                      fontSize: rpx(30),
-                      fontWeight: 600,
-                      color: "#56616B",
-                      margin: `0 0 ${rpx(10)}`,
-                      textShadow: TEXT_ENGRAVED,
-                    }}
-                  >
-                    手册导读
-                  </p>
-                  <p
-                    style={{
-                      fontSize: rpx(18),
-                      color: "#828791",
-                      margin: 0,
-                      lineHeight: 1.5,
-                      textShadow: TEXT_ENGRAVED_SOFT,
-                    }}
-                  >
-                    专业卷导读内容，帮助你更好地理解与运用
-                  </p>
-                </div>
-                <GuideIcon />
-              </div>
-
-              {/* 读后练习（液态玻璃·偏暖） */}
-              <div
-                onClick={handlePractice}
-                style={{
-                  flex: 1,
-                  height: rpx(176),
-                  borderRadius: rpx(28),
-                  ...LIQUID_GLASS,
-                  background:
-                    "linear-gradient(135deg, rgba(232,216,189,0.5), rgba(215,197,161,0.3))",
-                  position: "relative",
-                  overflow: "hidden",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: rpx(12),
-                  padding: `${rpx(26)} ${rpx(26)}`,
-                }}
-              >
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p
+                  <PracticeIcon />
+                  <span
                     style={{
                       fontFamily: FONT_SERIF,
                       fontSize: rpx(30),
                       fontWeight: 600,
                       color: "#5A4F3C",
-                      margin: `0 0 ${rpx(10)}`,
+                      letterSpacing: rpx(1),
                       textShadow: TEXT_ENGRAVED,
                     }}
                   >
-                    读后练习
-                  </p>
-                  <p
+                    读后练习（简版）
+                  </span>
+                </div>
+                <span
+                  style={{
+                    flexShrink: 0,
+                    fontSize: rpx(16),
+                    color: "#7A5E2E",
+                    background: "rgba(255,255,255,0.45)",
+                    padding: `${rpx(3)} ${rpx(12)}`,
+                    borderRadius: rpx(16),
+                    whiteSpace: "nowrap",
+                    textShadow: TEXT_ENGRAVED_SOFT,
+                  }}
+                >
+                  已开放 · 简版
+                </span>
+              </div>
+
+              {/* 三步预览：仅「思考一问 / 1分钟自照练习 / 写下自照」三个名称 + 一句轻提示，
+                  以连接符示意顺序，不放输入框。点击整卡进入完整练习去操作。 */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "stretch",
+                  gap: rpx(8),
+                  margin: `${rpx(20)} 0 0`,
+                }}
+              >
+                {PRACTICE_STEPS.map((s, i) => (
+                  <div
+                    key={s.title}
                     style={{
-                      fontSize: rpx(18),
-                      color: "#8C7F66",
-                      margin: 0,
-                      lineHeight: 1.5,
-                      textShadow: TEXT_ENGRAVED_SOFT,
+                      display: "flex",
+                      alignItems: "center",
+                      flex: 1,
+                      minWidth: 0,
                     }}
                   >
-                    每卷配套练习，让理解内化为行动
-                  </p>
-                </div>
-                <PracticeIcon />
+                    <div style={{ flex: 1, minWidth: 0, textAlign: "center" }}>
+                      <p
+                        style={{
+                          fontFamily: FONT_SERIF,
+                          fontSize: rpx(23),
+                          fontWeight: 600,
+                          color: "#3A352C",
+                          margin: 0,
+                          letterSpacing: rpx(0.5),
+                          whiteSpace: "nowrap",
+                          textShadow: TEXT_ENGRAVED_SOFT,
+                        }}
+                      >
+                        {s.title}
+                      </p>
+                      <p
+                        style={{
+                          fontSize: rpx(16),
+                          color: "#9A9078",
+                          margin: `${rpx(6)} 0 0`,
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {s.hint}
+                      </p>
+                    </div>
+                    {i < PRACTICE_STEPS.length - 1 && (
+                      <ChevronRight
+                        size={14}
+                        color="rgba(184,151,90,0.55)"
+                        strokeWidth={2}
+                        style={{ flexShrink: 0 }}
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
+
+              {/* 底部：状态/进度文案 + 极简入口（文字链 + 箭头，非按钮） */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: rpx(16),
+                  margin: `${rpx(22)} 0 0`,
+                }}
+              >
+                <span style={{ fontSize: rpx(17), color: "#9A9078" }}>
+                  {practiceHint}
+                </span>
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: rpx(6),
+                    fontFamily: FONT_SERIF,
+                    fontSize: rpx(23),
+                    color: GOLD,
+                    letterSpacing: rpx(1),
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  开始练习
+                  <ChevronRight size={15} color={GOLD} strokeWidth={2} />
+                </span>
+              </div>
+            </div>
+
+            {/* 手册导读（即将开放·保留）：纤细整行卡，配色同其他液态玻璃（不另加银灰底色） */}
+            <div
+              onClick={() => setShowGuideNote(true)}
+              style={{
+                ...LIQUID_GLASS,
+                marginTop: rpx(20),
+                position: "relative",
+                overflow: "hidden",
+                borderRadius: rpx(28),
+                padding: `${rpx(22)} ${rpx(28)}`,
+                display: "flex",
+                alignItems: "center",
+                gap: rpx(16),
+                cursor: "pointer",
+              }}
+            >
+              <GuideIcon />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p
+                  style={{
+                    fontFamily: FONT_SERIF,
+                    fontSize: rpx(26),
+                    fontWeight: 600,
+                    color: "#56616B",
+                    margin: 0,
+                    textShadow: TEXT_ENGRAVED,
+                  }}
+                >
+                  手册导读
+                </p>
+                <p
+                  style={{
+                    fontSize: rpx(17),
+                    color: "#828791",
+                    margin: `${rpx(6)} 0 0`,
+                    lineHeight: 1.4,
+                    textShadow: TEXT_ENGRAVED_SOFT,
+                  }}
+                >
+                  专业卷导读内容，帮助你更好地理解与运用
+                </p>
+              </div>
+              <span
+                style={{
+                  flexShrink: 0,
+                  fontSize: rpx(15),
+                  color: "#6E6A62",
+                  background: "rgba(255,255,255,0.45)",
+                  padding: `${rpx(3)} ${rpx(10)}`,
+                  borderRadius: rpx(16),
+                  display: "flex",
+                  alignItems: "center",
+                  gap: rpx(4),
+                }}
+              >
+                <Lock size={11} strokeWidth={2} /> 即将开放
+              </span>
             </div>
           </div>
         </div>
@@ -753,8 +958,10 @@ export function HandbookHome({
           right: 0,
           bottom: navDock.present ? navDock.height : "0px",
           zIndex: 40,
-          background: "#FBFAF7",
-          boxShadow: "0 -8px 24px rgba(60,50,30,0.10)",
+          background: "rgba(251,250,247,0.72)",
+          backdropFilter: "blur(20px) saturate(1.2)",
+          WebkitBackdropFilter: "blur(20px) saturate(1.2)",
+          boxShadow: "0 -8px 24px rgba(60,50,30,0.08)",
           padding: `${rpx(20)} ${rpx(40)} ${
             navDock.present
               ? rpx(18)
@@ -836,24 +1043,23 @@ export function HandbookHome({
             <div
               onClick={() => onContinueReading?.(dockVolume.id, dockChapter.id)}
               style={{
+                ...LIQUID_GLASS,
                 display: "flex",
                 alignItems: "center",
                 gap: rpx(20),
                 padding: rpx(18),
-                background:
-                  "linear-gradient(135deg, rgba(184,151,90,0.1), rgba(184,151,90,0.04))",
-                border: "1.5px solid rgba(233,216,166,0.6)",
                 borderRadius: rpx(24),
                 cursor: "pointer",
               }}
             >
-              {/* 封面缩略（黑书风格小封面） */}
+              {/* 封面缩略（通透水晶玻璃小封面） */}
               <div style={{ width: rpx(84), flexShrink: 0 }}>
-                <VolumeBookCover
+                <VolumeGlassCover
                   volumeNumber={dockVolume.volumeNumber}
                   volumeCn={VOLUME_CN[dockVolume.volumeNumber - 1]}
                   height={rpx(112)}
                   compact
+                  imageUrl={dockVolume.cover !== VOLUME_COVER_PLACEHOLDER ? dockVolume.cover : undefined}
                 />
               </div>
               {/* 标题 + 副标题 + 进度条 */}
@@ -955,6 +1161,82 @@ export function HandbookHome({
         message="手册导读会在这套书与练习稳稳落地之后再上线——它将基于十卷母本，陪你把读到的东西照见、内化。先慢慢读，不急。"
       />
     </div>
+  );
+}
+
+/**
+ * OrbitGlow - 今日一段大卡右侧轨道/星点装饰（代码绘制·柔金低透明度）
+ * 同心轨道 + 一枚发光的「日」与一颗轨道星点，呼应「回到感知」的日常节律；纯装饰、不抢正文。
+ */
+function OrbitGlow() {
+  return (
+    <svg
+      viewBox="0 0 240 200"
+      aria-hidden
+      style={{
+        position: "absolute",
+        right: rpx(-24),
+        top: "50%",
+        transform: "translateY(-50%)",
+        width: rpx(340),
+        height: rpx(284),
+        pointerEvents: "none",
+        opacity: 0.92,
+      }}
+      fill="none"
+    >
+      <defs>
+        {/* 柔和日晕：白→金→透明，营造发光的「太阳金圈」光感 */}
+        <radialGradient id="hbSunCore" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="rgba(255,252,238,0.95)" />
+          <stop offset="35%" stopColor="rgba(255,236,180,0.5)" />
+          <stop offset="100%" stopColor="rgba(255,224,150,0)" />
+        </radialGradient>
+        {/* 轨道金环：两端淡、中段亮，模拟一道掠过的金色光弧 */}
+        <linearGradient id="hbRing" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stopColor="rgba(212,178,108,0)" />
+          <stop offset="0.5" stopColor="rgba(201,167,99,0.7)" />
+          <stop offset="1" stopColor="rgba(212,178,108,0)" />
+        </linearGradient>
+      </defs>
+
+      {/* 日晕 */}
+      <circle cx="152" cy="96" r="82" fill="url(#hbSunCore)" />
+
+      {/* 同心金色轨道环 */}
+      {[70, 54, 38].map((r, i) => (
+        <circle
+          key={i}
+          cx="152"
+          cy="96"
+          r={r}
+          stroke="url(#hbRing)"
+          strokeWidth="1.1"
+          opacity={0.5 + i * 0.12}
+        />
+      ))}
+
+      {/* 太阳本体：金核 + 高光 */}
+      <circle cx="152" cy="96" r="11" fill="rgba(214,176,100,0.9)" />
+      <circle cx="152" cy="96" r="5" fill="rgba(255,246,216,0.95)" />
+
+      {/* 轨道星点 */}
+      <circle cx="222" cy="96" r="3.4" fill="rgba(201,167,99,0.8)" />
+      <circle cx="152" cy="26" r="2.6" fill="rgba(201,167,99,0.6)" />
+      <circle cx="98" cy="120" r="2" fill="rgba(201,167,99,0.5)" />
+
+      {/* 隐约的山水金线（极淡，点到为止） */}
+      <path
+        d="M64 152 Q116 130 168 148 T240 142"
+        stroke="rgba(201,167,99,0.26)"
+        strokeWidth="1"
+      />
+      <path
+        d="M64 164 Q128 152 192 162 T240 158"
+        stroke="rgba(201,167,99,0.16)"
+        strokeWidth="1"
+      />
+    </svg>
   );
 }
 

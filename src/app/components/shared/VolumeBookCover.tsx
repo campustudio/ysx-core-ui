@@ -82,20 +82,21 @@ export function VolumeBookCover({
           inset: 0,
           borderRadius: rpx(10),
           background: LEATHER_BACK,
-          // 立体投影：偏下、负扩散，避免横向外溢与相邻书连成一片
+          // 柔和接触投影：低不透明 + 大模糊 + 负扩散，使书"落"在桌面而非被硬裁成矩形，
+          // 同时负扩散避免横向外溢与相邻书连成一片
           boxShadow:
-            "0 14px 22px -8px rgba(20,12,4,0.5), 0 4px 8px -2px rgba(20,12,4,0.35)",
+            "0 18px 30px -14px rgba(20,12,4,0.42), 0 7px 14px -8px rgba(20,12,4,0.26)",
         }}
       />
 
-      {/* ② 白色书页：仅在底部上层/下层封面之间露出一丝（不明显） */}
+      {/* ② 白色书页：在底部上层封面之下露出一条奶白页边，使书底像「叠合的书页」而非一条黑边 */}
       <div
         style={{
           position: "absolute",
           top: rpx(3),
           left: rpx(3),
           right: rpx(2),
-          bottom: rpx(3),
+          bottom: rpx(2),
           borderRadius: `${rpx(8)} ${rpx(8)} ${rpx(8)} ${rpx(8)}`,
           background:
             "repeating-linear-gradient(90deg, #efe7d6 0px, #ffffff 1.5px, #e3dac8 3px)",
@@ -109,12 +110,12 @@ export function VolumeBookCover({
           top: 0,
           left: 0,
           right: rpx(2),
-          bottom: rpx(6),
+          bottom: rpx(5),
           borderRadius: rpx(10),
           background: LEATHER_FRONT,
-          // 封面本体立体：顶部高光 + 底部内阴影 + 底部投影到下层封面
+          // 封面本体立体：顶部高光 + 底部内阴影 + 轻柔投影到书页（不再深黑，避免书底出现一条黑边）
           boxShadow:
-            "inset 0 1.5px 1px rgba(255,255,255,0.12), inset 0 -3px 8px rgba(0,0,0,0.7), 0 5px 8px -2px rgba(0,0,0,0.6)",
+            "inset 0 1.5px 1px rgba(255,255,255,0.12), inset 0 -3px 8px rgba(0,0,0,0.7), 0 3px 5px -2px rgba(0,0,0,0.4)",
           overflow: "hidden",
         }}
       >
@@ -251,10 +252,10 @@ function EpicSigil({
   );
 }
 
-type StrokeProps = { stroke: string; strokeWidth: number; fill: "none" };
+export type StrokeProps = { stroke: string; strokeWidth: number; fill: "none" };
 
-/** 各卷母题：返回外圆内部的差异化图形 */
-function renderMotif(v: number, g: StrokeProps, r: StrokeProps) {
+/** 各卷母题：返回外圆内部的差异化图形（玻璃水晶封面 VolumeGlassCover 亦复用） */
+export function renderMotif(v: number, g: StrokeProps, r: StrokeProps) {
   switch (v) {
     case 1: // 行星轨道：椭圆轨道 + 内圆 + 十字轴（启蒙·本源）
       return (

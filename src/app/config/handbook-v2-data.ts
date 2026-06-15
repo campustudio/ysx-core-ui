@@ -12,6 +12,8 @@
 
 // 占位封面（先用现有首页背景图占位，待交互定稿后替换）
 import coverPlaceholder from "@/assets/images/home/1-menqian.webp";
+// 通用 3D 水晶背景图（ChatGPT 生成，已压缩为 WebP）
+import crystalCoverBg from "@/assets/images/human-manual/book-cover-1.webp";
 
 // ─── 类型定义 ──────────────────────────────────────────
 
@@ -233,7 +235,7 @@ export const V2_VOLUMES: V2Volume[] = [
     intro:
       "本卷描绘新文明的轮廓：新教育唤醒而非制造，新医疗归位而非控制，新科技服务生命而非替代生命。它是一个清醒的导航系统，让你看见另一种可能。",
     keywords: ["新教育", "新医疗", "新科技", "明镜ASI"],
-    cover: coverPlaceholder,
+    cover: crystalCoverBg,
     chapters: [
       {
         id: "v2-c1",
@@ -364,7 +366,7 @@ export const V2_VOLUMES: V2Volume[] = [
     intro:
       "本卷系统阐述感知科学的框架与原理。感知科学的起点，是把生命看作可感知、可连接、可归位的整体，而非彼此割裂的碎片。",
     keywords: ["感知科学", "时空真相", "能量体", "七维度"],
-    cover: coverPlaceholder,
+    cover: crystalCoverBg,
     chapters: [
       {
         id: "v3-c1",
@@ -494,7 +496,7 @@ export const V2_VOLUMES: V2Volume[] = [
     intro:
       "本卷回应实践中的真实困惑——关于方向、关系、情绪与日常选择。你不是来看答案的，你是来把自己活成答案的。",
     keywords: ["实践困惑", "关系", "情绪", "日常"],
-    cover: coverPlaceholder,
+    cover: crystalCoverBg,
     chapters: [
       {
         id: "v4-c1",
@@ -633,7 +635,7 @@ export const V2_VOLUMES: V2Volume[] = [
     intro:
       "本卷是从理解走向践行的路径：从一个人真实地活，到同频者相遇、聚落形成，再到平台母体与全球共感网。这本书结束的地方，正是新文明开始的地方。",
     keywords: ["个人践行", "小组共振", "聚落", "全球共感网"],
-    cover: coverPlaceholder,
+    cover: crystalCoverBg,
     chapters: [
       {
         id: "v5-c1",
